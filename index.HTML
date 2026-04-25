@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Physics Learning Hub - PTM3202 Group 1</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+* { box-sizing: border-box; }
+body { font-family: Arial, sans-serif; margin:0; background:#eef2f7; }
+header { background: linear-gradient(135deg, #0d47a1, #1976d2); color:white; padding:18px 20px; text-align:center; }
+header h1 { margin:0 0 4px; font-size:1.6rem; }
+header p { margin:2px 0; font-size:0.9rem; opacity:0.9; }
+nav { background:#1565c0; padding:8px; text-align:center; display:flex; flex-wrap:wrap; justify-content:center; gap:6px; }
+nav button { padding:9px 18px; border:none; background:rgba(255,255,255,0.15); color:white; cursor:pointer; border-radius:20px; font-size:13px; font-weight:bold; transition:background 0.2s; }
+nav button:hover, nav button.nav-active { background:white; color:#0d47a1; }
+section { display:none; padding:20px; max-width:900px; margin:0 auto; }
+.active { display:block; }
+.card { background:white; padding:18px; margin:15px 0; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+footer { background:#0d47a1; color:white; text-align:center; padding:12px; font-size:13px; margin-top:20px; }
+
+/* HOME */
+.home-hero { background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); color:white; border-radius:12px; padding:30px 24px; margin-bottom:20px; }
+.home-hero h2 { margin:0 0 10px; font-size:1.5rem; }
+.home-hero p { margin:6px 0; font-size:14px; opacity:0.92; line-height:1.7; }
+.home-stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(100px,1fr)); gap:10px; margin:20px 0; }
+.home-stat { background:white; border-radius:10px; padding:14px 10px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.07); }
+.home-stat .stat-num { font-size:1.6rem; font-weight:bold; color:#0d47a1; }
+.home-stat .stat-label { font-size:11px; color:#666; margin-top:2px; }
+.module-cards-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:14px; }
+.module-card { border-radius:12px; padding:22px 18px; cursor:pointer; color:white; border:none; text-align:left; transition:transform 0.15s, box-shadow 0.15s; box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+.module-card:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,0.2); }
+.module-card .mod-icon { font-size:2rem; margin-bottom:10px; display:block; }
+.module-card .mod-title { font-size:1rem; font-weight:bold; margin-bottom:5px; }
+.module-card .mod-desc { font-size:12px; opacity:0.88; line-height:1.5; }
+.module-card .mod-arrow { margin-top:12px; font-size:12px; opacity:0.8; }
+
+/* MODULE PAGE */
+#module-page { display:none; padding:20px; max-width:900px; margin:0 auto; }
+#module-page.active { display:block; }
+.module-back-btn, .proj-back-btn { display:inline-flex; align-items:center; gap:6px; background:#e3eeff; color:#0d47a1; border:none; border-radius:20px; padding:7px 16px; font-size:13px; font-weight:bold; cursor:pointer; margin-bottom:16px; }
+.module-back-btn:hover, .proj-back-btn:hover { background:#c5d5ee; }
+.mech-tabs { display:flex; gap:4px; margin-bottom:16px; background:#f0f4fa; padding:4px; border-radius:8px; flex-wrap:wrap; }
+.mech-tab { flex:1; min-width:80px; padding:8px 6px; font-size:13px; font-weight:bold; background:none; border:none; cursor:pointer; border-radius:6px; color:#555; transition:background 0.15s; }
+.mech-tab.active { background:white; color:#0d47a1; border:1px solid #c5d5ee; }
+.mech-panel { display:none; }
+.mech-panel.active { display:block; }
+.mech-overview-bar { border-left:4px solid #1e88e5; background:#f0f4fa; padding:12px 16px; border-radius:6px; margin-bottom:14px; }
+.mech-overview-bar p { margin:0; font-size:14px; line-height:1.7; color:#333; }
+.mech-topic-grid { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+.mech-topic-chip { background:#e3eeff; color:#0d47a1; border-radius:20px; padding:5px 14px; font-size:13px; }
+.concept-cards-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:10px; margin-bottom:14px; }
+.concept-card { background:#f9fafb; border:1px solid #dce6f5; border-radius:8px; padding:12px 14px; cursor:pointer; }
+.concept-card:hover { border-color:#1e88e5; }
+.concept-card.open { border-color:#1e88e5; background:#eef4ff; }
+.concept-header { display:flex; align-items:center; gap:10px; }
+.concept-icon { width:34px; height:34px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+.concept-title { font-size:14px; font-weight:bold; color:#1a1a1a; }
+.concept-formula { font-size:12px; color:#666; font-family:monospace; margin-top:2px; }
+.concept-body { font-size:13px; color:#444; line-height:1.6; margin-top:10px; padding-top:10px; border-top:1px solid #dce6f5; display:none; }
+.concept-card.open .concept-body { display:block; }
+.law-block { display:flex; gap:12px; align-items:flex-start; padding:12px 0; border-bottom:1px solid #eee; }
+.law-block:last-child { border-bottom:none; }
+.law-num { width:30px; height:30px; border-radius:50%; background:#e3eeff; color:#0d47a1; font-size:13px; font-weight:bold; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+.law-title { font-size:14px; font-weight:bold; color:#1a1a1a; margin-bottom:3px; }
+.law-desc { font-size:13px; color:#444; line-height:1.55; }
+.law-example { display:inline-block; font-size:11px; padding:3px 10px; border-radius:20px; margin-top:5px; }
+.mech-calc-box { background:#f9fafb; border:1px solid #dce6f5; border-radius:8px; padding:14px 16px; margin-top:12px; }
+.mech-calc-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.mech-calc-row label { font-size:13px; color:#555; width:160px; flex-shrink:0; }
+.mech-calc-row input[type=range] { flex:1; }
+.mech-calc-val { font-size:13px; font-weight:bold; color:#1a1a1a; min-width:70px; text-align:right; }
+.mech-calc-result { margin-top:10px; padding:10px 14px; background:#e3eeff; border-radius:6px; display:flex; justify-content:space-between; align-items:center; }
+.mech-calc-result-label { font-size:13px; color:#555; }
+.mech-calc-result-val { font-size:22px; font-weight:bold; color:#0d47a1; }
+.activity-card { background:#f0f9f4; border:1px solid #b7dfc8; border-radius:8px; padding:14px 16px; margin-bottom:14px; }
+.activity-step { display:flex; gap:10px; align-items:flex-start; margin-bottom:7px; }
+.step-num { font-size:12px; font-weight:bold; color:#777; width:18px; flex-shrink:0; margin-top:2px; }
+.step-text { font-size:13px; color:#333; line-height:1.55; }
+.apps-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; margin-bottom:14px; }
+.app-chip { background:#f0f4fa; border-radius:8px; padding:10px 12px; display:flex; gap:8px; align-items:flex-start; }
+.app-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+.app-text { font-size:13px; color:#333; line-height:1.5; }
+.mech-quiz-q { font-size:14px; font-weight:bold; color:#1a1a1a; padding:12px 14px; background:#f0f4fa; border-radius:7px; margin-bottom:10px; }
+.mech-quiz-opts { display:flex; flex-direction:column; gap:6px; }
+.mech-quiz-opt { padding:9px 14px; border:1px solid #dce6f5; border-radius:7px; font-size:13px; cursor:pointer; background:white; text-align:left; transition:background 0.1s; }
+.mech-quiz-opt:hover { background:#f0f4fa; }
+.mech-quiz-opt.correct { background:#e6f4ea; border-color:#4caf50; color:#2e7d32; }
+.mech-quiz-opt.wrong { background:#fdecea; border-color:#e53935; color:#b71c1c; }
+.mech-quiz-feedback { font-size:13px; padding:8px 12px; border-radius:7px; margin-top:8px; display:none; }
+.mech-quiz-feedback.show { display:block; }
+.mech-quiz-feedback.ok { background:#e6f4ea; color:#2e7d32; }
+.mech-quiz-feedback.no { background:#fdecea; color:#b71c1c; }
+.mech-btn { background:#0d47a1; color:white; padding:9px 18px; border:none; border-radius:6px; cursor:pointer; font-size:13px; margin-top:8px; }
+.mech-btn:hover { background:#1565c0; }
+
+/* EXPERIMENTS */
+.exp-procedure { background:#f0f9f4; border:1px solid #b7dfc8; border-radius:8px; padding:14px 16px; margin-top:14px; }
+.exp-procedure h4 { margin:0 0 10px; color:#2e7d32; font-size:14px; }
+.exp-step { display:flex; gap:10px; align-items:flex-start; margin-bottom:8px; }
+.exp-step-num { width:24px; height:24px; border-radius:50%; background:#2e7d32; color:white; font-size:12px; font-weight:bold; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+.exp-step-text { font-size:13px; color:#333; line-height:1.55; }
+.exp-controls { background:#f9fafb; border:1px solid #dce6f5; border-radius:8px; padding:14px 16px; margin:14px 0; }
+.exp-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.exp-row label { font-size:13px; color:#555; width:160px; flex-shrink:0; }
+.exp-row input[type=range] { flex:1; }
+.exp-val { font-size:13px; font-weight:bold; color:#0d47a1; min-width:70px; text-align:right; }
+.exp-result-box { background:#e3eeff; border-radius:8px; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; margin:10px 0; }
+.exp-result-label { font-size:13px; color:#555; }
+.exp-result-val { font-size:20px; font-weight:bold; color:#0d47a1; }
+.exp-btn { padding:9px 18px; border:none; border-radius:6px; cursor:pointer; font-size:13px; font-weight:bold; margin-right:6px; margin-top:4px; }
+.exp-btn-blue { background:#0d47a1; color:white; }
+.exp-btn-green { background:#2e7d32; color:white; }
+.exp-btn-red { background:#c62828; color:white; }
+.exp-btn:hover { opacity:0.88; }
+.exp-table { width:100%; border-collapse:collapse; text-align:center; margin-top:12px; font-size:13px; }
+.exp-table th { background:#0d47a1; color:white; padding:8px; }
+.exp-table td { padding:7px; border-bottom:1px solid #eee; }
+.chart-wrap { position:relative; height:300px; margin-top:16px; }
+.pend-canvas-wrap { display:flex; justify-content:center; margin:10px 0; }
+canvas#pendCanvas { border-radius:10px; background:#0d1b40; display:block; }
+
+/* PROJECT CARD STYLES */
+.proj-card { background:white; border-radius:14px; box-shadow:0 3px 12px rgba(0,0,0,0.1); cursor:pointer; overflow:hidden; transition:transform 0.18s, box-shadow 0.18s; }
+.proj-card:hover { transform:translateY(-4px); box-shadow:0 8px 24px rgba(0,0,0,0.16); }
+.proj-card-img { height:130px; display:flex; align-items:center; justify-content:center; padding:10px; }
+.proj-card-body { padding:14px 16px 16px; }
+.proj-card-badges { display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap; }
+.proj-badge { font-size:11px; font-weight:bold; padding:3px 10px; border-radius:20px; }
+.proj-badge.green { background:#e6f4ea; color:#2e7d32; }
+.proj-badge.amber { background:#fff3e0; color:#e65100; }
+.proj-badge.blue { background:#e3eeff; color:#0d47a1; }
+.proj-badge.red { background:#fdecea; color:#b71c1c; }
+.proj-card-title { font-size:15px; font-weight:bold; color:#1a1a1a; margin-bottom:4px; }
+.proj-card-concept { font-size:12px; color:#555; margin-bottom:10px; }
+.proj-card-footer { font-size:12px; color:#1e88e5; font-weight:bold; }
+
+/* PROJECT DETAIL */
+.proj-detail-hero { border-radius:12px; padding:20px; color:white; margin-bottom:16px; }
+.proj-detail-hero h2 { margin:0 0 6px; font-size:1.3rem; }
+.proj-detail-hero p { margin:0; font-size:13px; opacity:0.9; }
+.proj-info-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+.proj-info-chip { background:rgba(255,255,255,0.25); border-radius:20px; padding:4px 14px; font-size:12px; font-weight:bold; }
+.proj-tabs { display:flex; gap:4px; background:#f0f4fa; padding:4px; border-radius:8px; margin-bottom:16px; flex-wrap:wrap; }
+.proj-tab { flex:1; min-width:80px; padding:8px 6px; font-size:12px; font-weight:bold; background:none; border:none; cursor:pointer; border-radius:6px; color:#555; transition:background 0.15s; }
+.proj-tab.active { background:white; color:#0d47a1; border:1px solid #c5d5ee; }
+.proj-panel { display:none; }
+.proj-panel.active { display:block; }
+.learn-row { display:flex; gap:10px; margin-bottom:8px; align-items:flex-start; }
+.learn-icon { font-size:18px; flex-shrink:0; margin-top:2px; }
+.learn-text { font-size:13px; color:#333; line-height:1.55; }
+.step-card { background:#f9fafb; border:1px solid #dce6f5; border-radius:10px; padding:14px 16px; margin-bottom:12px; }
+.step-card-header { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.step-badge { width:28px; height:28px; border-radius:50%; background:#0d47a1; color:white; font-size:13px; font-weight:bold; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.step-card-title { font-size:14px; font-weight:bold; color:#1a1a1a; }
+.step-card-desc { font-size:13px; color:#444; line-height:1.55; margin-bottom:8px; }
+.step-tip { font-size:12px; color:#f57f17; background:#fff8e1; border-radius:6px; padding:6px 10px; margin-top:6px; display:flex; gap:6px; align-items:flex-start; }
+.proj-materials { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; margin-bottom:14px; }
+.proj-material { background:#f0f4fa; border-radius:8px; padding:10px 12px; display:flex; gap:8px; align-items:center; font-size:13px; color:#333; }
+.proj-quiz-opt { padding:9px 14px; border:1px solid #dce6f5; border-radius:7px; font-size:13px; cursor:pointer; background:white; text-align:left; width:100%; margin-bottom:6px; }
+.proj-quiz-opt.correct { background:#e6f4ea; border-color:#4caf50; color:#2e7d32; }
+.proj-quiz-opt.wrong { background:#fdecea; border-color:#e53935; color:#b71c1c; }
+.proj-quiz-fb { font-size:13px; padding:8px 12px; border-radius:7px; margin-bottom:8px; display:none; }
+.proj-quiz-fb.show.ok { display:block; background:#e6f4ea; color:#2e7d32; }
+.proj-quiz-fb.show.no { display:block; background:#fdecea; color:#b71c1c; }
+.badge-reward { background:linear-gradient(135deg,#ffd600,#ffab00); border-radius:14px; padding:20px; text-align:center; margin-top:16px; }
+.badge-reward .badge-icon { font-size:48px; }
+.badge-reward .badge-title { font-size:18px; font-weight:bold; color:#333; margin:8px 0 4px; }
+.badge-reward .badge-sub { font-size:13px; color:#555; }
+.progress-bar-wrap { background:#dce6f5; border-radius:20px; height:10px; margin:10px 0; overflow:hidden; }
+.progress-bar-fill { height:100%; background:#0d47a1; border-radius:20px; transition:width 0.4s; }
+.formula-box { background:#0d47a1; color:white; border-radius:8px; padding:12px 18px; text-align:center; font-size:1.1rem; font-family:monospace; margin:12px 0; letter-spacing:1px; }
+.why-box { background:#e8f5e9; border-left:4px solid #4caf50; border-radius:6px; padding:12px 16px; font-size:13px; color:#2e7d32; line-height:1.6; margin:10px 0; }
+
+/* CIRCUIT DIAGRAM */
+#circuitCanvas { display:block; border-radius:12px; background:#0a1628; width:100%; max-width:520px; margin:0 auto; }
+.circuit-legend { display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:10px; }
+.legend-item { display:flex; align-items:center; gap:6px; font-size:12px; color:#555; }
+.legend-dot { width:12px; height:12px; border-radius:50%; }
+.readout-row { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:12px 0; }
+.readout-box { background:#e3eeff; border-radius:8px; padding:10px 16px; text-align:center; min-width:100px; }
+.readout-label { font-size:11px; color:#555; font-weight:bold; text-transform:uppercase; margin-bottom:2px; }
+.readout-val { font-size:20px; font-weight:bold; color:#0d47a1; }
+
+/* QUIZ & CONTACT */
+.quiz-progress-bar-wrap { display:flex; align-items:center; gap:12px; background:#f0f4fa; border-radius:8px; padding:10px 14px; margin-bottom:16px; }
+.quiz-progress-track { flex:1; background:#dce6f5; border-radius:20px; height:10px; overflow:hidden; }
+.quiz-progress-fill { height:100%; background:#0d47a1; border-radius:20px; width:0%; transition:width 0.3s; }
+.team-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:16px 0; }
+.team-card { background:#f0f4fa; border-radius:10px; padding:14px 16px; display:flex; align-items:center; gap:12px; }
+.team-avatar { width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg,#0d47a1,#1e88e5); color:white; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:bold; flex-shrink:0; }
+.team-name { font-size:13px; font-weight:bold; color:#1a1a1a; margin-bottom:2px; }
+.team-phone { font-size:12px; color:#555; }
+.contact-form-section { margin-top:20px; }
+.form-group { margin-bottom:12px; }
+.form-group label { font-size:13px; font-weight:bold; color:#444; display:block; margin-bottom:4px; }
+.form-group input, .form-group textarea { width:100%; padding:10px 12px; border:1px solid #dce6f5; border-radius:7px; font-size:13px; font-family:Arial; outline:none; }
+.form-group input:focus, .form-group textarea:focus { border-color:#1e88e5; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.send-btn { background:linear-gradient(135deg,#0d47a1,#1565c0); color:white; padding:11px 28px; border:none; border-radius:7px; font-size:14px; font-weight:bold; cursor:pointer; width:100%; margin-top:4px; }
+#formResult { margin-top:10px; padding:10px 14px; border-radius:7px; display:none; font-size:13px; }
+#formResult.success { background:#e6f4ea; color:#2e7d32; display:block; }
+#formResult.error { background:#fdecea; color:#c62828; display:block; }
+/* MOBILE FIX FOR EXPERIMENT SLIDERS */
+@media (max-width: 600px) {
+  .exp-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .exp-row label {
+    width: 100%;
+    margin-bottom: 4px;
+  }
+
+  .exp-row input[type=range] {
+    width: 100%;
+  }
+
+  .exp-val {
+    text-align: left;
+    margin-top: 2px;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Physics Learning Hub</h1>
+  <p>Interactive Learning Platform for Secondary School Physics</p>
+  <p><strong>By PTM3202 Group One</strong></p>
+</header>
+
+<nav id="mainNav">
+  <button onclick="showPage('home')" class="nav-active" id="nav-home">Home</button>
+  <button onclick="showPage('experiments')" id="nav-experiments">Experiments</button>
+  <button onclick="showPage('projects')" id="nav-projects">Projects</button>
+  <button onclick="showPage('quiz')" id="nav-quiz">Quiz</button>
+  <button onclick="showPage('contact')" id="nav-contact">Contact</button>
+</nav>
+
+<!-- HOME -->
+<section id="home" class="active">
+  <div class="home-hero">
+    <h2>Welcome to the Physics Learning Hub</h2>
+    <p>Your interactive space for exploring Secondary School Physics through hands-on experiments, guided learning modules, real-life projects, and practice quizzes.</p>
+    <p style="margin-top:10px;font-size:13px;opacity:0.8;">✦ Learn by doing &nbsp;·&nbsp; ✦ Experiment virtually &nbsp;·&nbsp; ✦ Test your knowledge</p>
+  </div>
+
+<div class="home-stats">
+
+  <div class="home-stat" onclick="scrollToModules()">
+    <div class="stat-num">3</div>
+    <div class="stat-label">Learning Modules</div>
+  </div>
+
+  <div class="home-stat" onclick="showPage('experiments')">
+    <div class="stat-num">2</div>
+    <div class="stat-label">Virtual Experiments</div>
+  </div>
+
+  <div class="home-stat" onclick="showPage('projects')">
+    <div class="stat-num">5</div>
+    <div class="stat-label">Student Projects</div>
+  </div>
+
+  <div class="home-stat" onclick="showPage('quiz')">
+    <div class="stat-num">20</div>
+    <div class="stat-label">Quiz Questions</div>
+  </div>
+
+</div>
+  <div class="card" id="modulesSection">
+    <h3 style="margin:0 0 14px;font-size:1rem;color:#333;">Learning Modules</h3>
+    <div class="module-cards-grid">
+      <button class="module-card" style="background:linear-gradient(135deg,#0d47a1,#1565c0);" onclick="openModulePage('mechanics')">
+        <span class="mod-icon">⚙</span><div class="mod-title">Mechanics</div>
+        <div class="mod-desc">Motion, forces, Newton's laws, momentum, energy.</div>
+        <div class="mod-arrow">Tap to open →</div>
+      </button>
+      <button class="module-card" style="background:linear-gradient(135deg,#1565c0,#1e88e5);" onclick="openModulePage('electricity')">
+        <span class="mod-icon">🔌</span><div class="mod-title">Electricity</div>
+        <div class="mod-desc">Charge, voltage, current, resistance, circuits.</div>
+        <div class="mod-arrow">Tap to open →</div>
+      </button>
+      <button class="module-card" style="background:linear-gradient(135deg,#1976d2,#42a5f5);" onclick="openModulePage('waves')">
+        <span class="mod-icon">🌊</span><div class="mod-title">Waves</div>
+        <div class="mod-desc">Sound, light, EM spectrum, reflection, refraction.</div>
+        <div class="mod-arrow">Tap to open →</div>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- MODULE PAGE -->
+<section id="module-page">
+  <button class="module-back-btn" onclick="showPage('home')">← Back to Home</button>
+  <div id="moduleBox"></div>
+</section>
+
+<!-- EXPERIMENTS -->
+<section id="experiments">
+<h2>Virtual Experiments</h2>
+
+<!-- OHM'S LAW WITH ANIMATED CIRCUIT -->
+<div class="card">
+  <h3>Experiment 1: Ohm's Law — Animated Circuit</h3>
+  <p style="font-size:13px;color:#555;line-height:1.6;margin-bottom:12px;">Adjust voltage and resistance to see how current changes in real time. Watch the animated circuit — faster particles = more current.</p>
+
+  <div class="exp-controls">
+    <div class="exp-row">
+      <label>🔋 Voltage (V): <strong id="vValue" style="color:#e53935;">10.0 V</strong></label>
+      <input type="range" id="voltage" min="0" max="100" value="10" step="0.5" oninput="updateCircuit()">
+    </div>
+    <div class="exp-row">
+      <label>🔩 Resistance (Ω): <strong id="rValue" style="color:#7b1fa2;">100 Ω</strong></label>
+      <input type="range" id="resistance" min="0" max="500" value="100" step="5" oninput="updateCircuit()">
+    </div>
+  </div>
+
+  <!-- Live readouts -->
+  <div class="readout-row">
+    <div class="readout-box"><div class="readout-label">⚡ Voltage</div><div class="readout-val" id="roV" style="color:#e53935;">10.0 V</div></div>
+    <div class="readout-box"><div class="readout-label">🔩 Resistance</div><div class="readout-val" id="roR" style="color:#7b1fa2;">100 Ω</div></div>
+    <div class="readout-box"><div class="readout-label">💡 Current</div><div class="readout-val" id="roI" style="color:#2e7d32;">0.1000 A</div></div>
+  </div>
+
+  <!-- Animated Circuit Canvas -->
+  <div style="margin:14px 0;text-align:center;">
+    <canvas id="circuitCanvas" width="520" height="300"></canvas>
+    <div class="circuit-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#fdd835;"></div>Dry Cell (Battery)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ef5350;"></div>Current Particles</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#7b1fa2;"></div>Resistor</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ffd600;"></div>Bulb (Load)</div>
+    </div>
+  </div>
+
+  <!-- Visual bars -->
+  <div style="margin:14px 0;">
+    <div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#555;margin-bottom:4px;"><span>⚡ Voltage level</span><span id="vBar-label">10.0 / 20 V</span></div>
+      <div style="background:#f3e5f5;border-radius:20px;height:10px;overflow:hidden;"><div id="vBar" style="height:100%;background:#e53935;border-radius:20px;width:30%;transition:width 0.3s;"></div></div>
+    </div>
+    <div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#555;margin-bottom:4px;"><span>🔩 Resistance level</span><span id="rBar-label">100 / 500 Ω</span></div>
+      <div style="background:#f3e5f5;border-radius:20px;height:10px;overflow:hidden;"><div id="rBar" style="height:100%;background:#7b1fa2;border-radius:20px;width:20%;transition:width 0.3s;"></div></div>
+    </div>
+    <div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#555;margin-bottom:4px;"><span>💡 Current flow</span><span id="iBar-label">0.060 A</span></div>
+      <div style="background:#e8f5e9;border-radius:20px;height:10px;overflow:hidden;"><div id="iBar" style="height:100%;background:#43a047;border-radius:20px;width:12%;transition:width 0.3s;"></div></div>
+    </div>
+  </div>
+
+  <div class="exp-procedure">
+    <h4>📋 How to Use This Experiment</h4>
+    <div class="exp-step"><div class="exp-step-num">1</div><div class="exp-step-text">Set resistance to a fixed value (e.g. 100 Ω) and increase voltage. Watch particle speed increase.</div></div>
+    <div class="exp-step"><div class="exp-step-num">2</div><div class="exp-step-text">Now fix voltage and increase resistance — watch particles slow down.</div></div>
+    <div class="exp-step"><div class="exp-step-num">3</div><div class="exp-step-text">Read the current from the green readout box — this is V ÷ R (Ohm's Law).</div></div>
+    <div class="exp-step"><div class="exp-step-num">4</div><div class="exp-step-text">Use the Record button below to save readings and plot a graph.</div></div>
+  </div>
+
+  <div style="margin-top:10px;">
+    <button class="exp-btn exp-btn-blue" onclick="recordData()">Record Reading</button>
+    <button class="exp-btn exp-btn-green" onclick="showGraph()">📈 Show Graph</button>
+    <button class="exp-btn exp-btn-red" onclick="resetExperiment()">🔄 Reset</button>
+  </div>
+
+  <h4 style="margin-top:18px;font-size:14px;color:#333;">Recorded Data</h4>
+  <table class="exp-table">
+    <thead><tr><th>Trial</th><th>Voltage (V)</th><th>Resistance (Ω)</th><th>Current (A)</th></tr></thead>
+    <tbody id="dataTable"></tbody>
+  </table>
+  <div id="graphContainer" style="display:none;margin-top:20px;">
+    <div style="background:#f0f4fa;border-radius:8px;padding:12px 16px;margin-bottom:10px;">
+      <strong style="font-size:14px;color:#0d47a1;">📊 Graph: Voltage vs Current</strong>
+      <p style="font-size:12px;color:#555;margin:4px 0 0;">Straight line through origin confirms Ohm's Law. Gradient = 1/R.</p>
+    </div>
+    <div class="chart-wrap"><canvas id="ohmsChart"></canvas></div>
+  </div>
+</div>
+
+<!-- PENDULUM -->
+<div class="card">
+  <h3>Experiment 2: Simple Pendulum</h3>
+  <p style="font-size:13px;color:#555;line-height:1.6;">Period formula: <strong>T = 2π√(L/g)</strong>. Adjust length, start the swing, and calculate g.</p>
+  <div class="exp-procedure">
+    <h4>📋 How to Perform</h4>
+    <div class="exp-step"><div class="exp-step-num">1</div><div class="exp-step-text">Set pendulum length using the slider. Animation updates immediately.</div></div>
+    <div class="exp-step"><div class="exp-step-num">2</div><div class="exp-step-text">Click <strong>▶ Start</strong> to begin swinging; <strong>⏸ Stop</strong> to pause.</div></div>
+    <div class="exp-step"><div class="exp-step-num">3</div><div class="exp-step-text">In a real experiment: time 20 complete swings, divide by 20 to find T.</div></div>
+    <div class="exp-step"><div class="exp-step-num">4</div><div class="exp-step-text">Enter your measured T in the second slider. It computes g = 4π²L / T².</div></div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;margin:14px 0;">
+    <div style="flex-shrink:0;">
+      <div class="pend-canvas-wrap"><canvas id="pendCanvas" width="220" height="260"></canvas></div>
+      <div style="text-align:center;margin-top:10px;"><button class="exp-btn exp-btn-blue" onclick="togglePendulum()" id="pendBtn">▶ Start</button></div>
+    </div>
+    <div style="flex:1;min-width:220px;">
+      <div class="exp-controls" style="margin-top:0;">
+        <p style="font-size:13px;font-weight:bold;color:#333;margin:0 0 10px;">Pendulum Length</p>
+        <div class="exp-row"><label>Length L (m):</label><input type="range" id="pendLSlider" min="0.10" max="2.00" step="0.05" value="0.50" oninput="pendUpdate()"></div>
+        <div style="text-align:right;margin-top:-6px;margin-bottom:8px;"><strong id="pendLVal" style="color:#0d47a1;">0.50 m</strong></div>
+        <div class="exp-result-box"><span class="exp-result-label">Theoretical Period T</span><span class="exp-result-val" id="pendTOut">— s</span></div>
+      </div>
+      <div class="exp-controls">
+        <p style="font-size:13px;font-weight:bold;color:#333;margin:0 0 10px;">Calculate g from your measured T</p>
+        <div class="exp-row"><label>Measured T (s):</label><input type="range" id="pendMT" min="0.20" max="3.00" step="0.01" value="1.42" oninput="pendCalcG()"></div>
+        <div style="text-align:right;margin-top:-6px;margin-bottom:8px;"><strong id="pendMTVal" style="color:#0d47a1;">1.42 s</strong></div>
+        <div class="exp-result-box"><span class="exp-result-label">g = 4π²L / T²</span><span class="exp-result-val" id="pendGOut">— m/s²</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+<h2 style="font-size:1.4rem;color:#0d47a1;margin-bottom:4px;">📁 Student Projects</h2>
+<p style="font-size:13px;color:#666;margin-bottom:20px;">Tap a project card to explore step by step.</p>
+
+<div id="projectCardsGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;">
+
+  <div class="proj-card" onclick="openProject(0)">
+    <div class="proj-card-img" style="background:linear-gradient(135deg,#0d47a1,#1e88e5);">
+      <svg viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+        <rect x="12" y="34" width="22" height="22" rx="3" fill="none" stroke="#fff" stroke-width="2"/>
+        <line x1="34" y1="45" x2="58" y2="45" stroke="#fff" stroke-width="2"/>
+        <circle cx="70" cy="45" r="12" fill="none" stroke="#FFD700" stroke-width="2"/>
+        <line x1="66" y1="41" x2="74" y2="49" stroke="#FFD700" stroke-width="2"/>
+        <line x1="82" y1="45" x2="118" y2="45" stroke="#fff" stroke-width="2"/>
+        <line x1="118" y1="45" x2="118" y2="12" stroke="#fff" stroke-width="2"/>
+        <line x1="118" y1="12" x2="12" y2="12" stroke="#fff" stroke-width="2"/>
+        <line x1="12" y1="12" x2="12" y2="34" stroke="#fff" stroke-width="2"/>
+        <circle cx="86" cy="45" r="3" fill="#ef5350" opacity="0.9"><animate attributeName="cx" from="34" to="118" dur="1.5s" repeatCount="indefinite"/></circle>
+        <circle cx="50" cy="12" r="3" fill="#ef5350" opacity="0.9"><animate attributeName="cx" from="118" to="12" dur="1.5s" repeatCount="indefinite" begin="0.5s"/></circle>
+      </svg>
+    </div>
+    <div class="proj-card-body">
+      <div class="proj-card-badges"><span class="proj-badge green">Beginner</span><span class="proj-badge blue">⏱ 20 min</span></div>
+      <div class="proj-card-title">Simple Electric Circuit</div>
+      <div class="proj-card-concept">⚡ Electricity &amp; Current Flow</div>
+      <div class="proj-card-footer">Tap to explore →</div>
+    </div>
+  </div>
+
+  <div class="proj-card" onclick="openProject(1)">
+    <div class="proj-card-img" style="background:linear-gradient(135deg,#1b5e20,#43a047);">
+      <svg viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+        <rect x="58" y="12" width="24" height="58" rx="4" fill="#8d6e63" stroke="#6d4c41" stroke-width="1.5"/>
+        <path d="M54 16 Q42 41 54 66" fill="none" stroke="#ffd600" stroke-width="2.5" stroke-dasharray="5,3"><animate attributeName="stroke-dashoffset" from="0" to="-16" dur="0.8s" repeatCount="indefinite"/></path>
+        <path d="M50 19 Q36 41 50 63" fill="none" stroke="#ffd600" stroke-width="2.5" stroke-dasharray="5,3"><animate attributeName="stroke-dashoffset" from="0" to="-16" dur="0.8s" repeatCount="indefinite" begin="0.2s"/></path>
+        <path d="M86 16 Q98 41 86 66" fill="none" stroke="#ffd600" stroke-width="2.5" stroke-dasharray="5,3"><animate attributeName="stroke-dashoffset" from="0" to="-16" dur="0.8s" repeatCount="indefinite" begin="0.1s"/></path>
+        <path d="M90 19 Q104 41 90 63" fill="none" stroke="#ffd600" stroke-width="2.5" stroke-dasharray="5,3"><animate attributeName="stroke-dashoffset" from="0" to="-16" dur="0.8s" repeatCount="indefinite" begin="0.3s"/></path>
+        <rect x="32" y="72" width="76" height="10" rx="2" fill="#78909c"/><text x="70" y="80" fill="white" font-size="7" text-anchor="middle">METAL OBJECTS</text>
+      </svg>
+    </div>
+    <div class="proj-card-body">
+      <div class="proj-card-badges"><span class="proj-badge amber">Intermediate</span><span class="proj-badge blue">⏱ 30 min</span></div>
+      <div class="proj-card-title">Homemade Electromagnet</div>
+      <div class="proj-card-concept">🧲 Electromagnetism</div>
+      <div class="proj-card-footer">Tap to explore →</div>
+    </div>
+  </div>
+
+  <div class="proj-card" onclick="openProject(2)">
+    <div class="proj-card-img" style="background:linear-gradient(135deg,#827717,#f9a825);">
+      <svg viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+        <ellipse cx="25" cy="45" rx="20" ry="26" fill="#cddc39" stroke="#afb42b" stroke-width="1.5"/>
+        <ellipse cx="70" cy="45" rx="20" ry="26" fill="#cddc39" stroke="#afb42b" stroke-width="1.5"/>
+        <ellipse cx="115" cy="45" rx="20" ry="26" fill="#cddc39" stroke="#afb42b" stroke-width="1.5"/>
+        <line x1="45" y1="45" x2="50" y2="45" stroke="#ccc" stroke-width="2"/>
+        <line x1="90" y1="45" x2="95" y2="45" stroke="#ccc" stroke-width="2"/>
+        <line x1="25" y1="19" x2="25" y2="28" stroke="#888" stroke-width="4"/>
+        <line x1="70" y1="19" x2="70" y2="28" stroke="#888" stroke-width="4"/>
+        <line x1="115" y1="19" x2="115" y2="28" stroke="#888" stroke-width="4"/>
+        <circle cx="128" cy="72" r="9" fill="none" stroke="#f44336" stroke-width="2"/>
+        <line x1="115" y1="72" x2="119" y2="72" stroke="#f44336" stroke-width="2"/>
+      </svg>
+    </div>
+    <div class="proj-card-body">
+      <div class="proj-card-badges"><span class="proj-badge green">Beginner</span><span class="proj-badge blue">⏱ 25 min</span></div>
+      <div class="proj-card-title">Lemon Battery</div>
+      <div class="proj-card-concept">🔋 Electrochemical Cells</div>
+      <div class="proj-card-footer">Tap to explore →</div>
+    </div>
+  </div>
+
+  <div class="proj-card" onclick="openProject(3)">
+    <div class="proj-card-img" style="background:linear-gradient(135deg,#4a148c,#7b1fa2);">
+      <svg viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+        <circle cx="70" cy="45" r="32" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="10"/>
+        <circle cx="70" cy="45" r="22" fill="none" stroke="#ce93d8" stroke-width="3"/>
+        <circle cx="70" cy="45" r="7" fill="#fff"/>
+        <line x1="70" y1="45" x2="88" y2="28" stroke="#fff" stroke-width="2"><animateTransform attributeName="transform" type="rotate" from="0 70 45" to="360 70 45" dur="1.5s" repeatCount="indefinite"/></line>
+        <rect x="104" y="33" width="12" height="24" rx="3" fill="#ef5350"/><text x="110" y="48" fill="white" font-size="8" text-anchor="middle">N</text>
+        <rect x="24" y="33" width="12" height="24" rx="3" fill="#42a5f5"/><text x="30" y="48" fill="white" font-size="8" text-anchor="middle">S</text>
+      </svg>
+    </div>
+    <div class="proj-card-body">
+      <div class="proj-card-badges"><span class="proj-badge amber">Intermediate</span><span class="proj-badge blue">⏱ 45 min</span></div>
+      <div class="proj-card-title">Simple DC Motor</div>
+      <div class="proj-card-concept">⚙ Electromagnetism &amp; Motion</div>
+      <div class="proj-card-footer">Tap to explore →</div>
+    </div>
+  </div>
+
+  <div class="proj-card" onclick="openProject(4)">
+    <div class="proj-card-img" style="background:linear-gradient(135deg,#006064,#00838f);">
+      <svg viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+        <rect x="0" y="8" width="140" height="9" rx="2" fill="#546e7a"/>
+        <line x1="70" y1="17" x2="52" y2="78" stroke="#eceff1" stroke-width="2"/>
+        <line x1="70" y1="17" x2="88" y2="78" stroke="rgba(236,239,241,0.3)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <circle cx="52" cy="78" r="10" fill="#fb8c00" stroke="#e65100" stroke-width="1.5"/>
+        <path d="M52 17 Q28 48 52 78" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+        <text x="70" y="86" fill="rgba(255,255,255,0.6)" font-size="8" text-anchor="middle">T = 2π√(L/g)</text>
+      </svg>
+    </div>
+    <div class="proj-card-body">
+      <div class="proj-card-badges"><span class="proj-badge green">Beginner</span><span class="proj-badge blue">⏱ 30 min</span></div>
+      <div class="proj-card-title">Pendulum Experiment</div>
+      <div class="proj-card-concept">🔭 Gravity &amp; Simple Harmonic Motion</div>
+      <div class="proj-card-footer">Tap to explore →</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- PROJECT DETAIL VIEW -->
+<div id="projectDetail" style="display:none;margin-top:4px;">
+  <button class="proj-back-btn" onclick="closeProject()">← Back to Projects</button>
+  <div id="projectDetailContent"></div>
+</div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+<h2>📝 Quick Quiz</h2>
+<div class="card">
+  <h3>Test Your Physics Knowledge</h3>
+  <p style="font-size:13px;color:#555;margin-bottom:16px;">20 questions across Mechanics, Electricity, and Waves.</p>
+  <div class="quiz-progress-bar-wrap">
+    <div class="quiz-progress-track"><div class="quiz-progress-fill" id="mainQuizProgress"></div></div>
+    <span id="mainQuizCounter" style="font-size:13px;font-weight:bold;color:#0d47a1;white-space:nowrap;">0 / 20</span>
+    <span id="mainQuizScore" style="font-size:13px;font-weight:bold;color:#2e7d32;white-space:nowrap;">Score: 0</span>
+  </div>
+  <div id="mainQBox"></div>
+  <button class="mech-btn" id="mainNextBtn" style="display:none;margin-top:12px;" onclick="mainNextQ()">Next Question →</button>
+  <div id="mainQuizFinal" style="display:none;margin-top:16px;"></div>
+</div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+<h2>📬 Contact Us</h2>
+<div class="card">
+  <p style="font-size:14px;color:#555;line-height:1.6;">For any inquiries or suggestions, reach out to any team member below.</p>
+  <h4 style="font-size:14px;color:#0d47a1;border-bottom:2px solid #e3eeff;padding-bottom:6px;margin-bottom:14px;">👥 Our Team</h4>
+<div class="team-grid">
+
+  <div class="team-card" onclick="window.open('https://wa.me/256787469474?text=Hello%20I%20am%20using%20your%20Physics%20Learning%20Hub','_blank')">
+    <div class="team-avatar">BM</div>
+    <div>
+      <div class="team-name">Birungi Maria</div>
+      <div class="team-phone">💬 WhatsApp</div>
+    </div>
+  </div>
+
+  <div class="team-card" onclick="window.open('https://wa.me/256774215383?text=Hello%20I%20am%20using%20your%20Physics%20Learning%20Hub','_blank')">
+    <div class="team-avatar">MH</div>
+    <div>
+      <div class="team-name">Mirembe Humairah Jannat</div>
+      <div class="team-phone">💬 WhatsApp</div>
+    </div>
+  </div>
+
+  <div class="team-card" onclick="window.open('https://wa.me/256701907639?text=Hello%20I%20am%20using%20your%20Physics%20Learning%20Hub','_blank')">
+    <div class="team-avatar">SA</div>
+    <div>
+      <div class="team-name">Sseruyange Alex</div>
+      <div class="team-phone">💬 WhatsApp</div>
+    </div>
+  </div>
+
+  <div class="team-card" onclick="window.open('https://wa.me/256760320811?text=Hello%20I%20am%20using%20your%20Physics%20Learning%20Hub','_blank')">
+    <div class="team-avatar">NC</div>
+    <div>
+      <div class="team-name">Nakidde Cissy</div>
+      <div class="team-phone">💬 WhatsApp</div>
+    </div>
+  </div>
+
+  <div class="team-card" onclick="window.open('https://wa.me/256726003874?text=Hello%20I%20am%20using%20your%20Physics%20Learning%20Hub','_blank')">
+    <div class="team-avatar">KP</div>
+    <div>
+      <div class="team-name">Kisakye Patricia</div>
+      <div class="team-phone">💬 WhatsApp</div>
+    </div>
+  </div>
+
+</div> 
+  <div class="contact-form-section">
+    <h4 style="font-size:14px;color:#0d47a1;border-bottom:2px solid #e3eeff;padding-bottom:6px;margin-bottom:14px;">✉ Send Us a Message</h4>
+    <div class="form-row">
+      <div class="form-group"><label>Your Name</label><input type="text" id="contactName" placeholder="e.g. John Ssebuwufu"></div>
+      <div class="form-group"><label>Your Email</label><input type="email" id="contactEmail" placeholder="your@email.com"></div>
+    </div>
+    <div class="form-group"><label>Subject</label><input type="text" id="contactSubject" placeholder="e.g. Question about the module"></div>
+    <div class="form-group"><label>Message</label><textarea id="contactMessage" rows="5" placeholder="Type your message here..."></textarea></div>
+    <button class="send-btn" onclick="submitForm()">📤 Send Message</button>
+    <p id="formResult"></p>
+  </div>
+</div>
+</section>
+
+<footer><p>Physics Learning Hub © 2026 | PTM3202 Group One</p></footer>
+
+<script>
+// ==================== NAV ====================
+function showPage(page) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('#mainNav button').forEach(b => b.classList.remove('nav-active'));
+    const el = document.getElementById(page);
+    if (el) el.classList.add('active');
+    const nb = document.getElementById('nav-' + page);
+    if (nb) nb.classList.add('nav-active');
+    if (page === 'quiz') mainQuizInit();
+    if (page === 'experiments') setTimeout(() => { initOhmsChart(); updateCircuit(); pendInitCanvas(); }, 80);
+    window.scrollTo(0, 0);
+}
+function openModulePage(type) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('#mainNav button').forEach(b => b.classList.remove('nav-active'));
+    document.getElementById('module-page').classList.add('active');
+    showModule(type);
+    window.scrollTo(0, 0);
+}
+
+// ==================== ANIMATED CIRCUIT ====================
+let circuitParticles = [];
+let circuitAnimFrame = null;
+let circuitV = 6, circuitR = 100;
+
+function updateCircuit() {
+    circuitV = parseFloat(document.getElementById('voltage').value);
+    circuitR = parseFloat(document.getElementById('resistance').value);
+    const I = circuitV / circuitR;
+
+    const V_MAX = 100;   // 🔥 changed from 20 to 100
+    const R_MAX = 500;
+
+    document.getElementById('vValue').textContent = circuitV.toFixed(1) + ' V';
+    document.getElementById('rValue').textContent = circuitR + ' Ω';
+    document.getElementById('roV').textContent = circuitV.toFixed(1) + ' V';
+    document.getElementById('roR').textContent = circuitR + ' Ω';
+    document.getElementById('roI').textContent = I.toFixed(4) + ' A';
+
+    // Voltage bar (UPDATED)
+    document.getElementById('vBar').style.width = (circuitV / V_MAX * 100) + '%';
+    document.getElementById('vBar-label').textContent = circuitV.toFixed(1) + ' / ' + V_MAX + ' V';
+
+    // Resistance bar (unchanged)
+    document.getElementById('rBar').style.width = (circuitR / R_MAX * 100) + '%';
+    document.getElementById('rBar-label').textContent = circuitR + ' / ' + R_MAX + ' Ω';
+
+    // Current bar (UPDATED properly scaled)
+    const iMax = V_MAX / 10; // keeps your original physics idea
+    document.getElementById('iBar').style.width = Math.min(I / iMax * 100, 100) + '%';
+    document.getElementById('iBar-label').textContent = I.toFixed(4) + ' A';
+}
+
+// Circuit path: waypoints [x,y], total path length computed
+function initCircuit() {
+    circuitParticles = [];
+    const count = 12;
+    for (let i = 0; i < count; i++) {
+        circuitParticles.push({ t: i / count });
+    }
+    if (!circuitAnimFrame) animateCircuit();
+}
+
+// Path definition (clockwise rectangle with component positions)
+// Canvas 520x300, scale: battery left, bulb top, resistor right
+const PATH = [
+    [80, 240], [80, 60], [220, 60], [300, 60], [440, 60],
+    [440, 240], [300, 240], [220, 240], [80, 240]
+];
+
+function pathLength(pts) {
+    let len = 0;
+    for (let i = 0; i < pts.length - 1; i++) {
+        const dx = pts[i+1][0] - pts[i][0], dy = pts[i+1][1] - pts[i][1];
+        len += Math.sqrt(dx*dx + dy*dy);
+    }
+    return len;
+}
+
+function pathPoint(pts, t) {
+    const total = pathLength(pts);
+    let target = ((t % 1) + 1) % 1 * total;
+    for (let i = 0; i < pts.length - 1; i++) {
+        const dx = pts[i+1][0] - pts[i][0], dy = pts[i+1][1] - pts[i][1];
+        const seg = Math.sqrt(dx*dx + dy*dy);
+        if (target <= seg) {
+            const frac = target / seg;
+            return [pts[i][0] + dx*frac, pts[i][1] + dy*frac];
+        }
+        target -= seg;
+    }
+    return pts[pts.length - 1];
+}
+
+let lastCircuitTS = null;
+function animateCircuit() {
+    const canvas = document.getElementById('circuitCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+
+    const I = circuitV / circuitR;
+    const safeI = isNaN(I) ? 0 : I;
+    const speed = Math.min(safeI / 2.0, 0.8) * 0.003; // normalized to path
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Background
+    ctx.fillStyle = '#0a1628';
+    ctx.fillRect(0, 0, W, H);
+
+    // Draw wires
+    ctx.beginPath();
+    ctx.moveTo(PATH[0][0], PATH[0][1]);
+    PATH.forEach(p => ctx.lineTo(p[0], p[1]));
+    ctx.strokeStyle = '#37474f';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    // === BATTERY (left side, vertical) ===
+    const bx = 80, by1 = 200, by2 = 130;
+    // body
+    ctx.fillStyle = '#1a237e';
+    ctx.fillRect(bx - 18, by2, 36, by1 - by2);
+    ctx.strokeStyle = '#3949ab';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(bx - 18, by2, 36, by1 - by2);
+    // + and - terminals
+    ctx.fillStyle = '#ef5350';
+    ctx.fillRect(bx - 10, by2 - 8, 20, 8);
+    ctx.fillStyle = '#78909c';
+    ctx.fillRect(bx - 10, by1, 20, 8);
+    // label
+    ctx.fillStyle = '#fdd835';
+    ctx.font = 'bold 11px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('DRY CELL', bx, (by1 + by2) / 2 + 4);
+    ctx.fillStyle = '#ef5350';
+    ctx.font = 'bold 14px Arial';
+    ctx.fillText('+', bx, by2 - 12);
+    ctx.fillStyle = '#90a4ae';
+    ctx.fillText('−', bx, by1 + 18);
+    // voltage label
+    ctx.fillStyle = '#fdd835';
+    ctx.font = '10px Arial';
+    ctx.fillText(circuitV.toFixed(1) + 'V', bx + 26, (by1 + by2) / 2 + 4);
+
+    // === RESISTOR (right side, vertical) ===
+    const rx = 440, ry1 = 180, ry2 = 120;
+    const rH = ry1 - ry2;
+    ctx.fillStyle = '#4a148c';
+    ctx.fillRect(rx - 14, ry2, 28, rH);
+    ctx.strokeStyle = '#9c27b0';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(rx - 14, ry2, 28, rH);
+    // zigzag pattern inside
+    ctx.beginPath();
+    ctx.strokeStyle = '#ce93d8';
+    ctx.lineWidth = 1.5;
+    const zSteps = 6;
+    const zStep = rH / zSteps;
+    ctx.moveTo(rx, ry2 + 4);
+    for (let i = 0; i < zSteps; i++) {
+        ctx.lineTo(rx + (i % 2 === 0 ? 8 : -8), ry2 + 4 + zStep * (i + 0.5));
+    }
+    ctx.lineTo(rx, ry1 - 4);
+    ctx.stroke();
+    ctx.fillStyle = '#ce93d8';
+    ctx.font = 'bold 10px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(circuitR + 'Ω', rx, ry1 + 14);
+    ctx.fillText('R', rx, (ry1 + ry2) / 2 + 4);
+
+    // === BULB (top center) ===
+    const bulbX = 300, bulbY = 60;
+    const bulbR = 22;
+    const brightness = Math.min(I / 0.5, 1);
+    const bulbGlow = `rgba(255, ${Math.floor(200 + 55*brightness)}, 0, ${0.15 + 0.6*brightness})`;
+    // glow
+    if (brightness > 0.05) {
+        const grd = ctx.createRadialGradient(bulbX, bulbY, 0, bulbX, bulbY, bulbR * 2.5);
+        grd.addColorStop(0, bulbGlow);
+        grd.addColorStop(1, 'rgba(255,200,0,0)');
+        ctx.beginPath();
+        ctx.arc(bulbX, bulbY, bulbR * 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = grd;
+        ctx.fill();
+    }
+    // glass
+    ctx.beginPath();
+    ctx.arc(bulbX, bulbY, bulbR, 0, Math.PI * 2);
+    const bulbFill = `rgba(255, ${Math.floor(180 + 75*brightness)}, 0, ${0.1 + 0.6*brightness})`;
+    ctx.fillStyle = bulbFill;
+    ctx.fill();
+    ctx.strokeStyle = '#ffd600';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // filament
+    ctx.beginPath();
+    ctx.moveTo(bulbX - 8, bulbY + 4);
+    ctx.lineTo(bulbX - 4, bulbY - 4);
+    ctx.lineTo(bulbX, bulbY + 4);
+    ctx.lineTo(bulbX + 4, bulbY - 4);
+    ctx.lineTo(bulbX + 8, bulbY + 4);
+    ctx.strokeStyle = brightness > 0.1 ? '#fff' : '#888';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = '#ffd600';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('BULB', bulbX, bulbY + bulbR + 14);
+
+    // === SWITCH (top between battery and bulb) ===
+    const sx = 160, sy = 60;
+    ctx.beginPath();
+    ctx.arc(sx - 14, sy, 4, 0, Math.PI * 2);
+    ctx.arc(sx + 14, sy, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#78909c';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(sx - 10, sy);
+    ctx.lineTo(sx + 10, sy - 12);
+    ctx.strokeStyle = '#90a4ae';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    ctx.fillStyle = '#90a4ae';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('SWITCH', sx, sy + 16);
+
+    // === AMMETER (bottom center) ===
+    const ax = 220, ay = 240;
+    ctx.beginPath();
+    ctx.arc(ax, ay, 16, 0, Math.PI * 2);
+    ctx.fillStyle = '#263238';
+    ctx.fill();
+    ctx.strokeStyle = '#43a047';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#43a047';
+    ctx.font = 'bold 12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('A', ax, ay + 4);
+    ctx.font = '9px Arial';
+    ctx.fillStyle = '#81c784';
+    ctx.fillText(I.toFixed(3)+'A', ax, ay + 18);
+
+    // === CURRENT DIRECTION ARROWS on wires ===
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    [[160, 60, 1, 0], [440, 150, 0, -1], [340, 240, -1, 0], [80, 150, 0, 1]].forEach(([x, y, dx, dy]) => {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(Math.atan2(dy, dx));
+        ctx.beginPath();
+        ctx.moveTo(-6, -5); ctx.lineTo(6, 0); ctx.lineTo(-6, 5);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+    });
+
+    // === PARTICLES ===
+    circuitParticles.forEach(p => {
+        p.t = (p.t + speed) % 1;
+        const pos = pathPoint(PATH, p.t);
+        ctx.beginPath();
+        ctx.arc(pos[0], pos[1], 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#ef5350';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(pos[0], pos[1], 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffcdd2';
+        ctx.fill();
+    });
+
+    circuitAnimFrame = requestAnimationFrame(animateCircuit);
+}
+
+// Ohm's law chart
+let ohmsChart, chartInited = false, trialCount = 1;
+function initOhmsChart() {
+    if (chartInited) return;
+    const ctx = document.getElementById('ohmsChart');
+    if (!ctx) return;
+    ohmsChart = new Chart(ctx, {
+        type: 'scatter',
+        data: { datasets: [{ label: 'V vs I', data: [], borderColor: '#0d47a1', backgroundColor: 'rgba(13,71,161,0.15)', borderWidth: 2, pointRadius: 6, showLine: true, tension: 0.1, fill: true }] },
+        options: { responsive: true, maintainAspectRatio: false, scales: { x: { title: { display: true, text: 'Voltage (V)' }, beginAtZero: true }, y: { title: { display: true, text: 'Current (A)' }, beginAtZero: true } } }
+    });
+    chartInited = true;
+}
+function recordData() {
+    const V = circuitV, R = circuitR, I = V / R;
+    document.getElementById('dataTable').innerHTML += `<tr><td>${trialCount}</td><td>${V.toFixed(1)}</td><td>${R}</td><td>${I.toFixed(4)}</td></tr>`;
+    trialCount++;
+}
+function showGraph() {
+    initOhmsChart();
+    document.getElementById('graphContainer').style.display = 'block';
+    const pts = [];
+    document.querySelectorAll('#dataTable tr').forEach(row => {
+        const c = row.getElementsByTagName('td');
+        if (c.length >= 4) pts.push({ x: parseFloat(c[1].textContent), y: parseFloat(c[3].textContent) });
+    });
+    pts.sort((a, b) => a.x - b.x);
+    ohmsChart.data.datasets[0].data = pts;
+    ohmsChart.update();
+}
+function resetExperiment() {
+    document.getElementById('voltage').value = 6;
+    document.getElementById('resistance').value = 100;
+    document.getElementById('dataTable').innerHTML = '';
+    document.getElementById('graphContainer').style.display = 'none';
+    trialCount = 1;
+    if (ohmsChart) ohmsChart.data.datasets[0].data = [];
+    updateCircuit();
+}
+
+// ==================== PENDULUM ====================
+let pendRunning = false, pendAngle = Math.PI / 7, pendAngleVel = 0;
+let pendAnimFrame2 = null, pendLastTime = null, pendL = 0.5;
+const PEND_G = 9.81;
+function pendInitCanvas() {
+    pendL = parseFloat(document.getElementById('pendLSlider').value);
+    pendUpdateDisplay(); drawPendulum(pendAngle);
+}
+function pendUpdate() {
+    pendL = parseFloat(document.getElementById('pendLSlider').value);
+    if (pendRunning) { pendAngle = Math.PI / 7; pendAngleVel = 0; }
+    pendUpdateDisplay();
+    if (!pendRunning) drawPendulum(pendAngle);
+}
+function pendUpdateDisplay() {
+    document.getElementById('pendLVal').textContent = pendL.toFixed(2) + ' m';
+    const T = 2 * Math.PI * Math.sqrt(pendL / PEND_G);
+    document.getElementById('pendTOut').textContent = T.toFixed(3) + ' s';
+    const mt = document.getElementById('pendMT');
+    mt.value = Math.min(Math.max(T, parseFloat(mt.min)), parseFloat(mt.max)).toFixed(2);
+    pendCalcG();
+}
+function pendCalcG() {
+    const T = parseFloat(document.getElementById('pendMT').value);
+    document.getElementById('pendMTVal').textContent = T.toFixed(2) + ' s';
+    document.getElementById('pendGOut').textContent = ((4 * Math.PI * Math.PI * pendL) / (T * T)).toFixed(3) + ' m/s²';
+}
+function togglePendulum() {
+    pendRunning = !pendRunning;
+    document.getElementById('pendBtn').textContent = pendRunning ? '⏸ Stop' : '▶ Start';
+    if (pendRunning) { pendAngle = Math.PI / 7; pendAngleVel = 0; pendLastTime = null; requestAnimationFrame(pendAnimate); }
+    else { cancelAnimationFrame(pendAnimFrame2); drawPendulum(pendAngle); }
+}
+function pendAnimate(ts) {
+    if (!pendRunning) return;
+    if (pendLastTime !== null) {
+        const dt = Math.min((ts - pendLastTime) / 1000, 0.04);
+        pendAngleVel += -(PEND_G / pendL) * Math.sin(pendAngle) * dt;
+        pendAngleVel *= 0.9995;
+        pendAngle += pendAngleVel * dt;
+    }
+    pendLastTime = ts;
+    drawPendulum(pendAngle);
+    pendAnimFrame2 = requestAnimationFrame(pendAnimate);
+}
+function drawPendulum(angle) {
+    const canvas = document.getElementById('pendCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d'), W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#0d1b40'; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 1;
+    for (let y = 0; y < H; y += 20) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+    const cx = W / 2, pivotY = 28;
+    const armLen = 40 + ((pendL - 0.10) / 1.90) * 160;
+    const bx = cx + armLen * Math.sin(angle), by = pivotY + armLen * Math.cos(angle);
+    ctx.fillStyle = '#42a5f5'; ctx.fillRect(cx - 22, 8, 44, 12);
+    ctx.beginPath(); ctx.arc(cx, pivotY, 5, 0, Math.PI * 2); ctx.fillStyle = '#90caf9'; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx, pivotY); ctx.lineTo(bx, by);
+    ctx.strokeStyle = '#90caf9'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.beginPath(); ctx.arc(bx, by, 14, 0, Math.PI * 2); ctx.fillStyle = '#fb8c00'; ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.25)'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.75)'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center';
+    ctx.fillText('L = ' + pendL.toFixed(2) + ' m', cx + armLen * 0.5 * Math.sin(angle) + 22, pivotY + armLen * 0.5 * Math.cos(angle));
+    const T = 2 * Math.PI * Math.sqrt(pendL / PEND_G);
+    ctx.font = '11px Arial'; ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.fillText('T = ' + T.toFixed(2) + ' s', cx, H - 8);
+}
+
+// ==================== PROJECT DATA ====================
+const projects = [
+  {
+    title: "Simple Electric Circuit",
+    color: "linear-gradient(135deg,#0d47a1,#1e88e5)",
+    difficulty: "Beginner", time: "20 min", concept: "⚡ Electricity & Current Flow",
+    badge: "⚡", badgeTitle: "Circuit Builder", badgeXP: "50 XP",
+    learn: ["How electric current flows through a circuit","The role of a switch in controlling current","How a bulb lights up using electrical energy"],
+    why: "Electric circuits power every device around you — from your phone charger to hospital life-support machines. Understanding circuits is the first step to understanding all of electronics.",
+    formula: "V = IR (Ohm's Law)",
+    materials: ["🔋 1.5V battery","💡 Small bulb","🔌 Connecting wires","🔘 Switch","📋 Cardboard base"],
+    steps: [
+      { title:"Gather Materials", desc:"Collect a 1.5V dry cell battery, a small bulb, three connecting wires, and a switch.", tip:"Use crocodile clip wires for easier connections." },
+      { title:"Connect the Battery", desc:"Connect one wire to the positive (+) terminal of the battery.", tip:"The longer wire on a battery symbol is positive." },
+      { title:"Add the Switch", desc:"Connect the wire from the battery to one terminal of the switch.", tip:"Make sure the switch is open (off) before continuing." },
+      { title:"Connect the Bulb", desc:"Wire from the other switch terminal to one terminal of the bulb. Connect the final wire from the bulb back to the battery's negative (−) terminal.", tip:"Ensure all connections are tight." },
+      { title:"Test the Circuit", desc:"Close the switch and observe whether the bulb lights up. Open the switch and observe what happens.", tip:"If the bulb doesn't light, check all connections." }
+    ],
+    questions: [
+      { q:"What happens when you open the switch?", opts:["Bulb glows brighter","Current stops, bulb goes off","Nothing changes","Bulb explodes"], ans:1, exp:"Opening the switch breaks the circuit. No complete path = no current = bulb goes off." },
+      { q:"In this circuit, what pushes the current?", opts:["The switch","The bulb","The battery","The wire"], ans:2, exp:"The battery (dry cell) provides the electromotive force (voltage) that drives current through the circuit." },
+      { q:"What does current flow through in a closed circuit?", opts:["Only the battery","Air gaps","A complete conducting path","Only the bulb"], ans:2, exp:"Current flows through a complete closed loop of conductors — all components must be connected." }
+    ]
+  },
+  {
+    title: "Homemade Electromagnet",
+    color: "linear-gradient(135deg,#1b5e20,#43a047)",
+    difficulty: "Intermediate", time: "30 min", concept: "🧲 Electromagnetism",
+    badge: "🧲", badgeTitle: "Magnetic Force", badgeXP: "70 XP",
+    learn: ["How electricity creates a magnetic field","Why more coil turns increase magnetic strength","The difference between a permanent and temporary magnet"],
+    why: "Electromagnets are used in electric motors, MRI machines, cranes, loudspeakers, and maglev trains. They are one of the most powerful applications of electricity.",
+    formula: "B = μ₀ × n × I (Magnetic field strength)",
+    materials: ["🔩 Large iron nail (10 cm)","🪡 Insulated copper wire (1 m)","🔋 9V battery","📎 Paper clips","✂ Wire stripper"],
+    steps: [
+      { title:"Prepare the Nail", desc:"Take a large iron nail (about 10 cm long). This will be the core of your electromagnet.", tip:"Iron core makes the magnet much stronger than air core." },
+      { title:"Wind the Coil", desc:"Tightly wind insulated copper wire around the nail — aim for 50 to 100 turns. Keep turns close together.", tip:"More turns = stronger magnetic field." },
+      { title:"Strip the Wire Ends", desc:"Leave about 10 cm of wire free at both ends, then strip 2 cm of insulation from each end.", tip:"Use sandpaper if you don't have a stripper." },
+      { title:"Connect the Battery", desc:"Connect the two stripped wire ends to the terminals of a 9V battery.", tip:"Don't leave connected too long — the wire will heat up." },
+      { title:"Test the Magnet", desc:"Bring the nail near paper clips and count how many it picks up. Then disconnect the battery and observe.", tip:"Try 30 turns vs 80 turns and compare the strength." }
+    ],
+    questions: [
+      { q:"What makes the nail magnetic?", opts:["Its iron material alone","The current flowing through the coil","The battery voltage alone","The wire insulation"], ans:1, exp:"When current flows through the coiled wire, it creates a magnetic field. The iron nail strengthens and focuses this field." },
+      { q:"What happens when you disconnect the battery?", opts:["The nail stays magnetic forever","The nail loses its magnetism","The nail gets hotter","Nothing changes"], ans:1, exp:"An electromagnet is temporary — it only works when current flows. Disconnecting the battery stops the current and the magnetic field disappears." },
+      { q:"How can you increase the strength of the electromagnet?", opts:["Use fewer turns","Reduce voltage","Add more wire turns","Use a copper nail"], ans:2, exp:"More turns of wire = stronger magnetic field. More current (higher voltage) also increases strength." }
+    ]
+  },
+  {
+    title: "Lemon Battery",
+    color: "linear-gradient(135deg,#827717,#f9a825)",
+    difficulty: "Beginner", time: "25 min", concept: "🔋 Electrochemical Cells",
+    badge: "🍋", badgeTitle: "Electrochemist", badgeXP: "60 XP",
+    learn: ["How chemical energy converts to electrical energy","What a cell and a battery are","How cells connected in series add up voltage"],
+    why: "The lemon battery demonstrates the same principle as the batteries in phones, cars, and solar storage systems. Chemical reactions that generate electricity are called electrochemical cells.",
+    formula: "EMF = Sum of all cell voltages",
+    materials: ["🍋 4–6 fresh lemons","🔩 Zinc-coated nails (galvanized)","🪙 Copper coins or copper wire","🔌 Connecting wires","💡 Small LED"],
+    steps: [
+      { title:"Prepare the Lemons", desc:"Roll each lemon firmly on a table to break down the internal fibres and release more juice inside.", tip:"Juicier lemons = more ionic conductivity = more current." },
+      { title:"Insert Electrodes", desc:"Push one zinc nail into one end of each lemon and one copper coin into the other end. Do not let them touch inside.", tip:"Zinc and copper are your two different metals (electrodes)." },
+      { title:"Connect in Series", desc:"Use wires to connect the zinc nail of lemon 1 to the copper coin of lemon 2, and so on for all lemons.", tip:"Series connection adds up the voltages of each lemon cell." },
+      { title:"Test the Output", desc:"Connect the final free zinc nail and copper coin to a multimeter. You should see a small voltage (0.5–1V per lemon).", tip:"Each lemon produces about 0.5–0.9V." },
+      { title:"Light the LED", desc:"Connect the lemon battery chain to a small LED. If the LED lights up, you have successfully generated electricity!", tip:"LEDs need at least 1.8V — use at least 3–4 lemons." }
+    ],
+    questions: [
+      { q:"What type of energy does a lemon battery convert?", opts:["Light to electrical","Chemical to electrical","Mechanical to electrical","Thermal to electrical"], ans:1, exp:"A lemon battery is an electrochemical cell. The chemical reaction between the zinc and copper electrodes in the acidic lemon juice generates electrical energy." },
+      { q:"Why do we connect lemons in series?", opts:["To increase current","To add up the voltages","To reduce resistance","To create more acid"], ans:1, exp:"When cells are connected in series, their voltages add together. More lemons = higher total voltage." },
+      { q:"What acts as the electrolyte in a lemon battery?", opts:["The copper coin","The zinc nail","The citric acid in the lemon juice","The connecting wire"], ans:2, exp:"The citric acid in lemon juice is the electrolyte — it allows ions to flow between the two different metal electrodes, completing the circuit." }
+    ]
+  },
+  {
+    title: "Simple DC Motor",
+    color: "linear-gradient(135deg,#4a148c,#7b1fa2)",
+    difficulty: "Intermediate", time: "45 min", concept: "⚙ Electromagnetism & Motion",
+    badge: "⚙", badgeTitle: "Motor Engineer", badgeXP: "80 XP",
+    learn: ["How a magnetic field causes a current-carrying wire to rotate","The principle behind every electric motor","How to convert electrical energy into mechanical energy"],
+    why: "DC motors are inside electric fans, drills, toys, electric vehicles, and industrial machines. This simple project shows exactly the same physics used in a Tesla electric car motor.",
+    formula: "F = BIL (Force on a current-carrying conductor)",
+    materials: ["🪡 Copper wire (enamelled, ~50 cm)","🔋 1.5V AA battery","🧲 2 strong magnets","📎 2 large paper clips","🔧 Cylindrical object for winding"],
+    steps: [
+      { title:"Wind the Coil", desc:"Wrap enamelled copper wire around a cylindrical object (like a battery) about 10–15 times to form a flat coil. Leave 5 cm of wire free at each end.", tip:"Keep the coil compact and symmetrical." },
+      { title:"Prepare the Supports", desc:"Straighten two paper clips into U-shapes. These will hold the coil and connect to the battery.", tip:"The wire ends rest in the bends of the paper clips." },
+      { title:"Strip the Wire Ends", desc:"Use sandpaper to remove the enamel coating from the wire ends. On ONE end, strip only the TOP half. On the other end, strip ALL around.", tip:"This asymmetric stripping creates the commutator effect that keeps the coil spinning." },
+      { title:"Set Up the Magnets", desc:"Place two strong magnets on either side of where the coil will sit, with opposite poles facing each other (N facing S).", tip:"Stronger magnets = more force = faster spin." },
+      { title:"Balance and Test", desc:"Rest the coil's wire ends in the paper clip supports connected to the battery terminals. Give the coil a gentle push and observe.", tip:"If it doesn't spin, try flipping the magnets or adjusting the stripped section." }
+    ],
+    questions: [
+      { q:"What force makes the coil rotate in a DC motor?", opts:["Gravity","Air resistance","Magnetic force on a current-carrying wire","Friction"], ans:2, exp:"A current-carrying wire in a magnetic field experiences a force (F = BIL). This force rotates the coil." },
+      { q:"What does the stripped wire end act as in the motor?", opts:["A battery","A commutator that reverses current direction","An insulator","An electromagnet only"], ans:1, exp:"The half-stripped end acts as a simple commutator — it reverses the current direction each half turn, keeping the coil rotating continuously." },
+      { q:"What energy conversion takes place in a DC motor?", opts:["Chemical → Light","Mechanical → Electrical","Electrical → Mechanical","Heat → Electrical"], ans:2, exp:"A motor converts electrical energy from the battery into mechanical energy (rotation of the coil)." }
+    ]
+  },
+  {
+    title: "Pendulum Experiment",
+    color: "linear-gradient(135deg,#006064,#00838f)",
+    difficulty: "Beginner", time: "30 min", concept: "🔭 Gravity & Simple Harmonic Motion",
+    badge: "🔭", badgeTitle: "Gravity Detective", badgeXP: "60 XP",
+    learn: ["How pendulum period depends on length — not mass","How to calculate the value of g experimentally","What simple harmonic motion means"],
+    why: "Pendulums were used in the world's most accurate clocks for centuries. Today, the same physics governs earthquake seismometers and gyroscopes in aircraft navigation.",
+    formula: "T = 2π√(L/g)   →   g = 4π²L / T²",
+    materials: ["🧵 String or thread (1.5 m)","⚖ Small heavy bob (nut or stone)","📏 Ruler or tape measure","⏱ Stopwatch","🪝 Clamp or door frame"],
+    steps: [
+      { title:"Set Up the Pendulum", desc:"Tie a small heavy bob to one end of a string. Fix the other end firmly to a stand or door frame so it swings freely.", tip:"Make sure the attachment point is rigid — any wobble will affect results." },
+      { title:"Measure the Length", desc:"Measure the length L from the pivot point to the center of the bob. Record this accurately.", tip:"Measure to the center of the bob's mass, not the bottom." },
+      { title:"Release the Pendulum", desc:"Pull the bob to the side by no more than 15° and release it without pushing. Let it swing freely.", tip:"Keeping the angle small is important — large angles break the T = 2π√(L/g) formula." },
+      { title:"Time 20 Swings", desc:"Use a stopwatch to time exactly 20 complete oscillations (left → right → left = 1 swing). Record the total time.", tip:"Start timing when you release, not when it first passes the center." },
+      { title:"Calculate g", desc:"Period T = total time ÷ 20. Then use g = 4π²L / T² to calculate your experimental value of gravity.", tip:"Compare to 9.81 m/s². Repeat with 3 different lengths for accuracy." }
+    ],
+    questions: [
+      { q:"If you double the length of the pendulum, what happens to the period?", opts:["It doubles","It halves","It increases by a factor of √2","It stays the same"], ans:2, exp:"T = 2π√(L/g). If L doubles, T = 2π√(2L/g) = √2 × original T. Period increases by factor of √2 ≈ 1.41." },
+      { q:"What does the period of a pendulum NOT depend on?", opts:["Length of string","Value of gravity","Mass of the bob","All of the above"], ans:2, exp:"The period is independent of the mass of the bob! T = 2π√(L/g) contains no mass term." },
+      { q:"Why must you keep the swing angle less than 15°?", opts:["It's safer","The formula T = 2π√(L/g) only works for small angles","Larger angles make it go too fast","The string might break"], ans:1, exp:"The formula T = 2π√(L/g) is derived using the small-angle approximation (sin θ ≈ θ). Larger angles break this and make the formula inaccurate." }
+    ]
+  }
+];
+
+function openProject(idx) {
+    const p = projects[idx];
+    document.getElementById('projectCardsGrid').style.display = 'none';
+    document.getElementById('projectDetail').style.display = 'block';
+
+    let stepsHTML = p.steps.map((s, i) => `
+        <div class="step-card">
+            <div class="step-card-header">
+                <div class="step-badge">${i+1}</div>
+                <div class="step-card-title">${s.title}</div>
+            </div>
+            <div class="step-card-desc">${s.desc}</div>
+            ${s.tip ? `<div class="step-tip">💡 <span>${s.tip}</span></div>` : ''}
+        </div>`).join('');
+
+    let matsHTML = p.materials.map(m => `<div class="proj-material">${m}</div>`).join('');
+
+    let qHTML = p.questions.map((q, qi) => {
+        const opts = q.opts.map((o, oi) => `<button class="proj-quiz-opt" id="pqopt-${qi}-${oi}" onclick="projAnswer(${idx},${qi},${oi})">${o}</button>`).join('');
+        return `<div style="margin-bottom:16px;">
+            <p style="font-size:14px;font-weight:bold;color:#1a1a1a;padding:10px 14px;background:#f0f4fa;border-radius:7px;margin-bottom:8px;">${qi+1}. ${q.q}</p>
+            <div id="pqopts-${qi}">${opts}</div>
+            <div class="proj-quiz-fb" id="pqfb-${qi}"></div>
+        </div>`;
+    }).join('');
+
+    document.getElementById('projectDetailContent').innerHTML = `
+        <div class="proj-detail-hero" style="background:${p.color}">
+            <h2>${p.title}</h2>
+            <p>Key concept: ${p.concept}</p>
+            <div class="proj-info-row">
+                <span class="proj-info-chip">📊 ${p.difficulty}</span>
+                <span class="proj-info-chip">⏱ ${p.time}</span>
+                <span class="proj-info-chip">🏆 ${p.badgeXP}</span>
+            </div>
+        </div>
+
+        <div class="proj-tabs">
+            <button class="proj-tab active" onclick="projTab(this,'ptab-overview-${idx}')">📋 Overview</button>
+            <button class="proj-tab" onclick="projTab(this,'ptab-steps-${idx}')">🧪 Steps</button>
+            <button class="proj-tab" onclick="projTab(this,'ptab-reflect-${idx}')">🧠 Reflect</button>
+            <button class="proj-tab" onclick="projTab(this,'ptab-reward-${idx}')">🏆 Reward</button>
+        </div>
+
+        <!-- OVERVIEW -->
+        <div id="ptab-overview-${idx}" class="proj-panel active">
+            <div class="card" style="margin:0 0 14px;">
+                <p style="font-size:13px;font-weight:bold;color:#0d47a1;margin:0 0 10px;">📚 What You Will Learn</p>
+                ${p.learn.map(l => `<div class="learn-row"><div class="learn-icon">✅</div><div class="learn-text">${l}</div></div>`).join('')}
+            </div>
+            <div class="why-box">💡 <strong>Why it matters:</strong> ${p.why}</div>
+            <div class="formula-box">${p.formula}</div>
+            <p style="font-size:13px;font-weight:bold;color:#333;margin:14px 0 8px;">🛠 Materials Needed</p>
+            <div class="proj-materials">${matsHTML}</div>
+            <button class="mech-btn" onclick="projTabById('ptab-steps-${idx}',${idx})">Start Experiment →</button>
+        </div>
+
+        <!-- STEPS -->
+        <div id="ptab-steps-${idx}" class="proj-panel">
+            <p style="font-size:13px;color:#555;margin-bottom:12px;">Follow each step carefully. Tap a step to read the tip.</p>
+            ${stepsHTML}
+            <button class="mech-btn" onclick="projTabById('ptab-reflect-${idx}',${idx})">Reflect on Results →</button>
+        </div>
+
+        <!-- REFLECT -->
+        <div id="ptab-reflect-${idx}" class="proj-panel">
+            <div class="card" style="margin:0 0 14px;">
+                <p style="font-size:14px;font-weight:bold;color:#0d47a1;margin:0 0 12px;">🧠 Test Your Understanding</p>
+                ${qHTML}
+            </div>
+            <button class="mech-btn" onclick="projTabById('ptab-reward-${idx}',${idx})">Claim Your Reward →</button>
+        </div>
+
+        <!-- REWARD -->
+        <div id="ptab-reward-${idx}" class="proj-panel">
+            <div class="badge-reward">
+                <div class="badge-icon">${p.badge}</div>
+                <div class="badge-title">${p.badgeTitle} Badge</div>
+                <div class="badge-sub" style="margin-bottom:12px;">You earned <strong>${p.badgeXP}</strong> for completing this project!</div>
+                <div class="progress-bar-wrap" style="max-width:300px;margin:0 auto 12px;">
+                    <div class="progress-bar-fill" style="width:100%;"></div>
+                </div>
+                <div style="font-size:13px;color:#555;">✅ Project Complete</div>
+            </div>
+            <div style="margin-top:16px;text-align:center;">
+                <button class="mech-btn" onclick="closeProject()">← Back to All Projects</button>
+            </div>
+        </div>
+    `;
+    window.scrollTo(0, 0);
+}
+
+function projTab(btn, panelId) {
+    const detail = document.getElementById('projectDetailContent');
+    detail.querySelectorAll('.proj-tab').forEach(b => b.classList.remove('active'));
+    detail.querySelectorAll('.proj-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(panelId).classList.add('active');
+}
+function projTabById(panelId, idx) {
+    const detail = document.getElementById('projectDetailContent');
+    const tabs = detail.querySelectorAll('.proj-tab');
+    detail.querySelectorAll('.proj-panel').forEach(p => p.classList.remove('active'));
+    tabs.forEach(b => b.classList.remove('active'));
+    const panels = ['ptab-overview-'+idx,'ptab-steps-'+idx,'ptab-reflect-'+idx,'ptab-reward-'+idx];
+    const ti = panels.indexOf(panelId);
+    if (tabs[ti]) tabs[ti].classList.add('active');
+    const el = document.getElementById(panelId);
+    if (el) el.classList.add('active');
+}
+function projAnswer(projIdx, qi, oi) {
+    const q = projects[projIdx].questions[qi];
+    const opts = document.querySelectorAll(`#pqopts-${qi} .proj-quiz-opt`);
+    opts.forEach(b => b.disabled = true);
+    opts[oi].classList.add(oi === q.ans ? 'correct' : 'wrong');
+    if (oi !== q.ans) opts[q.ans].classList.add('correct');
+    const fb = document.getElementById(`pqfb-${qi}`);
+    fb.textContent = q.exp;
+    fb.className = 'proj-quiz-fb show ' + (oi === q.ans ? 'ok' : 'no');
+}
+function closeProject() {
+    document.getElementById('projectCardsGrid').style.display = 'grid';
+    document.getElementById('projectDetail').style.display = 'none';
+    document.getElementById('projectDetailContent').innerHTML = '';
+}
+
+// ==================== MODULE SYSTEM ====================
+let elecPanels=[], wavePanels=[];
+function showModule(type) {
+    const box = document.getElementById("moduleBox");
+    box.innerHTML = '';
+    if (type === "mechanics") {
+        box.innerHTML = `<h3 style="margin-top:0;">⚙ Mechanics Module</h3>
+        <div class="mech-tabs">
+            <button class="mech-tab active" onclick="mechTab(this,'mech-overview')">Overview</button>
+            <button class="mech-tab" onclick="mechTab(this,'mech-concepts')">Concepts</button>
+            <button class="mech-tab" onclick="mechTab(this,'mech-laws')">Newton's Laws</button>
+            <button class="mech-tab" onclick="mechTab(this,'mech-activity')">Activity</button>
+            <button class="mech-tab" onclick="mechTab(this,'mech-quiz')">Quiz</button>
+        </div>
+        <div id="mech-overview" class="mech-panel active">
+            <div class="mech-overview-bar"><p><strong>Mechanics</strong> is the branch of Physics that deals with <strong>motion</strong> and the <strong>forces</strong> acting on objects.</p></div>
+            <div class="mech-topic-grid">
+                <span class="mech-topic-chip">📏 Distance & Displacement</span><span class="mech-topic-chip">⚡ Speed & Velocity</span><span class="mech-topic-chip">🚀 Acceleration</span><span class="mech-topic-chip">⚖ Newton's 3 Laws</span><span class="mech-topic-chip">💥 Momentum</span><span class="mech-topic-chip">⚙ Work & Energy</span>
+            </div>
+            <button class="mech-btn" onclick="mechTabById('mech-concepts')">Start with Key Concepts →</button>
+        </div>
+        <div id="mech-concepts" class="mech-panel">
+            <div class="concept-cards-grid">
+                <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:#e3eeff;">📏</div><div><div class="concept-title">Distance & Displacement</div><div class="concept-formula">scalar vs vector</div></div></div><div class="concept-body">Distance is the total path length — scalar. Displacement is straight-line change in position including direction — vector. A 400m lap: distance=400m, displacement=0m.</div></div>
+                <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:#e6f4ea;">⚡</div><div><div class="concept-title">Speed & Velocity</div><div class="concept-formula">v = d/t | velocity = Δx/Δt</div></div></div><div class="concept-body">Speed is magnitude only (scalar). Velocity includes direction (vector). A car at 60 km/h north — if it turns around, speed unchanged but velocity reverses.</div></div>
+                <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:#fff8e1;">🚀</div><div><div class="concept-title">Acceleration</div><div class="concept-formula">a = Δv / Δt</div></div></div><div class="concept-body">Rate of change of velocity — a vector. Slowing down = acceleration opposite to motion. Free-fall: g ≈ 9.81 m/s².</div></div>
+                <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:#fdecea;">💥</div><div><div class="concept-title">Momentum</div><div class="concept-formula">p = mv</div></div></div><div class="concept-body">Mass × velocity. Vector quantity. In a closed system total momentum is conserved.</div></div>
+                <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:#f3e5f5;">⚙</div><div><div class="concept-title">Work & Energy</div><div class="concept-formula">W = F × d × cosθ</div></div></div><div class="concept-body">Work done when force moves object in force direction. KE = ½mv². PE = mgh. Net work = change in KE.</div></div>
+            </div>
+            <button class="mech-btn" onclick="mechTabById('mech-laws')">Explore Newton's Laws →</button>
+        </div>
+        <div id="mech-laws" class="mech-panel">
+            <div style="background:#f9fafb;border:1px solid #dce6f5;border-radius:8px;padding:12px 16px;margin-bottom:14px;">
+                <div class="law-block"><div class="law-num">1</div><div><div class="law-title">Law of Inertia</div><div class="law-desc">A body remains at rest or uniform motion unless acted upon by a net external force.</div><span class="law-example" style="background:#e3eeff;color:#0d47a1;">Example: a book on a table stays still until pushed</span></div></div>
+                <div class="law-block"><div class="law-num">2</div><div><div class="law-title">F = ma</div><div class="law-desc">Net force = mass × acceleration. Larger force → greater acceleration. Larger mass → resists more.</div><span class="law-example" style="background:#fff8e1;color:#f57f17;">Example: pushing a heavy crate needs more force</span></div></div>
+                <div class="law-block"><div class="law-num">3</div><div><div class="law-title">Action & Reaction</div><div class="law-desc">Every action has an equal and opposite reaction. Forces act in pairs on different bodies.</div><span class="law-example" style="background:#e6f4ea;color:#2e7d32;">Example: rocket expels gas down, thrust pushes it up</span></div></div>
+            </div>
+            <div class="mech-calc-box">
+                <div class="mech-calc-row"><label>Mass (kg)</label><input type="range" id="mechMass" min="1" max="100" value="20" oninput="mechCalcF()"><span class="mech-calc-val" id="mechMassVal">20 kg</span></div>
+                <div class="mech-calc-row"><label>Acceleration (m/s²)</label><input type="range" id="mechAcc" min="0" max="20" value="5" step="0.5" oninput="mechCalcF()"><span class="mech-calc-val" id="mechAccVal">5.0 m/s²</span></div>
+                <div class="mech-calc-result"><span class="mech-calc-result-label">Net Force</span><span class="mech-calc-result-val" id="mechForceOut">100 N</span></div>
+            </div>
+            <button class="mech-btn" style="margin-top:14px;" onclick="mechTabById('mech-activity')">Go to Activity →</button>
+        </div>
+        <div id="mech-activity" class="mech-panel">
+            <div class="activity-card">
+                <p style="font-size:14px;font-weight:bold;margin-bottom:6px;">🎯 Drop Test — Measuring g</p>
+                <div class="activity-step"><div class="step-num">1.</div><div class="step-text">Choose 3–5 drop heights.</div></div>
+                <div class="activity-step"><div class="step-num">2.</div><div class="step-text">Drop a dense object, time the fall. Repeat 3× and average.</div></div>
+                <div class="activity-step"><div class="step-num">3.</div><div class="step-text">Calculate g = 2h / t².</div></div>
+                <div class="activity-step"><div class="step-num">4.</div><div class="step-text">Compare to 9.81 m/s² and discuss sources of error.</div></div>
+            </div>
+            <div class="mech-calc-box">
+                <div class="mech-calc-row"><label>Height h (m)</label><input type="range" id="mechH" min="0.2" max="3" step="0.1" value="1" oninput="mechCalcG()"><span class="mech-calc-val" id="mechHVal">1.0 m</span></div>
+                <div class="mech-calc-row"><label>Fall time t (s)</label><input type="range" id="mechT" min="0.1" max="1.5" step="0.01" value="0.45" oninput="mechCalcG()"><span class="mech-calc-val" id="mechTVal">0.45 s</span></div>
+                <div class="mech-calc-result"><span class="mech-calc-result-label">g = 2h / t²</span><span class="mech-calc-result-val" id="mechGOut">9.88 m/s²</span></div>
+            </div>
+            <button class="mech-btn" style="margin-top:12px;" onclick="mechTabById('mech-quiz')">Test Knowledge →</button>
+        </div>
+        <div id="mech-quiz" class="mech-panel">
+            <div id="mechQBox"></div>
+            <button class="mech-btn" id="mechNextBtn" style="display:none;margin-top:10px;" onclick="mechNextQ()">Next Question →</button>
+        </div>`;
+        mechInitQuiz(); mechCalcF(); mechCalcG();
+    } else if (type === "electricity") {
+        box.innerHTML = `<h3 style="margin-top:0;">🔌 Electricity Module</h3>
+        <div class="mech-tabs">
+            <button class="mech-tab active" onclick="modTab(this,'elec-overview')">Overview</button>
+            <button class="mech-tab" onclick="modTab(this,'elec-concepts')">Concepts</button>
+            <button class="mech-tab" onclick="modTab(this,'elec-laws')">Circuit Laws</button>
+            <button class="mech-tab" onclick="modTab(this,'elec-activity')">Activity</button>
+            <button class="mech-tab" onclick="modTab(this,'elec-quiz')">Quiz</button>
+        </div>
+        <div id="elec-overview" class="mech-panel active">
+            <div class="mech-overview-bar"><p><strong>Electricity</strong> deals with the <strong>flow of electric charge</strong> and the behaviour of <strong>circuits</strong>.</p></div>
+            <div class="mech-topic-grid"><span class="mech-topic-chip">⚡ Electric Charge</span><span class="mech-topic-chip">🔋 Voltage</span><span class="mech-topic-chip">💡 Current</span><span class="mech-topic-chip">🔩 Resistance</span><span class="mech-topic-chip">📐 Ohm's Law</span><span class="mech-topic-chip">🔗 Circuits</span></div>
+            <button class="mech-btn" onclick="modTabById('elec-concepts',elecPanels)">Start with Key Concepts →</button>
+        </div>
+        <div id="elec-concepts" class="mech-panel">
+            <div class="concept-cards-grid">
+                <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:#e3eeff;">⚡</div><div><div class="concept-title">Electric Charge</div><div class="concept-formula">unit: Coulomb (C)</div></div></div><div class="concept-body">Charge is a fundamental property — positive (protons) or negative (electrons). Like charges repel; unlike attract.</div></div>
+                <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:#e6f4ea;">🔋</div><div><div class="concept-title">Voltage</div><div class="concept-formula">V = W/Q | unit: Volt (V)</div></div></div><div class="concept-body">Voltage is the energy per unit charge — the push driving current. 9V battery gives 9J per coulomb.</div></div>
+                <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:#fff8e1;">💡</div><div><div class="concept-title">Electric Current</div><div class="concept-formula">I = Q/t | unit: Ampere (A)</div></div></div><div class="concept-body">Current is the rate of flow of charge. More current = more charge per second.</div></div>
+                <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:#fdecea;">🔩</div><div><div class="concept-title">Resistance</div><div class="concept-formula">R = V/I | unit: Ohm (Ω)</div></div></div><div class="concept-body">Resistance opposes current flow. Long thin wires have higher resistance.</div></div>
+                <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:#f3e5f5;">💡</div><div><div class="concept-title">Electrical Power</div><div class="concept-formula">P = VI = I²R</div></div></div><div class="concept-body">Power is the rate of energy transfer in Watts. A 60W bulb converts 60J every second.</div></div>
+            </div>
+            <button class="mech-btn" onclick="modTabById('elec-laws',elecPanels)">Explore Circuit Laws →</button>
+        </div>
+        <div id="elec-laws" class="mech-panel">
+            <div style="background:#f9fafb;border:1px solid #dce6f5;border-radius:8px;padding:12px 16px;margin-bottom:14px;">
+                <div class="law-block"><div class="law-num">1</div><div><div class="law-title">Ohm's Law — V = IR</div><div class="law-desc">Voltage across a conductor is directly proportional to current at constant temperature.</div><span class="law-example" style="background:#e3eeff;color:#0d47a1;">Doubling voltage doubles current if R is fixed</span></div></div>
+                <div class="law-block"><div class="law-num">2</div><div><div class="law-title">Kirchhoff's Current Law</div><div class="law-desc">Current entering a junction = current leaving. Charge is conserved.</div><span class="law-example" style="background:#fff8e1;color:#f57f17;">3A in → 1A + 2A out</span></div></div>
+                <div class="law-block"><div class="law-num">3</div><div><div class="law-title">Kirchhoff's Voltage Law</div><div class="law-desc">Sum of voltages around any closed loop = zero.</div><span class="law-example" style="background:#e6f4ea;color:#2e7d32;">12V battery → voltages across resistors sum to 12V</span></div></div>
+            </div>
+            <div class="mech-calc-box">
+                <div class="mech-calc-row"><label>Voltage V (V)</label><input type="range" id="elecV" min="1" max="24" value="9" step="0.5" oninput="elecCalc()"><span class="mech-calc-val" id="elecVVal">9.0 V</span></div>
+                <div class="mech-calc-row"><label>Resistance R (Ω)</label><input type="range" id="elecR" min="1" max="200" value="50" oninput="elecCalc()"><span class="mech-calc-val" id="elecRVal">50 Ω</span></div>
+                <div class="mech-calc-result"><span class="mech-calc-result-label">Current I = V / R</span><span class="mech-calc-result-val" id="elecIOut">0.180 A</span></div>
+            </div>
+            <button class="mech-btn" style="margin-top:14px;" onclick="modTabById('elec-activity',elecPanels)">Go to Activity →</button>
+        </div>
+        <div id="elec-activity" class="mech-panel">
+            <div class="activity-card">
+                <p style="font-size:14px;font-weight:bold;margin-bottom:6px;">🎯 Verify Ohm's Law</p>
+                <div class="activity-step"><div class="step-num">1.</div><div class="step-text">Connect resistor in series with ammeter; voltmeter in parallel.</div></div>
+                <div class="activity-step"><div class="step-num">2.</div><div class="step-text">Set voltage at 2V, 4V, 6V, 8V, 10V and record current.</div></div>
+                <div class="activity-step"><div class="step-num">3.</div><div class="step-text">Plot V vs I. A straight line through origin confirms Ohm's Law.</div></div>
+            </div>
+            <button class="mech-btn" onclick="modTabById('elec-quiz',elecPanels)">Test Knowledge →</button>
+        </div>
+        <div id="elec-quiz" class="mech-panel">
+            <div id="elecQBox"></div>
+            <button class="mech-btn" id="elecNextBtn" style="display:none;margin-top:10px;" onclick="elecNextQ()">Next Question →</button>
+        </div>`;
+        elecPanels=['elec-overview','elec-concepts','elec-laws','elec-activity','elec-quiz'];
+        elecInitQuiz(); elecCalc();
+    } else if (type === "waves") {
+        box.innerHTML = `<h3 style="margin-top:0;">🌊 Waves Module</h3>
+        <div class="mech-tabs">
+            <button class="mech-tab active" onclick="modTab(this,'wave-overview')">Overview</button>
+            <button class="mech-tab" onclick="modTab(this,'wave-concepts')">Concepts</button>
+            <button class="mech-tab" onclick="modTab(this,'wave-laws')">Wave Behaviour</button>
+            <button class="mech-tab" onclick="modTab(this,'wave-activity')">Activity</button>
+            <button class="mech-tab" onclick="modTab(this,'wave-quiz')">Quiz</button>
+        </div>
+        <div id="wave-overview" class="mech-panel active">
+            <div class="mech-overview-bar"><p><strong>Waves</strong> transfer energy without transferring matter. Found in sound, light, and all communications.</p></div>
+            <div class="mech-topic-grid"><span class="mech-topic-chip">🔊 Sound Waves</span><span class="mech-topic-chip">☀ Light Waves</span><span class="mech-topic-chip">📡 EM Spectrum</span><span class="mech-topic-chip">🔁 Reflection</span><span class="mech-topic-chip">📐 Refraction</span><span class="mech-topic-chip">🌐 Wave Equation</span></div>
+            <button class="mech-btn" onclick="modTabById('wave-concepts',wavePanels)">Start with Key Concepts →</button>
+        </div>
+        <div id="wave-concepts" class="mech-panel">
+            <div class="concept-cards-grid">
+                <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:#e3eeff;">〰</div><div><div class="concept-title">Types of Waves</div><div class="concept-formula">Mechanical vs EM</div></div></div><div class="concept-body">Mechanical waves need a medium. EM waves travel at 3×10⁸ m/s in vacuum. Transverse: vibration ⊥ direction. Longitudinal: vibration ∥ direction.</div></div>
+                <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:#e6f4ea;">🔊</div><div><div class="concept-title">Sound Waves</div><div class="concept-formula">~340 m/s in air</div></div></div><div class="concept-body">Longitudinal wave — compressions and rarefactions. Speed ≈ 340 m/s in air. Pitch → frequency; loudness → amplitude.</div></div>
+                <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:#f3e5f5;">🌐</div><div><div class="concept-title">The Wave Equation</div><div class="concept-formula">v = f × λ</div></div></div><div class="concept-body">Speed = frequency × wavelength. If frequency doubles in the same medium, wavelength halves.</div></div>
+            </div>
+            <button class="mech-btn" onclick="modTabById('wave-laws',wavePanels)">Explore Wave Behaviour →</button>
+        </div>
+        <div id="wave-laws" class="mech-panel">
+            <div style="background:#f9fafb;border:1px solid #dce6f5;border-radius:8px;padding:12px 16px;margin-bottom:14px;">
+                <div class="law-block"><div class="law-num">1</div><div><div class="law-title">Reflection</div><div class="law-desc">Wave bounces back from a surface. Angle of incidence = angle of reflection.</div><span class="law-example" style="background:#e3eeff;color:#0d47a1;">Echo = sound reflecting off a hard wall</span></div></div>
+                <div class="law-block"><div class="law-num">2</div><div><div class="law-title">Refraction</div><div class="law-desc">Wave bends when speed changes between media. Frequency stays constant.</div><span class="law-example" style="background:#fff8e1;color:#f57f17;">Straw appears bent in water</span></div></div>
+                <div class="law-block"><div class="law-num">3</div><div><div class="law-title">Diffraction</div><div class="law-desc">Waves spread around corners or through gaps. Most noticeable when gap ≈ wavelength.</div><span class="law-example" style="background:#e6f4ea;color:#2e7d32;">Sound travels around corners better than light</span></div></div>
+            </div>
+            <div class="mech-calc-box">
+                <div class="mech-calc-row"><label>Frequency f (Hz)</label><input type="range" id="waveF" min="1" max="1000" value="340" oninput="waveCalc()"><span class="mech-calc-val" id="waveFVal">340 Hz</span></div>
+                <div class="mech-calc-row"><label>Wavelength λ (m)</label><input type="range" id="waveLam" min="0.1" max="10" value="1" step="0.1" oninput="waveCalc()"><span class="mech-calc-val" id="waveLamVal">1.0 m</span></div>
+                <div class="mech-calc-result"><span class="mech-calc-result-label">Speed v = f × λ</span><span class="mech-calc-result-val" id="waveVOut">340 m/s</span></div>
+            </div>
+            <button class="mech-btn" style="margin-top:14px;" onclick="modTabById('wave-activity',wavePanels)">Go to Activity →</button>
+        </div>
+        <div id="wave-activity" class="mech-panel">
+            <div class="activity-card">
+                <p style="font-size:14px;font-weight:bold;margin-bottom:6px;">🎯 Speed of Sound Using Echo</p>
+                <p style="font-size:13px;color:#444;margin-bottom:8px;"><strong>v = 2d / t</strong></p>
+                <div class="activity-step"><div class="step-num">1.</div><div class="step-text">Stand 50+ m from a flat wall. Clap boards and listen for the echo.</div></div>
+                <div class="activity-step"><div class="step-num">2.</div><div class="step-text">Time 20 claps; divide by 20 to get time t for one echo.</div></div>
+                <div class="activity-step"><div class="step-num">3.</div><div class="step-text">Calculate v = 2d / t. Compare to 340 m/s.</div></div>
+            </div>
+            <button class="mech-btn" onclick="modTabById('wave-quiz',wavePanels)">Test Knowledge →</button>
+        </div>
+        <div id="wave-quiz" class="mech-panel">
+            <div id="waveQBox"></div>
+            <button class="mech-btn" id="waveNextBtn" style="display:none;margin-top:10px;" onclick="waveNextQ()">Next Question →</button>
+        </div>`;
+        wavePanels=['wave-overview','wave-concepts','wave-laws','wave-activity','wave-quiz'];
+        waveInitQuiz(); waveCalc();
+    }
+}
+
+function modTab(btn, panelId) {
+    const box=document.getElementById('moduleBox');
+    box.querySelectorAll('.mech-tab').forEach(b=>b.classList.remove('active'));
+    box.querySelectorAll('.mech-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active'); document.getElementById(panelId).classList.add('active');
+}
+function modTabById(panelId, panels) {
+    const box=document.getElementById('moduleBox'), tabs=box.querySelectorAll('.mech-tab');
+    box.querySelectorAll('.mech-panel').forEach(p=>p.classList.remove('active'));
+    tabs.forEach(b=>b.classList.remove('active'));
+    const idx=panels.indexOf(panelId);
+    if(tabs[idx])tabs[idx].classList.add('active');
+    const el=document.getElementById(panelId); if(el)el.classList.add('active');
+}
+function mechTab(btn, panelId) {
+    const box=document.getElementById('moduleBox');
+    box.querySelectorAll('.mech-tab').forEach(b=>b.classList.remove('active'));
+    box.querySelectorAll('.mech-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active'); document.getElementById(panelId).classList.add('active');
+}
+function mechTabById(panelId) {
+    const panels=['mech-overview','mech-concepts','mech-laws','mech-activity','mech-quiz'];
+    const box=document.getElementById('moduleBox');
+    box.querySelectorAll('.mech-tab').forEach(b=>b.classList.remove('active'));
+    box.querySelectorAll('.mech-panel').forEach(p=>p.classList.remove('active'));
+    const idx=panels.indexOf(panelId);
+    box.querySelectorAll('.mech-tab')[idx].classList.add('active');
+    document.getElementById(panelId).classList.add('active');
+}
+function mechCalcF(){const m=parseFloat(document.getElementById('mechMass').value),a=parseFloat(document.getElementById('mechAcc').value);document.getElementById('mechMassVal').textContent=m+' kg';document.getElementById('mechAccVal').textContent=a.toFixed(1)+' m/s²';document.getElementById('mechForceOut').textContent=(m*a).toFixed(1)+' N';}
+function mechCalcG(){const h=parseFloat(document.getElementById('mechH').value),t=parseFloat(document.getElementById('mechT').value);document.getElementById('mechHVal').textContent=h.toFixed(1)+' m';document.getElementById('mechTVal').textContent=t.toFixed(2)+' s';document.getElementById('mechGOut').textContent=((2*h)/(t*t)).toFixed(2)+' m/s²';}
+function elecCalc(){const V=parseFloat(document.getElementById('elecV').value),R=parseFloat(document.getElementById('elecR').value);document.getElementById('elecVVal').textContent=V.toFixed(1)+' V';document.getElementById('elecRVal').textContent=R+' Ω';document.getElementById('elecIOut').textContent=(V/R).toFixed(3)+' A';}
+function waveCalc(){const f=parseFloat(document.getElementById('waveF').value),l=parseFloat(document.getElementById('waveLam').value);document.getElementById('waveFVal').textContent=f+' Hz';document.getElementById('waveLamVal').textContent=l.toFixed(1)+' m';document.getElementById('waveVOut').textContent=(f*l).toFixed(1)+' m/s';}
+
+// MODULE QUIZZES
+const mechQuestions=[{q:"A car travels 100m east then 60m west. Displacement?",opts:["160 m","40 m east","40 m west","100 m"],ans:1,exp:"Displacement = 100 − 60 = 40 m east."},{q:"Which is a vector?",opts:["Speed","Distance","Mass","Velocity"],ans:3,exp:"Velocity has magnitude and direction."},{q:"5 kg object at 3 m/s². Net force?",opts:["1.67 N","8 N","15 N","0.6 N"],ans:2,exp:"F = ma = 5 × 3 = 15 N."},{q:"Newton's 1st law is the law of…",opts:["Acceleration","Gravity","Inertia","Reaction"],ans:2,exp:"Law of inertia."},{q:"Object falls 2s, g=10. Distance?",opts:["10 m","20 m","40 m","5 m"],ans:1,exp:"h = ½gt² = 20 m."}];
+let mechQI=0,mechAnswered=false;
+function mechInitQuiz(){mechQI=0;mechAnswered=false;mechRenderQ();}
+function mechRenderQ(){mechAnswered=false;const q=mechQuestions[mechQI];document.getElementById('mechNextBtn').style.display='none';let html=`<div class="mech-quiz-q">${mechQI+1}/${mechQuestions.length} — ${q.q}</div><div class="mech-quiz-opts">`;q.opts.forEach((o,i)=>{html+=`<button class="mech-quiz-opt" onclick="mechAnswer(${i})">${o}</button>`;});html+=`</div><div class="mech-quiz-feedback" id="mechQFB"></div>`;document.getElementById('mechQBox').innerHTML=html;}
+function mechAnswer(i){if(mechAnswered)return;mechAnswered=true;const q=mechQuestions[mechQI];const btns=document.querySelectorAll('#mechQBox .mech-quiz-opt');btns[i].classList.add(i===q.ans?'correct':'wrong');if(i!==q.ans)btns[q.ans].classList.add('correct');const fb=document.getElementById('mechQFB');fb.textContent=q.exp;fb.className='mech-quiz-feedback show '+(i===q.ans?'ok':'no');const nb=document.getElementById('mechNextBtn');if(mechQI<mechQuestions.length-1){nb.textContent='Next →';nb.style.display='inline-block';}else{nb.textContent='🎉 Restart';nb.style.display='inline-block';nb.onclick=()=>{mechQI=0;mechRenderQ();nb.onclick=mechNextQ;};}}
+function mechNextQ(){mechQI++;mechRenderQ();}
+
+const elecQuestions=[{q:"Unit of electric current?",opts:["Volt","Ohm","Ampere","Watt"],ans:2,exp:"Current in Amperes (A)."},{q:"R doubles, V same. Current?",opts:["Doubles","Halves","Same","Quadruples"],ans:1,exp:"I = V/R. R doubles → I halves."},{q:"In parallel, same across all branches?",opts:["Current","Resistance","Voltage","Power"],ans:2,exp:"Voltage is the same across all parallel branches."},{q:"Which gives power?",opts:["P=IR","P=V/I","P=VI","P=V+I"],ans:2,exp:"P = VI."},{q:"5A from 230V. Power?",opts:["46W","235W","1150W","460W"],ans:2,exp:"P = 230 × 5 = 1150 W."}];
+let elecQI=0,elecAnswered=false;
+function elecInitQuiz(){elecQI=0;elecAnswered=false;elecRenderQ();}
+function elecRenderQ(){elecAnswered=false;const q=elecQuestions[elecQI];document.getElementById('elecNextBtn').style.display='none';let html=`<div class="mech-quiz-q">${elecQI+1}/${elecQuestions.length} — ${q.q}</div><div class="mech-quiz-opts" id="elecOptBox">`;q.opts.forEach((o,i)=>{html+=`<button class="mech-quiz-opt" onclick="elecAnswer(${i})">${o}</button>`;});html+=`</div><div class="mech-quiz-feedback" id="elecQFB"></div>`;document.getElementById('elecQBox').innerHTML=html;}
+function elecAnswer(i){if(elecAnswered)return;elecAnswered=true;const q=elecQuestions[elecQI];const btns=document.querySelectorAll('#elecOptBox .mech-quiz-opt');btns[i].classList.add(i===q.ans?'correct':'wrong');if(i!==q.ans)btns[q.ans].classList.add('correct');const fb=document.getElementById('elecQFB');fb.textContent=q.exp;fb.className='mech-quiz-feedback show '+(i===q.ans?'ok':'no');const nb=document.getElementById('elecNextBtn');if(elecQI<elecQuestions.length-1){nb.textContent='Next →';nb.style.display='inline-block';}else{nb.textContent='🎉 Restart';nb.style.display='inline-block';nb.onclick=()=>{elecQI=0;elecRenderQ();nb.onclick=elecNextQ;};}}
+function elecNextQ(){elecQI++;elecRenderQ();}
+
+const waveQuestions=[{q:"Which travels through vacuum?",opts:["Sound","Water waves","Electromagnetic","Seismic"],ans:2,exp:"EM waves travel at 3×10⁸ m/s in vacuum."},{q:"f=200Hz, λ=1.7m. Speed?",opts:["201.7","340","117.6","200"],ans:1,exp:"v = fλ = 200 × 1.7 = 340 m/s."},{q:"What determines loudness?",opts:["Frequency","Wavelength","Speed","Amplitude"],ans:3,exp:"Greater amplitude = louder."},{q:"Sound around corners = ?",opts:["Reflection","Refraction","Interference","Diffraction"],ans:3,exp:"Diffraction spreads waves around corners."},{q:"Refraction: what stays constant?",opts:["Speed","Wavelength","Frequency","Amplitude"],ans:2,exp:"Frequency stays constant during refraction."}];
+let waveQI=0,waveAnswered=false;
+function waveInitQuiz(){waveQI=0;waveAnswered=false;waveRenderQ();}
+function waveRenderQ(){waveAnswered=false;const q=waveQuestions[waveQI];document.getElementById('waveNextBtn').style.display='none';let html=`<div class="mech-quiz-q">${waveQI+1}/${waveQuestions.length} — ${q.q}</div><div class="mech-quiz-opts" id="waveOptBox">`;q.opts.forEach((o,i)=>{html+=`<button class="mech-quiz-opt" onclick="waveAnswer(${i})">${o}</button>`;});html+=`</div><div class="mech-quiz-feedback" id="waveQFB"></div>`;document.getElementById('waveQBox').innerHTML=html;}
+function waveAnswer(i){if(waveAnswered)return;waveAnswered=true;const q=waveQuestions[waveQI];const btns=document.querySelectorAll('#waveOptBox .mech-quiz-opt');btns[i].classList.add(i===q.ans?'correct':'wrong');if(i!==q.ans)btns[q.ans].classList.add('correct');const fb=document.getElementById('waveQFB');fb.textContent=q.exp;fb.className='mech-quiz-feedback show '+(i===q.ans?'ok':'no');const nb=document.getElementById('waveNextBtn');if(waveQI<waveQuestions.length-1){nb.textContent='Next →';nb.style.display='inline-block';}else{nb.textContent='🎉 Restart';nb.style.display='inline-block';nb.onclick=()=>{waveQI=0;waveRenderQ();nb.onclick=waveNextQ;};}}
+function waveNextQ(){waveQI++;waveRenderQ();}
+
+// MAIN QUIZ
+const mainQuizQuestions=[
+    {cat:"⚙ Mechanics",q:"Unit of force?",opts:["Joule","Newton","Watt","Pascal"],ans:1,exp:"Force in Newtons (N)."},
+    {cat:"⚙ Mechanics",q:"Car travels 100m east then 60m west. Displacement?",opts:["160 m","40 m east","40 m west","100 m east"],ans:1,exp:"Displacement = 40 m east."},
+    {cat:"⚙ Mechanics",q:"Which is a vector?",opts:["Speed","Distance","Mass","Velocity"],ans:3,exp:"Velocity has magnitude and direction."},
+    {cat:"⚙ Mechanics",q:"5kg object, 3m/s². Net force?",opts:["1.67 N","8 N","15 N","0.6 N"],ans:2,exp:"F = ma = 15 N."},
+    {cat:"⚙ Mechanics",q:"Object falls 2s (g=10). Distance?",opts:["10 m","20 m","40 m","5 m"],ans:1,exp:"h = ½gt² = 20 m."},
+    {cat:"⚙ Mechanics",q:"Newton's First Law = Law of…",opts:["Acceleration","Gravity","Inertia","Reaction"],ans:2,exp:"Law of inertia."},
+    {cat:"⚙ Mechanics",q:"Momentum of 4kg at 5m/s?",opts:["0.8","9","20","1.25"],ans:2,exp:"p = mv = 20 kg·m/s."},
+    {cat:"🔌 Electricity",q:"Unit of current?",opts:["Volt","Ohm","Ampere","Watt"],ans:2,exp:"Current in Amperes."},
+    {cat:"🔌 Electricity",q:"V doubles, R same. Current?",opts:["Halves","Same","Doubles","Quadruples"],ans:2,exp:"I = V/R. V doubles → I doubles."},
+    {cat:"🔌 Electricity",q:"Parallel circuit: same across all branches?",opts:["Current","Resistance","Voltage","Power"],ans:2,exp:"Voltage is the same across all parallel branches."},
+    {cat:"🔌 Electricity",q:"5A from 230V. Power?",opts:["46W","235W","1150W","460W"],ans:2,exp:"P = VI = 1150 W."},
+    {cat:"🔌 Electricity",q:"Electromagnet needs?",opts:["Only magnet","Current through coil","Only battery","Plastic rod"],ans:1,exp:"Current through a coil creates the magnetic field."},
+    {cat:"🔌 Electricity",q:"Which gives power?",opts:["P=IR","P=V/I","P=VI","P=V+I"],ans:2,exp:"P = VI."},
+    {cat:"🔌 Electricity",q:"4Ω and 6Ω in series. Total?",opts:["2.4Ω","10Ω","24Ω","1Ω"],ans:1,exp:"Series: 4 + 6 = 10 Ω."},
+    {cat:"🌊 Waves",q:"Which travels through vacuum?",opts:["Sound","Water","Electromagnetic","Seismic"],ans:2,exp:"EM waves travel at 3×10⁸ m/s in vacuum."},
+    {cat:"🌊 Waves",q:"f=200Hz, λ=1.7m. Speed?",opts:["201.7","340","117.6","200"],ans:1,exp:"v = fλ = 340 m/s."},
+    {cat:"🌊 Waves",q:"Loudness determined by?",opts:["Frequency","Wavelength","Speed","Amplitude"],ans:3,exp:"Greater amplitude = louder."},
+    {cat:"🌊 Waves",q:"Longer pendulum: period?",opts:["Increases","Decreases","Same","Zero"],ans:0,exp:"T = 2π√(L/g). Longer L → longer T."},
+    {cat:"🌊 Waves",q:"Sound around corners = ?",opts:["Reflection","Refraction","Interference","Diffraction"],ans:3,exp:"Diffraction."},
+    {cat:"🌊 Waves",q:"Refraction: what stays constant?",opts:["Speed","Wavelength","Frequency","Amplitude"],ans:2,exp:"Frequency stays constant."}
+];
+let mainQI=0,mainScore=0,mainAnswered=false;
+function mainQuizInit(){mainQI=0;mainScore=0;mainAnswered=false;document.getElementById('mainQuizFinal').style.display='none';document.getElementById('mainQBox').style.display='block';document.getElementById('mainQuizProgress').style.width='0%';document.getElementById('mainQuizCounter').textContent='0 / 20';document.getElementById('mainQuizScore').textContent='Score: 0';mainRenderQ();}
+function mainRenderQ(){mainAnswered=false;const q=mainQuizQuestions[mainQI];document.getElementById('mainNextBtn').style.display='none';const cc=q.cat.includes('Mechanics')?'#0d47a1':q.cat.includes('Electricity')?'#1565c0':'#1976d2';let html=`<div style="display:inline-block;font-size:11px;font-weight:bold;color:white;background:${cc};border-radius:20px;padding:3px 12px;margin-bottom:10px;">${q.cat}</div><div class="mech-quiz-q">${mainQI+1}/20 — ${q.q}</div><div class="mech-quiz-opts" id="mainOptBox">`;q.opts.forEach((o,i)=>{html+=`<button class="mech-quiz-opt" onclick="mainAnswer(${i})">${o}</button>`;});html+=`</div><div class="mech-quiz-feedback" id="mainQFB"></div>`;document.getElementById('mainQBox').innerHTML=html;}
+function mainAnswer(i){if(mainAnswered)return;mainAnswered=true;const q=mainQuizQuestions[mainQI];const btns=document.querySelectorAll('#mainOptBox .mech-quiz-opt');const correct=i===q.ans;btns[i].classList.add(correct?'correct':'wrong');if(!correct)btns[q.ans].classList.add('correct');if(correct)mainScore++;document.getElementById('mainQFB').textContent=q.exp;document.getElementById('mainQFB').className='mech-quiz-feedback show '+(correct?'ok':'no');const done=mainQI+1;document.getElementById('mainQuizProgress').style.width=(done/20*100)+'%';document.getElementById('mainQuizCounter').textContent=done+'/20';document.getElementById('mainQuizScore').textContent='Score: '+mainScore;const nb=document.getElementById('mainNextBtn');nb.textContent=mainQI<19?'Next Question →':'See Results 🏆';nb.style.display='inline-block';}
+function mainNextQ(){if(mainQI<19){mainQI++;mainRenderQ();}else{mainShowFinal();}}
+function mainShowFinal(){document.getElementById('mainQBox').style.display='none';document.getElementById('mainNextBtn').style.display='none';const pct=Math.round(mainScore/20*100);let grade,gc,msg;if(pct>=90){grade='Excellent! 🏆';gc='#2e7d32';msg='Outstanding! Strong grasp across all topics.';}else if(pct>=75){grade='Great Job! 🎉';gc='#1565c0';msg='Well done! Review a few more concepts.';}else if(pct>=55){grade='Good Effort! 👍';gc='#f57f17';msg='Good start! Revisit the Learning Modules.';}else{grade='Keep Practising! 📚';gc='#c62828';msg="Don't give up! Visit the modules and try again.";}document.getElementById('mainQuizFinal').style.display='block';document.getElementById('mainQuizFinal').innerHTML=`<div style="text-align:center;padding:24px 10px;background:#f9fafb;border-radius:10px;border:1px solid #dce6f5;"><div style="font-size:52px;margin-bottom:10px;">${pct>=75?'🏆':pct>=55?'👍':'📚'}</div><div style="font-size:20px;font-weight:bold;color:${gc};margin-bottom:4px;">${grade}</div><div style="font-size:34px;font-weight:bold;color:#0d47a1;">${mainScore}/20</div><div style="font-size:15px;color:#555;margin-bottom:14px;">${pct}% correct</div><div style="font-size:13px;color:#444;max-width:360px;margin:0 auto 20px;line-height:1.6;">${msg}</div><button class="mech-btn" onclick="mainQuizInit()">🔁 Try Again</button></div>`;}
+
+// CONTACT
+function submitForm(){const name=document.getElementById('contactName').value.trim(),email=document.getElementById('contactEmail').value.trim(),subject=document.getElementById('contactSubject').value.trim(),message=document.getElementById('contactMessage').value.trim(),resultEl=document.getElementById('formResult');if(!name||!email||!message){resultEl.textContent='⚠ Please fill in name, email and message.';resultEl.className='error';return;}window.location.href=`mailto:256allex256@gmail.com?subject=${encodeURIComponent(subject||'Message from '+name)}&body=${encodeURIComponent('Name: '+name+'\nEmail: '+email+'\n\n'+message)}`;resultEl.textContent='✅ Email client opened. Please send to complete.';resultEl.className='success';}
+
+// INIT
+window.onload = function() {
+    mainQuizInit();
+    updateCircuit();
+    initCircuit();
+};
+
+function scrollToModules() {
+    showPage('home'); // go to homepage
+
+    setTimeout(() => {
+        const section = document.getElementById('modulesSection');
+        if (section) {
+            section.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    }, 300);
+}
+
+</script>
+</body>
+</html>
