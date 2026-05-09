@@ -506,7 +506,7 @@ section { display: none; width: 100%; }
   top: 50%; left: 50%;
 }
 .hero-orbit-1 { width: 620px; height: 620px; margin: -310px 0 0 -310px; }
-.hero-orbit-2 { width: 880px; height: 880px; margin: -440px 0 0 -440px; animation-direction: reverse; animation-duration: 70s; border-color: rgba(199,125,255,0.07); }
+.hero-orbit-2 { width: 880px; height: 880px; margin: -440px 0 0 -440px; animation-direction: normal; animation-duration: 70s; border-color: rgba(199,125,255,0.07); }
 .hero-orbit-3 { width: 380px; height: 380px; margin: -190px 0 0 -190px; animation-duration: 28s; border-color: rgba(6,214,160,0.08); }
 @keyframes hero-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 .orbit-dot { position: absolute; border-radius: 50%; top: 0; left: 50%; transform: translateX(-50%); }
@@ -1288,15 +1288,21 @@ section { display: none; width: 100%; }
   border-radius: 10px 10px 0 0; flex-wrap: wrap;
 }
 .mech-tab {
-  flex: 1; min-width: 60px; padding: 9px 8px;
+  flex: 1; min-width: 0; padding: 9px 8px;
   font-size: 13px; font-weight: bold; background: none;
   border: none; cursor: pointer; border-radius: 7px;
   color: rgba(255,255,255,0.75); transition: background 0.15s,color 0.15s;
-  font-family: var(--font-body); white-space: nowrap;
+  font-family: var(--font-body);
+  white-space: normal; word-break: break-word;
+  text-align: center; line-height: 1.2;
 }
 .mech-tab:hover { background: rgba(255,255,255,0.15); color: white; }
 .mech-tab.active { background: white; color: #0d47a1; }
 [data-theme="dark"] .mech-tab.active { color: #0d47a1; }
+@media (max-width: 480px) {
+  .mech-tab { font-size: 11px; padding: 7px 4px; }
+  .mech-tab-locked::after { content: ' 🔒'; font-size: 9px; }
+}
 .mech-panel { display: none; }
 .mech-panel.active { display: block; animation: fadeIn 0.25s ease; }
 
@@ -1843,7 +1849,7 @@ input[type=range] { max-width: 100%; }
         <div class="home-stat-label">Projects</div>
       </div>
       <div class="home-stat-card" onclick="showPage('quiz')">
-        <div class="home-stat-num">20</div>
+        <div class="home-stat-num">30</div>
         <div class="home-stat-label">Questions</div>
       </div>
     </div>
@@ -2019,6 +2025,9 @@ input[type=range] { max-width: 100%; }
             <label>Resistance (Ω): <strong id="rValue" style="color:#7b1fa2;">100 Ω</strong></label>
             <input type="range" id="resistance" min="0" max="500" value="100" step="5" oninput="updateCircuit()">
           </div>
+          <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">
+            <button class="exp-btn exp-btn-blue" onclick="recordData()">Record Reading</button>
+          </div>
         </div>
         <div class="readout-row">
           <div class="readout-box"><div class="readout-label">Voltage</div><div class="readout-val" id="roV" style="color:#e53935;">10.0 V</div></div>
@@ -2056,11 +2065,6 @@ input[type=range] { max-width: 100%; }
           <div class="exp-step"><div class="exp-step-num">4</div><div class="exp-step-text">Use Record to save readings and plot a graph to confirm the linear relationship.</div></div>
         </div>
         <div class="note-box" style="margin-top:12px;">The graph of Voltage vs Current should be a straight line through the origin, confirming V is proportional to I.</div>
-        <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">
-          <button class="exp-btn exp-btn-blue" onclick="recordData()">Record Reading</button>
-          <button class="exp-btn exp-btn-green" onclick="showGraph()">Show Graph</button>
-          <button class="exp-btn exp-btn-red" onclick="resetExperiment()">Reset</button>
-        </div>
         <h4 style="margin-top:18px;font-size:14px;color:var(--pg-text);">Recorded Data</h4>
         <div style="overflow-x:auto;">
           <table class="exp-table">
@@ -2068,12 +2072,19 @@ input[type=range] { max-width: 100%; }
             <tbody id="dataTable"></tbody>
           </table>
         </div>
+        <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">
+          <button class="exp-btn exp-btn-green" onclick="showGraph()">Show Graph</button>
+        </div>
         <div id="graphContainer" style="display:none;margin-top:20px;">
           <div style="background:var(--pg-panel-bg);border-radius:8px;padding:12px 16px;margin-bottom:10px;border:1px solid var(--pg-border);">
             <strong style="font-size:14px;color:var(--pg-accent);">Voltage vs Current Graph</strong>
             <p style="font-size:12px;color:var(--pg-text-secondary);margin:4px 0 0;">Straight line through origin confirms Ohm's Law.</p>
           </div>
           <div class="chart-wrap"><canvas id="ohmsChart"></canvas></div>
+        </div>
+        <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:6px;justify-content:space-between;align-items:center;">
+          <button class="exp-btn exp-btn-red" onclick="resetExperiment()">Reset</button>
+          <button class="module-back-btn" onclick="showExp(null)" style="margin:0;">← Back to Experiments</button>
         </div>
       </div>
     </div>
@@ -2116,6 +2127,9 @@ input[type=range] { max-width: 100%; }
           </div>
         </div>
         <div class="note-box">Precaution: Keep the angle of release under 15° so the small-angle approximation holds and the formula T = 2π√(L/g) remains valid.</div>
+        <div style="margin-top:16px;display:flex;justify-content:flex-end;">
+          <button class="module-back-btn" onclick="showExp(null)" style="margin:0;">← Back to Experiments</button>
+        </div>
       </div>
     </div>
 
@@ -2175,6 +2189,9 @@ input[type=range] { max-width: 100%; }
             <span class="exp-result-label">v = 2d / t</span>
             <span class="exp-result-val" id="echoV">340 m/s</span>
           </div>
+          <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">
+            <button class="exp-btn exp-btn-blue" onclick="recordWaveData()">Record Reading</button>
+          </div>
         </div>
         <div class="note-box">Precautions: Use a large smooth flat surface for the best echo. Avoid windy conditions. Take at least 5 readings and average them.</div>
         <div class="exp-section-title">Data Table</div>
@@ -2184,9 +2201,9 @@ input[type=range] { max-width: 100%; }
             <tbody id="waveDataTable"></tbody>
           </table>
         </div>
-        <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">
-          <button class="exp-btn exp-btn-blue" onclick="recordWaveData()">Record Reading</button>
+        <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:6px;justify-content:space-between;align-items:center;">
           <button class="exp-btn exp-btn-red" onclick="resetWaveData()">Reset</button>
+          <button class="module-back-btn" onclick="showExp(null)" style="margin:0;">← Back to Experiments</button>
         </div>
       </div>
     </div>
@@ -2295,12 +2312,12 @@ input[type=range] { max-width: 100%; }
 <section id="quiz">
   <div class="page-wrap">
     <h2>Quick Quiz</h2>
-    <p class="page-subtitle">20 questions covering Mechanics, Electricity, and Waves. One question at a time with instant feedback.</p>
+    <p class="page-subtitle">30 questions covering Mechanics, Electricity, and Waves — 10 from each module. One question at a time with instant feedback.</p>
     <div class="card">
       <h3>Test Your Physics Knowledge</h3>
       <div class="quiz-progress-bar-wrap">
         <div class="quiz-progress-track"><div class="quiz-progress-fill" id="mainQuizProgress"></div></div>
-        <span class="quiz-counter-badge" id="mainQuizCounter">Q 1 of 20</span>
+        <span class="quiz-counter-badge" id="mainQuizCounter">Q 1 of 30</span>
         <span class="quiz-score-badge" id="mainQuizScore">Score: 0</span>
         <span id="mainQuizTimerBadge" style="background:rgba(245,127,23,0.15);color:#e65100;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:bold;white-space:nowrap;font-family:var(--font-heading);">⏱ 30s</span>
       </div>
@@ -2432,7 +2449,7 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeMobil
     const ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
     ctx.clearRect(0,0,W,H);
     const cx=W*0.5,cy=H*0.5;
-    const arms=3,starsPerArm=320;
+    const arms=0,starsPerArm=0;
     for(let arm=0;arm<arms;arm++){
       const armOffset=(arm/arms)*Math.PI*2;
       for(let s=0;s<starsPerArm;s++){
@@ -2461,6 +2478,7 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeMobil
 
 /* ══ NAVIGATION ═════════════════════════════════════════════ */
 function showPage(page){
+  window.scrollTo(0,0);
   document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
   document.getElementById('module-page').classList.remove('active');
   // Desktop nav
@@ -2478,15 +2496,14 @@ function showPage(page){
     showExp(null);
     setTimeout(()=>{initOhmsChart();updateCircuit();initCircuit();pendInitCanvas();updateWaveExp();calcEcho();},80);
   }
-  window.scrollTo(0,0);
 }
 function openModulePage(type){
+  window.scrollTo(0,0);
   document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('#mainNav button').forEach(b=>b.classList.remove('nav-active'));
   document.querySelectorAll('.mobile-nav-btn[id^="mnav-"]').forEach(b=>b.classList.remove('nav-active'));
   document.getElementById('module-page').classList.add('active');
   showModule(type);
-  window.scrollTo(0,0);
 }
 
 /* ══ EXPERIMENT SWITCHER ════════════════════════════════════ */
@@ -2496,6 +2513,7 @@ function showExp(id){
     const el=document.getElementById('exp-'+k);
     if(el)el.classList[id===k?'add':'remove']('active');
   });
+  if(id){window.scrollTo(0,0);}
   if(id==='ohms'){setTimeout(()=>{initOhmsChart();updateCircuit();initCircuit();},80);}
   if(id==='pendulum'){setTimeout(()=>{pendInitCanvas();},80);}
   if(id==='waves'){setTimeout(()=>{updateWaveExp();calcEcho();},80);}
@@ -2613,18 +2631,12 @@ function animateWaveExp(){
   const midY=H/2;
   const pixelsPerMeter=40;
   const lamPx=(waveExpSpdVal/waveExpFreqVal)*pixelsPerMeter/10;
-  const waves=[
-    {color:'#00e5ff',phase:0,amp:waveExpAmpVal},
-    {color:'rgba(0,229,255,0.2)',phase:Math.PI/6,amp:waveExpAmpVal*0.7}
-  ];
-  waves.forEach(wave=>{
-    ctx.beginPath();
-    for(let x=0;x<=W;x+=2){
-      const y=midY+wave.amp*Math.sin(2*Math.PI*x/lamPx - 2*Math.PI*waveExpFreqVal*waveExpTime+wave.phase);
-      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-    }
-    ctx.strokeStyle=wave.color;ctx.lineWidth=2.5;ctx.stroke();
-  });
+  ctx.beginPath();
+  for(let x=0;x<=W;x+=2){
+    const y=midY+waveExpAmpVal*Math.sin(2*Math.PI*x/lamPx - 2*Math.PI*waveExpFreqVal*waveExpTime);
+    x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.strokeStyle='#00e5ff';ctx.lineWidth=2.5;ctx.stroke();
   ctx.fillStyle='rgba(0,229,255,0.5)';ctx.font='10px Arial';ctx.textAlign='left';
   ctx.fillText('v='+waveExpSpdVal+' m/s',6,14);
   ctx.fillText('f='+waveExpFreqVal+' Hz',6,26);
@@ -2729,22 +2741,22 @@ function showModule(type){
 
             <div class="lesson-section-heading"><span class="lesson-section-icon">📋</span>Topics in this Module</div>
             <div class="mech-topic-grid">
-              <span class="mech-topic-chip">📏 Distance &amp; Displacement</span>
-              <span class="mech-topic-chip">⚡ Speed &amp; Velocity</span>
-              <span class="mech-topic-chip">🚀 Acceleration</span>
-              <span class="mech-topic-chip">📊 Equations of Motion</span>
-              <span class="mech-topic-chip">📈 Graphs of Motion</span>
-              <span class="mech-topic-chip">⚖ Newton's 3 Laws</span>
-              <span class="mech-topic-chip">🔩 Force &amp; Friction</span>
-              <span class="mech-topic-chip">💥 Momentum</span>
-              <span class="mech-topic-chip">⚡ Impulse</span>
-              <span class="mech-topic-chip">🔧 Work</span>
-              <span class="mech-topic-chip">🔋 Energy</span>
-              <span class="mech-topic-chip">💪 Power</span>
-              <span class="mech-topic-chip">🌊 Pressure</span>
-              <span class="mech-topic-chip">⚙ Moments</span>
-              <span class="mech-topic-chip">⚖ Equilibrium</span>
-              <span class="mech-topic-chip">🧪 Density</span>
+              <span class="mech-topic-chip">Distance &amp; Displacement</span>
+              <span class="mech-topic-chip">Speed &amp; Velocity</span>
+              <span class="mech-topic-chip">Acceleration</span>
+              <span class="mech-topic-chip">Equations of Motion</span>
+              <span class="mech-topic-chip">Graphs of Motion</span>
+              <span class="mech-topic-chip">Newton's 3 Laws</span>
+              <span class="mech-topic-chip">Force &amp; Friction</span>
+              <span class="mech-topic-chip">Momentum</span>
+              <span class="mech-topic-chip">Impulse</span>
+              <span class="mech-topic-chip">Work</span>
+              <span class="mech-topic-chip">Energy</span>
+              <span class="mech-topic-chip">Power</span>
+              <span class="mech-topic-chip">Pressure</span>
+              <span class="mech-topic-chip">Moments</span>
+              <span class="mech-topic-chip">Equilibrium</span>
+              <span class="mech-topic-chip">Density</span>
             </div>
 
             <div class="lesson-section-heading"><span class="lesson-section-icon">🌍</span>Real-World Applications</div>
@@ -2832,6 +2844,7 @@ function showModule(type){
             <p class="lesson-text"><strong>Work</strong> is done when a force moves an object. <strong>Kinetic energy</strong> (KE) is the energy of motion. <strong>Gravitational potential energy</strong> (GPE) is stored by height. <strong>Power</strong> is the rate of doing work.</p>
             <div class="formula-box"><div class="formula-box-label">Work, Energy &amp; Power</div>W = Fd·cosθ &nbsp;|&nbsp; KE = ½mv² &nbsp;|&nbsp; GPE = mgh &nbsp;|&nbsp; P = W/t</div>
 
+            <p style="font-size:12px;color:var(--pg-text-muted);margin-bottom:8px;">👇 Tap any card below to expand its explanation.</p>
             <div class="concept-cards-grid">
               <div class="concept-card" onclick="this.classList.toggle('open')">
                 <div class="concept-header"><div class="concept-icon" style="background:rgba(13,71,161,0.1);">📏</div><div><div class="concept-title">Distance vs Displacement</div><div class="concept-formula">scalar vs vector</div></div></div>
@@ -2949,6 +2962,7 @@ function showModule(type){
             </div>
 
             <div class="lesson-section-heading"><span class="lesson-section-icon">💬</span>Scenario Questions</div>
+            <p style="font-size:12px;color:var(--pg-text-muted);margin-bottom:8px;">Press "Show Solution" on each scenario to reveal the worked answer.</p>
             ${scenarioHTML('mech-sc1','A ball is dropped from 20 m (g = 10 m/s²). How long does it take to reach the ground, and what is its speed on impact?','Using s = ½gt²: → 20 = ½ × 10 × t² → t² = 4 → <strong>t = 2 s</strong>. Impact speed: v = gt = 10 × 2 = <strong>20 m/s</strong>.')}
             ${scenarioHTML('mech-sc2','A car accelerates from 0 to 30 m/s in 10 s. Mass = 1500 kg. Find (a) acceleration and (b) net force.','(a) a = Δv/t = 30/10 = <strong>3 m/s²</strong>. (b) F = ma = 1500 × 3 = <strong>4500 N</strong>.')}
             ${scenarioHTML('mech-sc3','A 0.5 kg ball moving at 12 m/s strikes a wall and bounces back at 8 m/s. Find the change in momentum (impulse).','Initial p = 0.5 × 12 = 6 kg·m/s (forward). Final p = 0.5 × 8 = 4 kg·m/s (backward). Δp = 6 − (−4) = <strong>10 kg·m/s</strong> toward wall.')}
@@ -3037,18 +3051,18 @@ function showModule(type){
             <div class="callout-box info"><span class="callout-icon">💡</span><div>Almost every device you use — phone, fridge, light, computer — runs on electricity. Understanding circuits lets you troubleshoot, design, and innovate.</div></div>
             <div class="lesson-section-heading"><span class="lesson-section-icon">📋</span>Topics in this Module</div>
             <div class="mech-topic-grid">
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">⚡ Electric Charge</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">🔋 Current</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">📊 Voltage</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">🔩 Resistance</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">📐 Ohm's Law</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">🔗 Series Circuits</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">🔀 Parallel Circuits</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">💡 Electrical Power</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">🏠 Domestic Wiring</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">🧲 Electromagnetism</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">🌀 Magnetic Fields</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">🔄 Transformers</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Electric Charge</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Current</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Voltage</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Resistance</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Ohm's Law</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Series Circuits</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Parallel Circuits</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Electrical Power</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Domestic Wiring</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Electromagnetism</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Magnetic Fields</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Transformers</span>
             </div>
             <div class="summary-box" style="background:linear-gradient(135deg,rgba(123,31,162,0.06),transparent);">
               <div class="summary-box-title" style="color:#7b1fa2;">📌 Key Points</div>
@@ -3074,6 +3088,7 @@ function showModule(type){
 
             <hr class="lesson-divider">
             <div class="lesson-section-heading"><span class="lesson-section-icon">🔋</span>Voltage, Current &amp; Resistance</div>
+            <p style="font-size:12px;color:var(--pg-text-muted);margin-bottom:8px;">👇 Tap any card below to expand its explanation.</p>
             <div class="concept-cards-grid">
               <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:rgba(123,31,162,0.1);">🔋</div><div><div class="concept-title">Voltage (V)</div><div class="concept-formula">V = W / Q</div></div></div><div class="concept-body">Electrical potential difference — the "pressure" that drives current. A 9V battery gives 9 J of energy per coulomb of charge. Measured in Volts (V).</div></div>
               <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:rgba(46,125,50,0.1);">💡</div><div><div class="concept-title">Current (I)</div><div class="concept-formula">I = Q / t</div></div></div><div class="concept-body">Rate of flow of charge. 1 Ampere = 1 Coulomb per second. Conventional current flows + to −; electrons flow the other way.</div></div>
@@ -3144,6 +3159,7 @@ function showModule(type){
               <div class="mech-calc-result"><span class="mech-calc-result-label">I = V / R</span><span class="mech-calc-result-val" id="elecIOut">0.180 A</span></div>
             </div>
             <div class="lesson-section-heading"><span class="lesson-section-icon">💬</span>Scenario Questions</div>
+            <p style="font-size:12px;color:var(--pg-text-muted);margin-bottom:8px;">Press "Show Solution" on each scenario to reveal the worked answer.</p>
             ${scenarioHTML('elec-sc1','A torch bulb has resistance 40 Ω, connected to a 6 V battery. (a) Find the current. (b) A second identical bulb is added in series — what happens?','(a) I = V/R = 6/40 = <strong>0.15 A</strong>. (b) In series: R_total = 80 Ω → I = 6/80 = <strong>0.075 A</strong> — halved! Each bulb is dimmer.')}
             ${scenarioHTML('elec-sc2','A household appliance runs at 240 V drawing 5 A. (a) Find power. (b) Used 2 hours/day — weekly energy in kWh?','(a) P = VI = 240 × 5 = <strong>1200 W = 1.2 kW</strong>. (b) Weekly: 1.2 × 2 × 7 = <strong>16.8 kWh</strong>.')}
             ${scenarioHTML('elec-sc3','Two resistors (10 Ω and 15 Ω) are connected in parallel to a 30 V supply. Find the total current.','1/R_T = 1/10 + 1/15 = 3/30 + 2/30 = 5/30, so R_T = 6 Ω. I_T = V/R_T = 30/6 = <strong>5 A</strong>.')}
@@ -3228,18 +3244,18 @@ function showModule(type){
             <div class="callout-box info"><span class="callout-icon">💡</span><div>Waves carry information across the universe — light from distant stars, radio signals, sound in a concert hall. Understanding waves is understanding communication itself.</div></div>
             <div class="lesson-section-heading"><span class="lesson-section-icon">📋</span>Topics in this Module</div>
             <div class="mech-topic-grid">
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">〰 Types of Waves</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">🔊 Sound Waves</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">☀ Light &amp; EM Spectrum</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">📐 Amplitude</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">🔁 Frequency</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">📏 Wavelength</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">⚡ Wave Speed</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">🔁 Reflection</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">💧 Refraction</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">🌀 Diffraction</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">🎵 Interference</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">📡 Echoes</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Types of Waves</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Sound Waves</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Light &amp; EM Spectrum</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Amplitude</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Frequency</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Wavelength</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Wave Speed</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Reflection</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Refraction</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Diffraction</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Interference</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Echoes</span>
             </div>
             <div class="application-chips">
               <span class="app-chip">📻 Radio broadcasting</span>
@@ -3268,6 +3284,7 @@ function showModule(type){
           <div class="lesson-panel-card">
             <div class="lesson-section-heading"><span class="lesson-section-icon">〰</span>Types of Waves</div>
             <p class="lesson-text"><strong>Mechanical waves</strong> need a medium to travel (sound, water, seismic). <strong>Electromagnetic waves</strong> travel through a vacuum at c = 3×10⁸ m/s (light, radio, X-rays). <strong>Transverse waves</strong> oscillate perpendicular to travel; <strong>longitudinal waves</strong> oscillate parallel.</p>
+            <p style="font-size:12px;color:var(--pg-text-muted);margin-bottom:8px;">👇 Tap any card below to expand its explanation.</p>
             <div class="concept-cards-grid">
               <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:rgba(0,105,92,0.1);">〰</div><div><div class="concept-title">Transverse Waves</div><div class="concept-formula">oscillation ⊥ travel</div></div></div><div class="concept-body">Particles move at right angles to the wave direction. Examples: light, water waves, EM waves. Can be polarised. Peaks (crests) and troughs are visible.</div></div>
               <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:rgba(46,125,50,0.1);">🔊</div><div><div class="concept-title">Longitudinal Waves</div><div class="concept-formula">oscillation ∥ travel</div></div></div><div class="concept-body">Particles move parallel to the wave direction. Examples: sound, ultrasound, P-waves. Consist of compressions (high pressure) and rarefactions (low pressure).</div></div>
@@ -3351,6 +3368,7 @@ function showModule(type){
             </div>
 
             <div class="lesson-section-heading"><span class="lesson-section-icon">💬</span>Scenario Questions</div>
+            <p style="font-size:12px;color:var(--pg-text-muted);margin-bottom:8px;">Press "Show Solution" on each scenario to reveal the worked answer.</p>
             ${scenarioHTML('wave-sc1','A student claps near a cliff. The echo is heard 1.2 s later. The speed of sound is 340 m/s. How far is the cliff?','d = v × t / 2 = 340 × 1.2 / 2 = <strong>204 m</strong>.')}
             ${scenarioHTML('wave-sc2','A radio station broadcasts at 100 MHz. Speed of radio waves = 3×10⁸ m/s. What is the wavelength?','λ = v / f = 3×10⁸ / 10⁸ = <strong>3 m</strong>.')}
             ${scenarioHTML('wave-sc3','A wave has speed 1500 m/s and frequency 3000 Hz. Find the wavelength and describe what type of wave this might be.','λ = v / f = 1500 / 3000 = <strong>0.5 m</strong>. Speed of ~1500 m/s in liquid suggests this could be a sound wave in water (e.g. sonar).')}
@@ -3472,7 +3490,7 @@ function openProject(idx){
   <div class="proj-tabs"><button class="proj-tab active" id="ptab-btn-0" onclick="projTab(this,'ptab-overview-${idx}',${idx})">Overview</button><button class="proj-tab" id="ptab-btn-1" onclick="projTabGuarded('ptab-steps-${idx}',${idx},1)">Steps</button><button class="proj-tab" id="ptab-btn-2" onclick="projTabGuarded('ptab-reflect-${idx}',${idx},2)">Reflect</button><button class="proj-tab" id="ptab-btn-3" onclick="projTabGuarded('ptab-reward-${idx}',${idx},3)">Reward</button></div>
   <div id="tab-locked-msg" class="locked-msg">Complete and mark all steps before proceeding.</div>
   <div id="tab-reward-locked-msg" class="locked-msg">Answer all questions in Reflect first.</div>
-  <div id="ptab-overview-${idx}" class="proj-panel active"><div class="card" style="margin:0 0 14px;"><p style="font-size:13px;font-weight:bold;color:var(--pg-accent);margin:0 0 10px;">What You Will Learn</p>${p.learn.map(l=>`<div class="learn-row"><div class="learn-icon">✅</div><div class="learn-text">${l}</div></div>`).join('')}</div><div class="why-box"><strong>Why it matters:</strong> ${p.why}</div><div class="formula-box">${p.formula}</div><p style="font-size:13px;font-weight:bold;color:var(--pg-text);margin:14px 0 8px;">Materials Needed</p><div class="proj-materials">${matsHTML}</div><button class="mech-btn" onclick="projTabGuarded('ptab-steps-${idx}',${idx},1)">Start Experiment →</button></div>
+  <div id="ptab-overview-${idx}" class="proj-panel active"><div class="card" style="margin:0 0 14px;"><p style="font-size:13px;font-weight:bold;color:var(--pg-accent);margin:0 0 10px;">What You Will Learn</p>${p.learn.map(l=>`<div class="learn-row"><div class="learn-icon">✅</div><div class="learn-text">${l}</div></div>`).join('')}</div><div class="why-box"><strong>Why it matters:</strong> ${p.why}</div><div class="formula-box">${p.formula}</div><p style="font-size:13px;font-weight:bold;color:var(--pg-text);margin:14px 0 8px;">Materials Needed</p><div class="proj-materials">${matsHTML}</div><button class="mech-btn" onclick="projTabGuarded('ptab-steps-${idx}',${idx},1)">Start Project →</button></div>
   <div id="ptab-steps-${idx}" class="proj-panel"><p style="font-size:13px;color:var(--pg-text-secondary);margin-bottom:12px;">Follow each step carefully and mark done when finished.</p>${stepsHTML}<div id="steps-progress-${idx}" style="margin:10px 0;font-size:13px;color:var(--pg-accent);font-weight:bold;"></div><button class="mech-btn" onclick="projTabGuarded('ptab-reflect-${idx}',${idx},2)">Reflect on Results →</button></div>
   <div id="ptab-reflect-${idx}" class="proj-panel"><div class="card" style="margin:0 0 14px;"><p style="font-size:14px;font-weight:bold;color:var(--pg-accent);margin:0 0 12px;">Test Your Understanding</p>${qHTML}</div><button class="mech-btn" onclick="projTabGuarded('ptab-reward-${idx}',${idx},3)">Claim Your Reward →</button></div>
   <div id="ptab-reward-${idx}" class="proj-panel"><div id="reward-content-${idx}"></div></div>`;
@@ -3484,11 +3502,11 @@ function allStepsDone(idx){return projStepDone[idx]&&projStepDone[idx].every(Boo
 function allQuestionsAnswered(idx){return projQuizAnswered[idx]&&projQuizAnswered[idx].every(Boolean);}
 function projTabGuarded(panelId,idx,tabIdx){const lockMsg=document.getElementById('tab-locked-msg'),rewardLockMsg=document.getElementById('tab-reward-locked-msg');if(lockMsg)lockMsg.classList.remove('show');if(rewardLockMsg)rewardLockMsg.classList.remove('show');if((tabIdx===2||tabIdx===3)&&!allStepsDone(idx)){if(lockMsg)lockMsg.classList.add('show');setTimeout(()=>{if(lockMsg)lockMsg.classList.remove('show');},4000);return;}if(tabIdx===3&&!allQuestionsAnswered(idx)){if(rewardLockMsg)rewardLockMsg.classList.add('show');setTimeout(()=>{if(rewardLockMsg)rewardLockMsg.classList.remove('show');},4000);return;}if(tabIdx===3)buildReward(idx);projTab(document.getElementById('ptab-btn-'+tabIdx),panelId,idx);}
 function buildReward(idx){const p=projects[idx];const score=projQuizScore[idx]||0,total=p.questions.length,pct=Math.round(score/total*100);let grade,msg,bgColor;if(pct===100){grade='Perfect Score!';msg='Outstanding work!';bgColor='linear-gradient(135deg,#ffd600,#ffab00)';}else if(pct>=67){grade='Great Job!';msg='Well done!';bgColor='linear-gradient(135deg,#1e88e5,#0d47a1)';}else{grade='Keep Practising!';msg='Review and try again.';bgColor='linear-gradient(135deg,#78909c,#546e7a)';}const el=document.getElementById(`reward-content-${idx}`);if(!el)return;el.innerHTML=`<div class="badge-reward" style="background:${bgColor};"><div class="badge-icon">${p.badge}</div><div class="badge-title" style="color:white;">${p.badgeTitle} Badge</div><div class="badge-sub" style="color:rgba(255,255,255,0.9);margin-bottom:12px;">Earned <strong>${p.badgeXP}</strong></div><div style="background:rgba(255,255,255,0.3);border-radius:10px;padding:12px 16px;display:inline-block;min-width:200px;margin-bottom:12px;"><div style="font-size:28px;font-weight:bold;color:white;">${score} / ${total}</div><div style="font-size:13px;color:rgba(255,255,255,0.9);">${pct}%</div></div><div class="progress-bar-wrap" style="max-width:300px;margin:0 auto 10px;"><div class="progress-bar-fill" style="width:${pct}%;background:${pct>=67?'#43a047':'#90a4ae'};"></div></div><div style="font-size:14px;color:rgba(255,255,255,0.95);font-weight:bold;margin-bottom:6px;">${grade}</div><div style="font-size:13px;color:rgba(255,255,255,0.85);max-width:320px;margin:0 auto 14px;">${msg}</div></div><div style="margin-top:16px;text-align:center;"><button class="mech-btn" onclick="closeProject()">← Back to All Projects</button></div>`;}
-function projTab(btn,panelId,idx){const detail=document.getElementById('projectDetailContent');detail.querySelectorAll('.proj-tab').forEach(b=>b.classList.remove('active'));detail.querySelectorAll('.proj-panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');document.getElementById(panelId).classList.add('active');}
+function projTab(btn,panelId,idx){const detail=document.getElementById('projectDetailContent');detail.querySelectorAll('.proj-tab').forEach(b=>b.classList.remove('active'));detail.querySelectorAll('.proj-panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');document.getElementById(panelId).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
 function projAnswer(projIdx,qi,oi){if(projQuizAnswered[projIdx][qi])return;const q=projects[projIdx].questions[qi];projQuizAnswered[projIdx][qi]=true;if(oi===q.ans)projQuizScore[projIdx]=(projQuizScore[projIdx]||0)+1;const opts=document.querySelectorAll(`#pqopts-${qi} .proj-quiz-opt`);opts.forEach(b=>b.disabled=true);opts[oi].classList.add(oi===q.ans?'correct':'wrong');if(oi!==q.ans)opts[q.ans].classList.add('correct');const fb=document.getElementById(`pqfb-${qi}`);fb.textContent=q.exp;fb.className='proj-quiz-fb show '+(oi===q.ans?'ok':'no');}
 function closeProject(){document.getElementById('projectCardsGrid').style.display='grid';document.getElementById('projectDetail').style.display='none';document.getElementById('projectDetailContent').innerHTML='';}
 
-/* ══ MAIN 20-QUESTION QUIZ ══════════════════════════════════ */
+/* ══ MAIN 30-QUESTION QUIZ ══════════════════════════════════ */
 const mainQuizQuestions=[
   {cat:"Mechanics",q:"What is the SI unit of force?",opts:["Joule","Newton","Watt","Pascal"],ans:1,exp:"Force is measured in Newtons (N)."},
   {cat:"Mechanics",q:"A car travels 100 m east then 60 m west. What is its displacement?",opts:["160 m","40 m east","40 m west","100 m east"],ans:1,exp:"Displacement = 100 − 60 = 40 m east."},
@@ -3497,6 +3515,9 @@ const mainQuizQuestions=[
   {cat:"Mechanics",q:"An object falls for 2 s (g = 10 m/s²). How far?",opts:["10 m","20 m","40 m","5 m"],ans:1,exp:"h = ½gt² = ½ × 10 × 4 = 20 m."},
   {cat:"Mechanics",q:"Newton's First Law is called the law of…",opts:["Acceleration","Gravity","Inertia","Reaction"],ans:2,exp:"Newton's First Law — the law of inertia."},
   {cat:"Mechanics",q:"What is the momentum of a 4 kg object moving at 5 m/s?",opts:["0.8 kg·m/s","9 kg·m/s","20 kg·m/s","1.25 kg·m/s"],ans:2,exp:"p = mv = 4 × 5 = 20 kg·m/s."},
+  {cat:"Mechanics",q:"A car accelerates from 0 to 30 m/s in 6 s. What is its acceleration?",opts:["180 m/s²","5 m/s²","0.2 m/s²","36 m/s²"],ans:1,exp:"a = Δv/t = 30/6 = 5 m/s²."},
+  {cat:"Mechanics",q:"Work is calculated as…",opts:["mass × velocity","force × distance × cosθ","½mv²","mgh"],ans:1,exp:"W = Fd·cosθ — force times distance in the direction of the force."},
+  {cat:"Mechanics",q:"Which equation of motion correctly relates v, u, a, and t?",opts:["v = u + at²","v² = u + 2as","v = u + at","s = vt − ½at²"],ans:2,exp:"v = u + at is one of the four SUVAT equations."},
   {cat:"Electricity",q:"What is the unit of electric current?",opts:["Volt","Ohm","Ampere","Watt"],ans:2,exp:"Current is measured in Amperes (A)."},
   {cat:"Electricity",q:"Voltage doubles, resistance stays the same. Current?",opts:["Halves","Same","Doubles","Quadruples"],ans:2,exp:"I = V/R. V doubles → I doubles."},
   {cat:"Electricity",q:"In a parallel circuit, which is the same across all branches?",opts:["Current","Resistance","Voltage","Power"],ans:2,exp:"Voltage is the same across all parallel branches."},
@@ -3504,20 +3525,27 @@ const mainQuizQuestions=[
   {cat:"Electricity",q:"What creates the magnetic field in an electromagnet?",opts:["Iron alone","Current through coil","Battery voltage alone","Plastic rod"],ans:1,exp:"Current through the coil creates the magnetic field."},
   {cat:"Electricity",q:"Which formula gives electrical power?",opts:["P=IR","P=V/I","P=VI","P=V+I"],ans:2,exp:"P = VI."},
   {cat:"Electricity",q:"4Ω and 6Ω connected in series. Total resistance?",opts:["2.4Ω","10Ω","24Ω","1Ω"],ans:1,exp:"Series: R = 4 + 6 = 10 Ω."},
+  {cat:"Electricity",q:"A resistor has V = 12V and I = 0.5A. What is its resistance?",opts:["6Ω","24Ω","0.04Ω","12.5Ω"],ans:1,exp:"R = V/I = 12/0.5 = 24 Ω. Wait — 12/0.5 = 24 Ω."},
+  {cat:"Electricity",q:"Two 10Ω resistors in parallel give a total resistance of…",opts:["20Ω","5Ω","10Ω","1Ω"],ans:1,exp:"1/R = 1/10 + 1/10 = 2/10, so R = 5 Ω."},
+  {cat:"Electricity",q:"Which component opposes the flow of current in a circuit?",opts:["Ammeter","Voltmeter","Resistor","Switch"],ans:2,exp:"A resistor opposes current flow according to Ohm's Law."},
   {cat:"Waves",q:"Which type of wave can travel through a vacuum?",opts:["Sound","Water waves","Electromagnetic","Seismic"],ans:2,exp:"EM waves travel at 3×10⁸ m/s through vacuum."},
   {cat:"Waves",q:"A wave has f = 200 Hz and λ = 1.7 m. Speed?",opts:["201.7 m/s","340 m/s","117.6 m/s","200 m/s"],ans:1,exp:"v = fλ = 200 × 1.7 = 340 m/s."},
   {cat:"Waves",q:"What determines the loudness of sound?",opts:["Frequency","Wavelength","Speed","Amplitude"],ans:3,exp:"Greater amplitude = louder sound."},
   {cat:"Waves",q:"A longer pendulum has a… period.",opts:["Longer","Shorter","Same","Zero"],ans:0,exp:"T = 2π√(L/g). Longer L → longer T."},
   {cat:"Waves",q:"Sound bending around a corner is…",opts:["Reflection","Refraction","Interference","Diffraction"],ans:3,exp:"Diffraction."},
-  {cat:"Waves",q:"During refraction, which property stays constant?",opts:["Speed","Wavelength","Frequency","Amplitude"],ans:2,exp:"Frequency stays constant; speed and wavelength change."}
+  {cat:"Waves",q:"During refraction, which property stays constant?",opts:["Speed","Wavelength","Frequency","Amplitude"],ans:2,exp:"Frequency stays constant; speed and wavelength change."},
+  {cat:"Waves",q:"What is the speed of light in a vacuum?",opts:["3×10⁶ m/s","3×10⁸ m/s","3×10¹⁰ m/s","3×10⁴ m/s"],ans:1,exp:"c = 3×10⁸ m/s in a vacuum."},
+  {cat:"Waves",q:"In which type of wave do particles vibrate parallel to wave travel?",opts:["Transverse","Longitudinal","Electromagnetic","Surface"],ans:1,exp:"Longitudinal waves (e.g. sound) vibrate parallel to the direction of travel."},
+  {cat:"Waves",q:"An echo is heard 0.6 s after a clap. Speed of sound = 340 m/s. Distance to wall?",opts:["204 m","102 m","340 m","68 m"],ans:1,exp:"d = v×t/2 = 340×0.6/2 = 102 m."},
+  {cat:"Waves",q:"Which part of the electromagnetic spectrum has the shortest wavelength?",opts:["Radio waves","Visible light","X-rays","Gamma rays"],ans:3,exp:"Gamma rays have the shortest wavelength (and highest frequency) in the EM spectrum."}
 ];
 let mainQI=0,mainScore=0,mainAnswered=false,mainTimerInterval=null,mainTimeLeft=30;
 let mainIsFirst=true;
-function mainQuizInit(){mainQI=0;mainScore=0;mainAnswered=false;mainIsFirst=true;clearInterval(mainTimerInterval);mainTimerInterval=null;mainTimeLeft=30;document.getElementById('mainQuizFinal').style.display='none';document.getElementById('mainQBox').style.display='block';document.getElementById('mainQuizProgress').style.width='0%';document.getElementById('mainQuizCounter').textContent='Q 1 of 20';document.getElementById('mainQuizScore').textContent='Score: 0';mainRenderQ();}
-function mainRenderQ(){mainAnswered=false;mainTimeLeft=30;clearInterval(mainTimerInterval);const timerBadge=document.getElementById('mainQuizTimerBadge');if(timerBadge){timerBadge.textContent='⏱ 30s';timerBadge.style.background='rgba(245,127,23,0.15)';timerBadge.style.color='#e65100';timerBadge.style.animation='none';}mainTimerInterval=setInterval(function(){mainTimeLeft--;const tb=document.getElementById('mainQuizTimerBadge');if(tb){tb.textContent='⏱ '+mainTimeLeft+'s';if(mainTimeLeft<=10){tb.style.background='rgba(198,40,40,0.15)';tb.style.color='#c62828';}}if(mainTimeLeft<=0){clearInterval(mainTimerInterval);if(!mainAnswered)mainAnswer(-1);}},1000);const q=mainQuizQuestions[mainQI];document.getElementById('mainNextBtn').style.display='none';const numPill=mainIsFirst?'':` <span style="background:#f0f4fa;color:#555;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:bold;">Q ${mainQI+1} of 20</span>`;let html=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;"><span style="background:#0d47a1;color:white;border-radius:20px;padding:3px 12px;font-size:11px;font-weight:bold;">${q.cat}</span>${numPill}</div>`;html+=`<div class="mech-quiz-q">${q.q}</div><div class="mech-quiz-opts" id="mainOptBox">`;q.opts.forEach((o,i)=>{html+=`<button class="mech-quiz-opt" onclick="mainAnswer(${i})">${o}</button>`;});html+=`</div><div class="mech-quiz-feedback" id="mainQFB"></div>`;document.getElementById('mainQBox').innerHTML=html;}
-function mainAnswer(i){if(mainAnswered)return;mainAnswered=true;clearInterval(mainTimerInterval);const tb=document.getElementById('mainQuizTimerBadge');if(tb){tb.style.animation='none';}const q=mainQuizQuestions[mainQI];const btns=document.querySelectorAll('#mainOptBox .mech-quiz-opt');const correct=(i>=0)&&(i===q.ans);if(i>=0){btns[i].classList.add(correct?'correct':'wrong');if(!correct)btns[q.ans].classList.add('correct');}else{btns.forEach(b=>b.disabled=true);btns[q.ans].classList.add('correct');}if(correct)mainScore++;const fbEl=document.getElementById('mainQFB');fbEl.textContent=i<0?'⏱ Time up! '+q.exp:q.exp;fbEl.className='mech-quiz-feedback show '+(correct?'ok':'no');const done=mainQI+1;document.getElementById('mainQuizProgress').style.width=(done/20*100)+'%';document.getElementById('mainQuizCounter').textContent='Q '+done+' of 20';document.getElementById('mainQuizScore').textContent='Score: '+mainScore;const nb=document.getElementById('mainNextBtn');nb.textContent=mainQI<19?'Next Question →':'See Results 🏆';nb.style.display='inline-block';}
-function mainNextQ(){mainIsFirst=false;if(mainQI<19){mainQI++;mainRenderQ();}else{mainShowFinal();}}
-function mainShowFinal(){document.getElementById('mainQBox').style.display='none';document.getElementById('mainNextBtn').style.display='none';const pct=Math.round(mainScore/20*100);let grade,gc,msg;if(pct>=90){grade='Excellent! 🏆';gc='#2e7d32';msg='Outstanding! Strong grasp across all topics.';}else if(pct>=75){grade='Great Job! 🎉';gc='#1565c0';msg='Well done! Review a few more concepts.';}else if(pct>=55){grade='Good Effort! 👍';gc='#f57f17';msg='Good start! Revisit the Learning Modules.';}else{grade='Keep Practising! 📚';gc='#c62828';msg="Don't give up!";}document.getElementById('mainQuizFinal').style.display='block';document.getElementById('mainQuizFinal').innerHTML=`<div style="text-align:center;padding:24px 10px;background:#f9fafb;border-radius:10px;border:1px solid #dce6f5;"><div style="font-size:52px;">${pct>=75?'🏆':pct>=55?'👍':'📚'}</div><div style="font-size:20px;font-weight:bold;color:${gc};">${grade}</div><div style="font-size:34px;font-weight:bold;color:#0d47a1;">${mainScore}/20</div><div style="font-size:15px;color:#555;margin-bottom:14px;">${pct}%</div><div style="font-size:13px;color:#444;max-width:360px;margin:0 auto 20px;">${msg}</div><button class="mech-btn" onclick="mainQuizInit()">🔁 Try Again</button></div>`;}
+function mainQuizInit(){mainQI=0;mainScore=0;mainAnswered=false;mainIsFirst=true;clearInterval(mainTimerInterval);mainTimerInterval=null;mainTimeLeft=30;document.getElementById('mainQuizFinal').style.display='none';document.getElementById('mainQBox').style.display='block';document.getElementById('mainQuizProgress').style.width='0%';document.getElementById('mainQuizCounter').textContent='Q 1 of 30';document.getElementById('mainQuizScore').textContent='Score: 0';mainRenderQ();}
+function mainRenderQ(){mainAnswered=false;mainTimeLeft=30;clearInterval(mainTimerInterval);const timerBadge=document.getElementById('mainQuizTimerBadge');if(timerBadge){timerBadge.textContent='⏱ 30s';timerBadge.style.background='rgba(245,127,23,0.15)';timerBadge.style.color='#e65100';timerBadge.style.animation='none';}mainTimerInterval=setInterval(function(){mainTimeLeft--;const tb=document.getElementById('mainQuizTimerBadge');if(tb){tb.textContent='⏱ '+mainTimeLeft+'s';if(mainTimeLeft<=10){tb.style.background='rgba(198,40,40,0.15)';tb.style.color='#c62828';}}if(mainTimeLeft<=0){clearInterval(mainTimerInterval);if(!mainAnswered)mainAnswer(-1);}},1000);const q=mainQuizQuestions[mainQI];document.getElementById('mainNextBtn').style.display='none';const numPill=mainIsFirst?'':` <span style="background:#f0f4fa;color:#555;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:bold;">Q ${mainQI+1} of 30</span>`;let html=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;"><span style="background:#0d47a1;color:white;border-radius:20px;padding:3px 12px;font-size:11px;font-weight:bold;">${q.cat}</span>${numPill}</div>`;html+=`<div class="mech-quiz-q">${q.q}</div><div class="mech-quiz-opts" id="mainOptBox">`;q.opts.forEach((o,i)=>{html+=`<button class="mech-quiz-opt" onclick="mainAnswer(${i})">${o}</button>`;});html+=`</div><div class="mech-quiz-feedback" id="mainQFB"></div>`;document.getElementById('mainQBox').innerHTML=html;}
+function mainAnswer(i){if(mainAnswered)return;mainAnswered=true;clearInterval(mainTimerInterval);const tb=document.getElementById('mainQuizTimerBadge');if(tb){tb.style.animation='none';}const q=mainQuizQuestions[mainQI];const btns=document.querySelectorAll('#mainOptBox .mech-quiz-opt');const correct=(i>=0)&&(i===q.ans);if(i>=0){btns[i].classList.add(correct?'correct':'wrong');if(!correct)btns[q.ans].classList.add('correct');}else{btns.forEach(b=>b.disabled=true);btns[q.ans].classList.add('correct');}if(correct)mainScore++;const fbEl=document.getElementById('mainQFB');fbEl.textContent=i<0?'⏱ Time up! '+q.exp:q.exp;fbEl.className='mech-quiz-feedback show '+(correct?'ok':'no');const done=mainQI+1;document.getElementById('mainQuizProgress').style.width=(done/30*100)+'%';document.getElementById('mainQuizCounter').textContent='Q '+done+' of 30';document.getElementById('mainQuizScore').textContent='Score: '+mainScore;const nb=document.getElementById('mainNextBtn');nb.textContent=mainQI<29?'Next Question →':'See Results 🏆';nb.style.display='inline-block';}
+function mainNextQ(){mainIsFirst=false;if(mainQI<29){mainQI++;mainRenderQ();}else{mainShowFinal();}}
+function mainShowFinal(){document.getElementById('mainQBox').style.display='none';document.getElementById('mainNextBtn').style.display='none';const pct=Math.round(mainScore/30*100);let grade,gc,msg;if(pct>=90){grade='Excellent! 🏆';gc='#2e7d32';msg='Outstanding! Strong grasp across all topics.';}else if(pct>=75){grade='Great Job! 🎉';gc='#1565c0';msg='Well done! Review a few more concepts.';}else if(pct>=55){grade='Good Effort! 👍';gc='#f57f17';msg='Good start! Revisit the Learning Modules.';}else{grade='Keep Practising! 📚';gc='#c62828';msg="Don't give up!";}document.getElementById('mainQuizFinal').style.display='block';document.getElementById('mainQuizFinal').innerHTML=`<div style="text-align:center;padding:24px 10px;background:#f9fafb;border-radius:10px;border:1px solid #dce6f5;"><div style="font-size:52px;">${pct>=75?'🏆':pct>=55?'👍':'📚'}</div><div style="font-size:20px;font-weight:bold;color:${gc};">${grade}</div><div style="font-size:34px;font-weight:bold;color:#0d47a1;">${mainScore}/30</div><div style="font-size:15px;color:#555;margin-bottom:14px;">${pct}%</div><div style="font-size:13px;color:#444;max-width:360px;margin:0 auto 20px;">${msg}</div><button class="mech-btn" onclick="mainQuizInit()">🔁 Try Again</button></div>`;}
 
 function submitForm(){const name=document.getElementById('contactName').value.trim(),email=document.getElementById('contactEmail').value.trim(),subject=document.getElementById('contactSubject').value.trim(),message=document.getElementById('contactMessage').value.trim(),resultEl=document.getElementById('formResult');if(!name||!email||!message){resultEl.textContent='⚠ Please fill in name, email and message.';resultEl.className='error';return;}window.location.href=`mailto:256allex256@gmail.com?subject=${encodeURIComponent(subject||'Message from '+name)}&body=${encodeURIComponent('Name: '+name+'\nEmail: '+email+'\n\n'+message)}`;resultEl.textContent='✅ Email client opened. Please send to complete.';resultEl.className='success';}
 
