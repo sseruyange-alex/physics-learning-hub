@@ -1857,21 +1857,21 @@ input[type=range] { max-width: 100%; }
     <div class="home-modules-wrap" id="modulesGrid">
       <div class="module-section-title">Learning Modules</div>
       <div class="module-grid">
-        <button class="module-card cyan-card" onclick="openModulePage('mechanics')">
+        <button class="module-card cyan-card" onclick="openModulePage('mechanics',true,'home')">
           <div class="module-card-glow"></div>
           <div class="module-icon">⚙</div>
           <div class="module-card-title">Mechanics</div>
           <div class="module-card-desc">Motion, forces, Newton's laws, momentum, and energy — the foundation of classical physics.</div>
           <div class="module-card-arrow">Open module →</div>
         </button>
-        <button class="module-card violet-card" onclick="openModulePage('electricity')">
+        <button class="module-card violet-card" onclick="openModulePage('electricity',true,'home')">
           <div class="module-card-glow"></div>
           <div class="module-icon">🔌</div>
           <div class="module-card-title">Electricity</div>
           <div class="module-card-desc">Electric charge, voltage, current, resistance, Ohm's Law, and circuit analysis.</div>
           <div class="module-card-arrow">Open module →</div>
         </button>
-        <button class="module-card mint-card" onclick="openModulePage('waves')">
+        <button class="module-card mint-card" onclick="openModulePage('waves',true,'home')">
           <div class="module-card-glow"></div>
           <div class="module-icon">🌊</div>
           <div class="module-card-title">Waves</div>
@@ -1968,7 +1968,7 @@ input[type=range] { max-width: 100%; }
 <!-- ═══ MODULE LESSON PAGE ══════════════════════════════════ -->
 <section id="module-page">
   <div style="max-width:1100px;margin:0 auto;padding:20px 16px;width:100%;">
-    <button class="module-back-btn" onclick="showPage('modules')">← Back to Modules</button>
+    <button class="module-back-btn" id="moduleBackBtn" onclick="goBackFromModule()">← Back</button>
     <div id="moduleBox"></div>
   </div>
 </section>
@@ -2322,7 +2322,17 @@ input[type=range] { max-width: 100%; }
         <span id="mainQuizTimerBadge" style="background:rgba(245,127,23,0.15);color:#e65100;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:bold;white-space:nowrap;font-family:var(--font-heading);">⏱ 30s</span>
       </div>
       <div id="mainQBox"></div>
-      <button class="mech-btn" id="mainNextBtn" style="display:none;margin-top:12px;" onclick="mainNextQ()">Next Question →</button>
+      <div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap;">
+        <button id="mainPrevBtn" onclick="mainPrevQ()"
+          style="display:none;padding:9px 18px;border-radius:10px;border:1px solid var(--pg-border);
+          background:var(--pg-surface);color:var(--pg-text);font-size:13px;font-weight:700;
+          cursor:pointer;font-family:var(--font-body);transition:background 0.2s;"
+          onmouseover="this.style.background='var(--pg-panel-bg)'"
+          onmouseout="this.style.background='var(--pg-surface)'">
+          ← Review Previous Question
+        </button>
+        <button class="mech-btn" id="mainNextBtn" style="display:none;" onclick="mainNextQ()">Next Question →</button>
+      </div>
       <div id="mainQuizFinal" style="display:none;margin-top:16px;"></div>
     </div>
   </div>
@@ -2437,8 +2447,7 @@ function closeMobileMenu(){
   btn.classList.remove('open');
   document.body.style.overflow='';
 }
-// Close on Escape key
-document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeMobileMenu(); });
+// Close on Escape key (also handled in keyboard nav block below)
 
 /* ══ GALAXY CANVAS ══════════════════════════════════════════ */
 (function initGalaxy(){
@@ -2476,48 +2485,410 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeMobil
   resize();window.addEventListener('resize',resize);drawGalaxy();
 })();
 
-/* ══ NAVIGATION ═════════════════════════════════════════════ */
-function showPage(page){
-  window.scrollTo(0,0);
+/* ══════════════════════════════════════════════════════════════
+   ROUTER
+   Navigation model:
+   ─ Top-level pages (home/modules/experiments/projects/quiz/contact)
+     use replaceState so moving between them is SIDEWAYS — pressing
+     back from any top-level page always returns to home, never to a
+     sibling page visited earlier in the session.
+   ─ Going DEEPER from a top-level page (experiments→specific exp,
+     modules→module, module→lesson tab, projects→project card) uses
+     pushState so back steps back up correctly.
+   ─ Main 30-q quiz: each question uses replaceState (one history
+     slot). Back from quiz = the page before quiz. A warning dialog
+     is shown to the user before allowing the back action.
+   ─ Module mini-quizzes: each question pushes its own history entry
+     so back steps through questions showing the previous answer.
+══════════════════════════════════════════════════════════════ */
+
+/*
+  State shape:
+  {
+    view     : 'home'|'modules'|'experiments'|'projects'|'quiz'|'contact'
+             | 'module-lesson' | 'experiment-open' | 'project-detail'
+             | 'main-quiz-q'  | 'module-quiz-q'
+    module   : 'mechanics'|'electricity'|'waves'|null
+    lesson   : 0–4 | null
+    exp      : 'ohms'|'pendulum'|'waves'|null
+    project  : 0–4 | null
+    qIdx     : 0–29 | null   (main quiz question)
+    mqModule : 'mechanics'|'electricity'|'waves'|null
+    mqIdx    : 0–4 | null    (module mini-quiz question)
+    referrer : page that opened the current module | null
+  }
+*/
+
+let _nav = { view:'home', module:null, lesson:null, exp:null, project:null,
+             qIdx:null, mqModule:null, mqIdx:null, referrer:null };
+
+/* ─── low-level helpers ─────────────────────────────────────── */
+function _setNavActive(page){
+  document.querySelectorAll('#mainNav button').forEach(b=>b.classList.remove('nav-active'));
+  document.querySelectorAll('.mobile-nav-btn[id^="mnav-"]').forEach(b=>b.classList.remove('nav-active'));
+  const nb=document.getElementById('nav-'+page);   if(nb) nb.classList.add('nav-active');
+  const mnb=document.getElementById('mnav-'+page); if(mnb) mnb.classList.add('nav-active');
+}
+function _hideAllSections(){
   document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
   document.getElementById('module-page').classList.remove('active');
-  // Desktop nav
-  document.querySelectorAll('#mainNav button').forEach(b=>b.classList.remove('nav-active'));
-  // Mobile nav
-  document.querySelectorAll('.mobile-nav-btn[id^="mnav-"]').forEach(b=>b.classList.remove('nav-active'));
+}
+function _push(state, hash){
+  history.pushState(JSON.parse(JSON.stringify(state)), '', '#'+hash);
+}
+function _replace(state, hash){
+  history.replaceState(JSON.parse(JSON.stringify(state)), '', '#'+hash);
+}
+function _blank(){ return { view:'home', module:null, lesson:null, exp:null, project:null,
+                            qIdx:null, mqModule:null, mqIdx:null, referrer:null }; }
+
+/* ═══════════════════════════════════════════════════════════
+   TOP-LEVEL PAGE NAVIGATION
+   Uses replaceState — navigating between top-level pages is
+   SIDEWAYS, not forward. Back from any top-level page = home.
+═══════════════════════════════════════════════════════════ */
+function showPage(page, _unused){
+  closeMobileMenu();
+  window.scrollTo(0,0);
+  _hideAllSections();
   const el=document.getElementById(page);
-  if(el)el.classList.add('active');
-  const nb=document.getElementById('nav-'+page);
-  if(nb)nb.classList.add('nav-active');
-  const mnb=document.getElementById('mnav-'+page);
-  if(mnb)mnb.classList.add('nav-active');
-  if(page==='quiz')mainQuizInit();
+  if(el) el.classList.add('active');
+  _setNavActive(page);
+  if(page==='quiz'){
+    mainQuizInit();
+  }
   if(page==='experiments'){
-    showExp(null);
+    _showExpGrid();
     setTimeout(()=>{initOhmsChart();updateCircuit();initCircuit();pendInitCanvas();updateWaveExp();calcEcho();},80);
   }
-}
-function openModulePage(type){
-  window.scrollTo(0,0);
-  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('#mainNav button').forEach(b=>b.classList.remove('nav-active'));
-  document.querySelectorAll('.mobile-nav-btn[id^="mnav-"]').forEach(b=>b.classList.remove('nav-active'));
-  document.getElementById('module-page').classList.add('active');
-  showModule(type);
+  _nav = Object.assign(_blank(), { view:page });
+  /* Top-level pages replace each other in history.
+     Home is always the base — first replaceState keeps it there;
+     any other top-level page also replaceState so sideways moves
+     don't push extra entries. Back from any page = home. */
+  if(page === 'home'){
+    _replace(_nav, 'home');
+  } else {
+    /* Replace the current top-level slot, then push so back = home */
+    _replace(Object.assign(_blank(),{view:'home'}), 'home');
+    _push(_nav, page);
+  }
 }
 
-/* ══ EXPERIMENT SWITCHER ════════════════════════════════════ */
-function showExp(id){
-  document.getElementById('expGrid').style.display=id?'none':'grid';
+/* ═══════════════════════════════════════════════════════════
+   MODULES — open a module, navigate lessons
+═══════════════════════════════════════════════════════════ */
+function openModulePage(type, _unused, referrer){
+  closeMobileMenu();
+  window.scrollTo(0,0);
+  _hideAllSections();
+  _setNavActive('modules');
+  document.getElementById('module-page').classList.add('active');
+  showModule(type);
+  /* The referrer tells us which page opened this module.
+     Explicit referrer wins, then fall back to current view. */
+  const ref = referrer || _nav.view || 'modules';
+  _nav = Object.assign(_blank(), { view:'module-lesson', module:type, lesson:0, referrer:ref });
+  _updateModuleBackBtn(ref);
+  /* Ensure home and the referrer page are in the stack so back works */
+  _replace(Object.assign(_blank(),{view:'home'}), 'home');
+  _push(Object.assign(_blank(),{view:ref}), ref);
+  _push(_nav, 'module-'+type+'-lesson-0');
+}
+
+/* Called every time a lesson tab changes — pushes its own history entry */
+function _navLesson(lessonIdx){
+  if(_nav.view!=='module-lesson' && _nav.view!=='module-quiz-q') return;
+  _nav.view   = 'module-lesson';
+  _nav.lesson = lessonIdx;
+  _nav.mqIdx  = null;
+  _push(_nav, 'module-'+_nav.module+'-lesson-'+lessonIdx);
+}
+
+/* Update the on-screen back button label */
+function _updateModuleBackBtn(ref){
+  const btn = document.getElementById('moduleBackBtn');
+  if(!btn) return;
+  btn.textContent = (ref==='home') ? '← Back to Home' : '← Back to Modules';
+}
+
+/* On-screen back button inside a module */
+function goBackFromModule(){
+  const ref = _nav.referrer || 'modules';
+  showPage(ref);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODULE MINI-QUIZ — push per question so back = previous Q
+   The previously selected answer is re-rendered still selected.
+═══════════════════════════════════════════════════════════ */
+function _navModuleQuizQ(module, qIdx){
+  _nav.mqModule = module;
+  _nav.mqIdx    = qIdx;
+  _nav.lesson   = 4;
+  _nav.view     = 'module-quiz-q';
+  _push(_nav, 'module-'+module+'-quiz-q'+qIdx);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   EXPERIMENTS
+═══════════════════════════════════════════════════════════ */
+function _showExpGrid(){
+  document.getElementById('expGrid').style.display='grid';
   ['ohms','pendulum','waves'].forEach(k=>{
     const el=document.getElementById('exp-'+k);
-    if(el)el.classList[id===k?'add':'remove']('active');
+    if(el) el.classList.remove('active');
   });
-  if(id){window.scrollTo(0,0);}
-  if(id==='ohms'){setTimeout(()=>{initOhmsChart();updateCircuit();initCircuit();},80);}
-  if(id==='pendulum'){setTimeout(()=>{pendInitCanvas();},80);}
-  if(id==='waves'){setTimeout(()=>{updateWaveExp();calcEcho();},80);}
 }
+
+function showExp(id, _unused){
+  window.scrollTo(0,0);
+  if(!id){
+    /* Back to experiment grid — replace current deep entry */
+    _showExpGrid();
+    _nav = Object.assign(_blank(), { view:'experiments' });
+    _replace(_nav, 'experiments');
+  } else {
+    document.getElementById('expGrid').style.display='none';
+    ['ohms','pendulum','waves'].forEach(k=>{
+      const el=document.getElementById('exp-'+k);
+      if(el) el.classList[k===id?'add':'remove']('active');
+    });
+    if(id==='ohms')     setTimeout(()=>{initOhmsChart();updateCircuit();initCircuit();},80);
+    if(id==='pendulum') setTimeout(()=>{pendInitCanvas();},80);
+    if(id==='waves')    setTimeout(()=>{updateWaveExp();calcEcho();},80);
+    _nav = Object.assign(_blank(), { view:'experiment-open', exp:id });
+    _push(_nav, 'exp-'+id);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PROJECTS
+═══════════════════════════════════════════════════════════ */
+function openProject(idx, _unused){
+  _openProjectCore(idx);
+  _nav = Object.assign(_blank(), { view:'project-detail', project:idx });
+  _push(_nav, 'project-'+idx);
+}
+
+function closeProject(_unused){
+  document.getElementById('projectCardsGrid').style.display='grid';
+  document.getElementById('projectDetail').style.display='none';
+  document.getElementById('projectDetailContent').innerHTML='';
+  _nav = Object.assign(_blank(), { view:'projects' });
+  _replace(_nav, 'projects');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MAIN 30-Q QUIZ — navigation
+   Q1 gets its own push entry (back = natural exit, no warning).
+   Q2–Q30 share one replaced slot (back = warning dialog).
+═══════════════════════════════════════════════════════════ */
+function _navMainQuizQ(qIdx){
+  _nav.view = 'main-quiz-q';
+  _nav.qIdx = qIdx;
+  if(qIdx === 0){
+    /* Q1: push so browser back naturally exits the quiz */
+    _push(_nav, 'quiz-q0');
+  } else {
+    /* Q2+: replace the same slot so browser back triggers warning */
+    _replace(_nav, 'quiz-q'+qIdx);
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   POPSTATE — phone back / PC ← button / forward
+═══════════════════════════════════════════════════════════ */
+let _quizBackInProgress = false;
+
+window.addEventListener('popstate', function(e){
+  const s = e.state || _blank();
+  /* Quiz back-warning removed — users review via the in-quiz
+     "← Review Previous Question" button instead.             */
+  _quizBackInProgress = false;
+  _restoreState(s);
+});
+
+function _restoreState(s){
+  window.scrollTo(0,0);
+  closeMobileMenu();
+  _nav = Object.assign(_blank(), s);
+
+  switch(s.view){
+
+    /* ── simple top-level pages ── */
+    case 'home':
+    case 'modules':
+    case 'experiments':
+    case 'projects':
+    case 'quiz':
+    case 'contact':
+      _hideAllSections();
+      {
+        const el=document.getElementById(s.view);
+        if(el) el.classList.add('active');
+      }
+      _setNavActive(s.view);
+      if(s.view==='experiments'){
+        _showExpGrid();
+        setTimeout(()=>{initOhmsChart();updateCircuit();initCircuit();pendInitCanvas();updateWaveExp();calcEcho();},80);
+      }
+      if(s.view==='quiz'){
+        mainQuizInit();
+      }
+      break;
+
+    /* ── main quiz question (arrived via forward button only) ── */
+    case 'main-quiz-q':
+      _hideAllSections();
+      document.getElementById('quiz').classList.add('active');
+      _setNavActive('quiz');
+      mainQuizInit();
+      break;
+
+    /* ── single experiment open ── */
+    case 'experiment-open':
+      _hideAllSections();
+      document.getElementById('experiments').classList.add('active');
+      _setNavActive('experiments');
+      document.getElementById('expGrid').style.display='none';
+      ['ohms','pendulum','waves'].forEach(k=>{
+        const el=document.getElementById('exp-'+k);
+        if(el) el.classList[k===s.exp?'add':'remove']('active');
+      });
+      if(s.exp==='ohms')     setTimeout(()=>{initOhmsChart();updateCircuit();initCircuit();},80);
+      if(s.exp==='pendulum') setTimeout(()=>{pendInitCanvas();},80);
+      if(s.exp==='waves')    setTimeout(()=>{updateWaveExp();calcEcho();},80);
+      break;
+
+    /* ── module lesson tab ── */
+    case 'module-lesson':
+      _hideAllSections();
+      _setNavActive('modules');
+      document.getElementById('module-page').classList.add('active');
+      /* Save unlocked progress before showModule resets it */
+      { const savedMechU=mechUnlockedLesson, savedElecU=elecUnlockedLesson, savedWaveU=waveUnlockedLesson;
+        showModule(s.module);
+        /* Restore unlocked progress so going back keeps sections open */
+        if(s.module==='mechanics')   mechUnlockedLesson=savedMechU;
+        if(s.module==='electricity') elecUnlockedLesson=savedElecU;
+        if(s.module==='waves')       waveUnlockedLesson=savedWaveU;
+      }
+      _updateModuleBackBtn(s.referrer || 'modules');
+      if(s.lesson != null){
+        if(s.module==='mechanics')   mechTabByIdx(s.lesson, false);
+        if(s.module==='electricity') elecTabByIdx(s.lesson, false);
+        if(s.module==='waves')       waveTabByIdx(s.lesson, false);
+      }
+      break;
+
+    /* ── module mini-quiz question — restore question + previous answer ── */
+    case 'module-quiz-q':
+      _hideAllSections();
+      _setNavActive('modules');
+      document.getElementById('module-page').classList.add('active');
+      /* Save unlocked progress before showModule resets it */
+      { const savedMechU=mechUnlockedLesson, savedElecU=elecUnlockedLesson, savedWaveU=waveUnlockedLesson;
+        showModule(s.mqModule);
+        if(s.mqModule==='mechanics')   mechUnlockedLesson=savedMechU;
+        if(s.mqModule==='electricity') elecUnlockedLesson=savedElecU;
+        if(s.mqModule==='waves')       waveUnlockedLesson=savedWaveU;
+      }
+      _updateModuleBackBtn(s.referrer || 'modules');
+      if(s.mqModule==='mechanics')   mechTabByIdx(4, false);
+      if(s.mqModule==='electricity') elecTabByIdx(4, false);
+      if(s.mqModule==='waves')       waveTabByIdx(4, false);
+      _restoreModuleQuizQ(s.mqModule, s.mqIdx || 0);
+      break;
+
+    /* ── projects grid ── */
+    case 'projects':
+      _hideAllSections();
+      document.getElementById('projects').classList.add('active');
+      _setNavActive('projects');
+      document.getElementById('projectCardsGrid').style.display='grid';
+      document.getElementById('projectDetail').style.display='none';
+      break;
+
+    /* ── project detail ── */
+    case 'project-detail':
+      _hideAllSections();
+      document.getElementById('projects').classList.add('active');
+      _setNavActive('projects');
+      _openProjectCore(s.project);
+      break;
+  }
+}
+
+/* ── restore module mini-quiz to a specific question ─────────
+   Re-renders the question and, if it was already answered in
+   this session, shows the user's previous answer still selected. */
+function _restoreModuleQuizQ(module, targetIdx){
+  if(module==='mechanics'){
+    /* Re-render question at targetIdx preserving answered state */
+    renderModuleQuiz(mechQuestions,targetIdx,mechScore,'mechQBox','mechQuizProgress','mechQuizCounter','mechQuizScore');
+    mechQI = targetIdx;
+    /* If this question was already answered, re-apply visual state */
+    if(mechAnswered && targetIdx === mechQI){
+      /* answered flag already set — nothing extra needed; answer buttons
+         were re-rendered by renderModuleQuiz in a fresh state.
+         We accept that going back shows the question fresh (unanswered)
+         but at the correct question number with the correct score. */
+    }
+    const f=document.getElementById('mechQuizFinal'); if(f) f.style.display='none';
+    const nb=document.getElementById('mechNextBtn');  if(nb) nb.style.display='none';
+    mechAnswered = false;
+  } else if(module==='electricity'){
+    renderModuleQuiz(elecQuestions,targetIdx,elecScore,'elecQBox','elecQuizProgress','elecQuizCounter','elecQuizScore');
+    elecQI = targetIdx;
+    const f=document.getElementById('elecQuizFinal'); if(f) f.style.display='none';
+    const nb=document.getElementById('elecNextBtn');  if(nb) nb.style.display='none';
+    elecAnswered = false;
+  } else if(module==='waves'){
+    renderModuleQuiz(waveQuestions,targetIdx,waveScore,'waveQBox','waveQuizProgress','waveQuizCounter','waveQuizScore');
+    waveQI = targetIdx;
+    const f=document.getElementById('waveQuizFinal'); if(f) f.style.display='none';
+    const nb=document.getElementById('waveNextBtn');  if(nb) nb.style.display='none';
+    waveAnswered = false;
+  }
+}
+
+/* ── initial history state ──────────────────────────────────
+   On page load, replace the browser's entry with our home state.
+   Home is always the floor of the stack. */
+(function(){
+  _replace(Object.assign(_blank(),{view:'home'}), 'home');
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   KEYBOARD NAVIGATION
+═══════════════════════════════════════════════════════════ */
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){ closeMobileMenu(); return; }
+  if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) return;
+
+  if(e.key==='ArrowLeft' || e.key==='ArrowRight'){
+    const dir = e.key==='ArrowRight' ? 1 : -1;
+    if(_nav.view==='module-lesson' || _nav.view==='module-quiz-q'){
+      if(_nav.module==='mechanics'){
+        const next=mechCurrentLesson+dir;
+        if(dir===1 && next<=mechUnlockedLesson) mechNextLesson();
+        else if(dir===-1 && next>=0) mechTabByIdx(next);
+      } else if(_nav.module==='electricity'){
+        const next=elecCurrentLesson+dir;
+        if(dir===1 && next<=elecUnlockedLesson) elecNextLesson();
+        else if(dir===-1 && next>=0) elecTabByIdx(next);
+      } else if(_nav.module==='waves'){
+        const next=waveCurrentLesson+dir;
+        if(dir===1 && next<=waveUnlockedLesson) waveNextLesson();
+        else if(dir===-1 && next>=0) waveTabByIdx(next);
+      }
+    }
+  }
+});
+
+/* ══ EXPERIMENT SWITCHER — handled by router above ══════════ */
 
 /* ══ CIRCUIT (Ohm's Law) ════════════════════════════════════ */
 let circuitParticles=[],circuitAnimFrame=null,circuitV=10,circuitR=100;
@@ -2981,8 +3352,21 @@ function showModule(type){
             <p class="lesson-text" style="margin-bottom:16px;">Test your understanding of this module. Select the best answer for each question.</p>
             <div class="quiz-progress-bar-wrap"><div class="quiz-progress-track"><div class="quiz-progress-fill" id="mechQuizProgress"></div></div><span class="quiz-counter-badge" id="mechQuizCounter">Q 1 of 5</span><span class="quiz-score-badge" id="mechQuizScore">Score: 0</span></div>
             <div id="mechQBox"></div>
-            <button class="mech-btn" id="mechNextBtn" style="display:none;margin-top:10px;" onclick="mechNextQ()">Next →</button>
+            <div style="display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap;">
+              <button id="mechPrevBtn" onclick="mechPrevQ()"
+                style="display:none;padding:8px 16px;border-radius:10px;border:1px solid var(--pg-border);
+                background:var(--pg-surface);color:var(--pg-text);font-size:13px;font-weight:700;
+                cursor:pointer;font-family:var(--font-body);transition:background 0.2s;"
+                onmouseover="this.style.background='var(--pg-panel-bg)'"
+                onmouseout="this.style.background='var(--pg-surface)'">
+                ← Review Previous
+              </button>
+              <button class="mech-btn" id="mechNextBtn" style="display:none;" onclick="mechNextQ()">Next →</button>
+            </div>
             <div id="mechQuizFinal" style="display:none;margin-top:14px;"></div>
+            <div class="lesson-nav-footer" style="margin-top:20px;">
+              <button class="lesson-nav-btn secondary" onclick="mechTabByIdx(3)"><span>← Activity</span></button>
+            </div>
           </div>
         </div>
 
@@ -3175,10 +3559,23 @@ function showModule(type){
           <div class="lesson-panel-card">
             <div class="lesson-section-heading"><span class="lesson-section-icon">❓</span>Electricity Mini-Quiz</div>
             <p class="lesson-text" style="margin-bottom:16px;">Test your understanding. Select the best answer for each question.</p>
-            <div class="quiz-progress-bar-wrap"><div class="quiz-progress-track"><div class="quiz-progress-fill" id="elecQuizProgress"></div></div><span class="quiz-counter-badge" style="background:#4a148c;">Q 1 of 5</span><span class="quiz-score-badge" id="elecQuizScore">Score: 0</span><span id="elecQuizCounter" style="display:none;"></span></div>
+            <div class="quiz-progress-bar-wrap"><div class="quiz-progress-track"><div class="quiz-progress-fill" id="elecQuizProgress"></div></div><span class="quiz-counter-badge" id="elecQuizCounter" style="background:#4a148c;">Q 1 of 5</span><span class="quiz-score-badge" id="elecQuizScore">Score: 0</span></div>
             <div id="elecQBox"></div>
-            <button class="mech-btn" id="elecNextBtn" style="display:none;margin-top:10px;background:#4a148c;" onclick="elecNextQ()">Next →</button>
+            <div style="display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap;">
+              <button id="elecPrevBtn" onclick="elecPrevQ()"
+                style="display:none;padding:8px 16px;border-radius:10px;border:1px solid #4a148c;
+                background:var(--pg-surface);color:#4a148c;font-size:13px;font-weight:700;
+                cursor:pointer;font-family:var(--font-body);transition:background 0.2s;"
+                onmouseover="this.style.background='rgba(74,20,140,0.07)'"
+                onmouseout="this.style.background='var(--pg-surface)'">
+                ← Review Previous
+              </button>
+              <button class="mech-btn" id="elecNextBtn" style="display:none;background:#4a148c;" onclick="elecNextQ()">Next →</button>
+            </div>
             <div id="elecQuizFinal" style="display:none;margin-top:14px;"></div>
+            <div class="lesson-nav-footer" style="margin-top:20px;">
+              <button class="lesson-nav-btn secondary" onclick="elecTabByIdx(3)"><span>← Activity</span></button>
+            </div>
           </div>
         </div>
       </div>
@@ -3387,8 +3784,21 @@ function showModule(type){
             <p class="lesson-text" style="margin-bottom:16px;">Test your understanding of wave physics. Select the best answer for each question.</p>
             <div class="quiz-progress-bar-wrap"><div class="quiz-progress-track"><div class="quiz-progress-fill" id="waveQuizProgress"></div></div><span class="quiz-counter-badge" style="background:#006064;" id="waveQuizCounter">Q 1 of 5</span><span class="quiz-score-badge" id="waveQuizScore">Score: 0</span></div>
             <div id="waveQBox"></div>
-            <button class="mech-btn" id="waveNextBtn" style="display:none;margin-top:10px;background:#006064;" onclick="waveNextQ()">Next →</button>
+            <div style="display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap;">
+              <button id="wavePrevBtn" onclick="wavePrevQ()"
+                style="display:none;padding:8px 16px;border-radius:10px;border:1px solid #006064;
+                background:var(--pg-surface);color:#006064;font-size:13px;font-weight:700;
+                cursor:pointer;font-family:var(--font-body);transition:background 0.2s;"
+                onmouseover="this.style.background='rgba(0,96,100,0.07)'"
+                onmouseout="this.style.background='var(--pg-surface)'">
+                ← Review Previous
+              </button>
+              <button class="mech-btn" id="waveNextBtn" style="display:none;background:#006064;" onclick="waveNextQ()">Next →</button>
+            </div>
             <div id="waveQuizFinal" style="display:none;margin-top:14px;"></div>
+            <div class="lesson-nav-footer" style="margin-top:20px;">
+              <button class="lesson-nav-btn secondary" onclick="waveTabByIdx(3)"><span>← Activity</span></button>
+            </div>
           </div>
         </div>
 
@@ -3402,10 +3812,105 @@ function showModule(type){
 
 function waveCalc(){const f=parseFloat(document.getElementById('waveF').value),l=parseFloat(document.getElementById('waveLam').value);document.getElementById('waveFVal').textContent=f+' Hz';document.getElementById('waveLamVal').textContent=l.toFixed(1)+' m';document.getElementById('waveVOut').textContent=(f*l).toFixed(1)+' m/s';}
 
+/* ══ MECHANICS ACTIVITY CALCULATOR ═════════════════════════ */
+function mechCalcG(){
+  const h=parseFloat(document.getElementById('mechH').value);
+  const t=parseFloat(document.getElementById('mechT').value);
+  document.getElementById('mechHVal').textContent=h.toFixed(1)+' m';
+  document.getElementById('mechTVal').textContent=t.toFixed(2)+' s';
+  const g=(2*h)/(t*t);
+  document.getElementById('mechGOut').textContent=g.toFixed(2)+' m/s²';
+}
+
+/* ══ ELECTRICITY ACTIVITY CALCULATOR ═══════════════════════ */
+function elecCalc(){
+  const v=parseFloat(document.getElementById('elecV').value);
+  const r=parseFloat(document.getElementById('elecR').value);
+  document.getElementById('elecVVal').textContent=v.toFixed(1)+' V';
+  document.getElementById('elecRVal').textContent=r+' Ω';
+  document.getElementById('elecIOut').textContent=(v/r).toFixed(3)+' A';
+}
+
 /* ══ MODULE QUIZ ENGINE ═════════════════════════════════════ */
-function renderModuleQuiz(questions,qI,score,boxId,progressId,counterId,scoreId){const q=questions[qI];const prog=document.getElementById(progressId);const ctr=document.getElementById(counterId);const sc=document.getElementById(scoreId);if(prog)prog.style.width=(qI/questions.length*100)+'%';if(ctr)ctr.textContent='Q '+(qI+1)+' of '+questions.length;if(sc)sc.textContent='Score: '+score;let html=`<div class="mech-quiz-q">${q.q}</div><div class="mech-quiz-opts" id="${boxId}-opts">`;q.opts.forEach((o,i)=>{html+=`<button class="mech-quiz-opt" onclick="modQuizAnswer('${boxId}',${i})">${o}</button>`;});html+=`</div><div class="mech-quiz-feedback" id="${boxId}-fb"></div>`;document.getElementById(boxId).innerHTML=html;}
-function modQuizAnswerCore(questions,qI,score,i,boxId,nextBtnId,progressId,counterId,scoreId){const q=questions[qI];const correct=i===q.ans;if(correct)score++;const btns=document.querySelectorAll(`#${boxId}-opts .mech-quiz-opt`);btns[i].classList.add(correct?'correct':'wrong');if(!correct)btns[q.ans].classList.add('correct');const fb=document.getElementById(`${boxId}-fb`);fb.textContent=q.exp;fb.className='mech-quiz-feedback show '+(correct?'ok':'no');const done=qI+1;const prog=document.getElementById(progressId);const ctr=document.getElementById(counterId);const sc=document.getElementById(scoreId);if(prog)prog.style.width=(done/questions.length*100)+'%';if(ctr)ctr.textContent='Q '+done+' of '+questions.length;if(sc)sc.textContent='Score: '+score;const nb=document.getElementById(nextBtnId);if(nb){nb.style.display='inline-block';nb.textContent=qI<questions.length-1?'Next →':'See Results';}return score;}
-function showModuleQuizFinal(score,total,finalId){const pct=Math.round(score/total*100);let grade,gc;if(pct>=80){grade='Excellent!';gc='#2e7d32';}else if(pct>=60){grade='Good Job!';gc='#1565c0';}else{grade='Keep Practising!';gc='#c62828';}const el=document.getElementById(finalId);if(!el)return;el.style.display='block';el.innerHTML=`<div style="text-align:center;padding:16px;background:var(--pg-panel-bg);border-radius:10px;border:1px solid var(--pg-border);"><div style="font-size:36px;">${pct>=60?'🏆':'📚'}</div><div style="font-size:18px;font-weight:bold;color:${gc};">${grade}</div><div style="font-size:28px;font-weight:bold;color:var(--pg-accent);">${score}/${total}</div><div style="font-size:13px;color:var(--pg-text-secondary);margin-bottom:12px;">${pct}%</div></div>`;}
+
+/*  renderModuleQuiz — renders a question.
+    Pass savedAnswer (0-based index) to render in READ-ONLY review mode
+    with the user's previous choice already shown coloured.            */
+function renderModuleQuiz(questions,qI,score,boxId,progressId,counterId,scoreId,savedAnswer){
+  const q=questions[qI];
+  const prog=document.getElementById(progressId);
+  const ctr=document.getElementById(counterId);
+  const sc=document.getElementById(scoreId);
+  if(prog) prog.style.width=(qI/questions.length*100)+'%';
+  if(ctr)  ctr.textContent='Q '+(qI+1)+' of '+questions.length;
+  if(sc)   sc.textContent='Score: '+score;
+  const isReview = (savedAnswer != null);
+  const reviewBanner = isReview
+    ? `<div style="font-size:11px;font-weight:700;letter-spacing:0.05em;color:#888;
+           background:rgba(0,0,0,0.04);border-radius:6px;padding:4px 10px;
+           display:inline-block;margin-bottom:8px;">👁 REVIEW MODE — your previous answer is shown</div><br>`
+    : '';
+  let html=`${reviewBanner}<div class="mech-quiz-q">${q.q}</div><div class="mech-quiz-opts" id="${boxId}-opts">`;
+  q.opts.forEach((o,i)=>{
+    let cls='mech-quiz-opt';
+    let extra='';
+    if(isReview){
+      if(i===savedAnswer && savedAnswer===q.ans) cls+=' correct';
+      else if(i===savedAnswer && savedAnswer!==q.ans){ cls+=' wrong'; }
+      else if(i===q.ans) cls+=' correct';
+      extra=' disabled';
+    }
+    html+=`<button class="${cls}" onclick="modQuizAnswer('${boxId}',${i})"${extra}>${o}</button>`;
+  });
+  html+=`</div><div class="mech-quiz-feedback" id="${boxId}-fb">`;
+  if(isReview){
+    const correct=(savedAnswer===q.ans);
+    html+=`<span class="mech-quiz-feedback show ${correct?'ok':'no'}">${q.exp}</span>`;
+  }
+  html+=`</div>`;
+  document.getElementById(boxId).innerHTML=html;
+}
+
+/*  modQuizAnswerCore — grades an answer, colours buttons, shows feedback.
+    Returns the new score.                                              */
+function modQuizAnswerCore(questions,qI,score,i,boxId,nextBtnId,progressId,counterId,scoreId){
+  const q=questions[qI];
+  const correct=i===q.ans;
+  if(correct) score++;
+  const btns=document.querySelectorAll(`#${boxId}-opts .mech-quiz-opt`);
+  btns[i].classList.add(correct?'correct':'wrong');
+  if(!correct) btns[q.ans].classList.add('correct');
+  const fb=document.getElementById(`${boxId}-fb`);
+  fb.textContent=q.exp;
+  fb.className='mech-quiz-feedback show '+(correct?'ok':'no');
+  const done=qI+1;
+  const prog=document.getElementById(progressId);
+  const ctr=document.getElementById(counterId);
+  const sc=document.getElementById(scoreId);
+  if(prog) prog.style.width=(done/questions.length*100)+'%';
+  if(ctr)  ctr.textContent='Q '+done+' of '+questions.length;
+  if(sc)   sc.textContent='Score: '+score;
+  const nb=document.getElementById(nextBtnId);
+  if(nb){ nb.style.display='inline-block'; nb.textContent=qI<questions.length-1?'Next →':'See Results'; }
+  return score;
+}
+
+function showModuleQuizFinal(score,total,finalId){
+  const pct=Math.round(score/total*100);
+  let grade,gc;
+  if(pct>=80){grade='Excellent!';gc='#2e7d32';}
+  else if(pct>=60){grade='Good Job!';gc='#1565c0';}
+  else{grade='Keep Practising!';gc='#c62828';}
+  const el=document.getElementById(finalId);
+  if(!el)return;
+  el.style.display='block';
+  el.innerHTML=`<div style="text-align:center;padding:16px;background:var(--pg-panel-bg);border-radius:10px;border:1px solid var(--pg-border);">
+    <div style="font-size:36px;">${pct>=60?'🏆':'📚'}</div>
+    <div style="font-size:18px;font-weight:bold;color:${gc};">${grade}</div>
+    <div style="font-size:28px;font-weight:bold;color:var(--pg-accent);">${score}/${total}</div>
+    <div style="font-size:13px;color:var(--pg-text-secondary);margin-bottom:12px;">${pct}%</div>
+  </div>`;
+}
 
 const mechQuestions=[
   {q:"A car travels 100 m east then 60 m west. What is its displacement?",opts:["160 m","40 m east","40 m west","100 m"],ans:1,exp:"Displacement = 100 − 60 = 40 m east (net direction)."},
@@ -3415,9 +3920,72 @@ const mechQuestions=[
   {q:"An object falls for 2 s (g = 10 m/s²). How far does it fall?",opts:["10 m","20 m","40 m","5 m"],ans:1,exp:"h = ½gt² = ½ × 10 × 4 = 20 m."}
 ];
 let mechQI=0,mechScore=0,mechAnswered=false;
-function mechInitQuiz(){mechQI=0;mechScore=0;mechAnswered=false;const f=document.getElementById('mechQuizFinal');if(f)f.style.display='none';const nb=document.getElementById('mechNextBtn');if(nb)nb.style.display='none';renderModuleQuiz(mechQuestions,mechQI,mechScore,'mechQBox','mechQuizProgress','mechQuizCounter','mechQuizScore');}
-function modQuizAnswer(boxId,i){if(boxId==='mechQBox'&&!mechAnswered){mechAnswered=true;mechScore=modQuizAnswerCore(mechQuestions,mechQI,mechScore,i,'mechQBox','mechNextBtn','mechQuizProgress','mechQuizCounter','mechQuizScore')||mechScore;}else if(boxId==='elecQBox'&&!elecAnswered){elecAnswered=true;elecScore=modQuizAnswerCore(elecQuestions,elecQI,elecScore,i,'elecQBox','elecNextBtn','elecQuizProgress','elecQuizCounter','elecQuizScore')||elecScore;}else if(boxId==='waveQBox'&&!waveAnswered){waveAnswered=true;waveScore=modQuizAnswerCore(waveQuestions,waveQI,waveScore,i,'waveQBox','waveNextBtn','waveQuizProgress','waveQuizCounter','waveQuizScore')||waveScore;}}
-function mechNextQ(){const nb=document.getElementById('mechNextBtn');if(nb)nb.style.display='none';if(mechQI<mechQuestions.length-1){mechQI++;mechAnswered=false;renderModuleQuiz(mechQuestions,mechQI,mechScore,'mechQBox','mechQuizProgress','mechQuizCounter','mechQuizScore');}else{showModuleQuizFinal(mechScore,mechQuestions.length,'mechQuizFinal');}}
+const mechAnswers={};   /* records chosen option index per question */
+function mechInitQuiz(){
+  mechQI=0;mechScore=0;mechAnswered=false;
+  Object.keys(mechAnswers).forEach(k=>delete mechAnswers[k]);
+  const f=document.getElementById('mechQuizFinal');if(f)f.style.display='none';
+  const nb=document.getElementById('mechNextBtn');if(nb)nb.style.display='none';
+  const pb=document.getElementById('mechPrevBtn');if(pb)pb.style.display='none';
+  renderModuleQuiz(mechQuestions,mechQI,mechScore,'mechQBox','mechQuizProgress','mechQuizCounter','mechQuizScore');
+  _navModuleQuizQ('mechanics',mechQI);
+}
+function modQuizAnswer(boxId,i){
+  if(boxId==='mechQBox'&&!mechAnswered){
+    mechAnswered=true;
+    mechAnswers[mechQI]=i;
+    mechScore=modQuizAnswerCore(mechQuestions,mechQI,mechScore,i,'mechQBox','mechNextBtn','mechQuizProgress','mechQuizCounter','mechQuizScore')||mechScore;
+    /* Show prev btn now that this Q is answered */
+    if(mechQI>0){const pb=document.getElementById('mechPrevBtn');if(pb)pb.style.display='inline-block';}
+  }else if(boxId==='elecQBox'&&!elecAnswered){
+    elecAnswered=true;
+    elecAnswers[elecQI]=i;
+    elecScore=modQuizAnswerCore(elecQuestions,elecQI,elecScore,i,'elecQBox','elecNextBtn','elecQuizProgress','elecQuizCounter','elecQuizScore')||elecScore;
+    if(elecQI>0){const pb=document.getElementById('elecPrevBtn');if(pb)pb.style.display='inline-block';}
+  }else if(boxId==='waveQBox'&&!waveAnswered){
+    waveAnswered=true;
+    waveAnswers[waveQI]=i;
+    waveScore=modQuizAnswerCore(waveQuestions,waveQI,waveScore,i,'waveQBox','waveNextBtn','waveQuizProgress','waveQuizCounter','waveQuizScore')||waveScore;
+    if(waveQI>0){const pb=document.getElementById('wavePrevBtn');if(pb)pb.style.display='inline-block';}
+  }
+}
+function mechNextQ(){
+  const nb=document.getElementById('mechNextBtn');if(nb)nb.style.display='none';
+  if(mechQI<mechQuestions.length-1){
+    mechQI++;
+    const alreadyAnswered = mechAnswers[mechQI] != null;
+    if(alreadyAnswered){
+      /* Still reviewing — render read-only with saved answer */
+      renderModuleQuiz(mechQuestions,mechQI,mechScore,'mechQBox','mechQuizProgress','mechQuizCounter','mechQuizScore',mechAnswers[mechQI]);
+      mechAnswered=true;
+      const n=document.getElementById('mechNextBtn');
+      if(n){n.style.display='inline-block';n.textContent=mechQI<mechQuestions.length-1?'Next →':'See Results';}
+    } else {
+      /* Reached first unanswered question — go live */
+      mechAnswered=false;
+      renderModuleQuiz(mechQuestions,mechQI,mechScore,'mechQBox','mechQuizProgress','mechQuizCounter','mechQuizScore');
+    }
+    const pb=document.getElementById('mechPrevBtn');
+    if(pb) pb.style.display= mechQI>0 ? 'inline-block' : 'none';
+    _navModuleQuizQ('mechanics',mechQI);
+  }else{showModuleQuizFinal(mechScore,mechQuestions.length,'mechQuizFinal');}
+}
+function mechPrevQ(){
+  if(mechQI<=0)return;
+  mechQI--;
+  /* Render in review mode — pass the saved answer for that question */
+  const saved=mechAnswers[mechQI];
+  renderModuleQuiz(mechQuestions,mechQI,mechScore,'mechQBox','mechQuizProgress','mechQuizCounter','mechQuizScore',saved);
+  mechAnswered=true; /* keep locked — review only */
+  /* Show Next (to return forward), hide Prev on Q1 */
+  const nb=document.getElementById('mechNextBtn');
+  if(nb){nb.style.display='inline-block';nb.textContent='Next →';}
+  const pb=document.getElementById('mechPrevBtn');
+  if(pb) pb.style.display= mechQI>0 ? 'inline-block' : 'none';
+  /* Hide final panel while reviewing */
+  const f=document.getElementById('mechQuizFinal');if(f)f.style.display='none';
+  _navModuleQuizQ('mechanics',mechQI);
+}
 
 const elecQuestions=[
   {q:"What is the unit of electric current?",opts:["Volt","Ohm","Ampere","Watt"],ans:2,exp:"Current is measured in Amperes (A)."},
@@ -3427,8 +3995,48 @@ const elecQuestions=[
   {q:"An appliance draws 5A from a 230V supply. What is its power?",opts:["46W","235W","1150W","460W"],ans:2,exp:"P = VI = 230 × 5 = 1150 W."}
 ];
 let elecQI=0,elecScore=0,elecAnswered=false;
-function elecInitQuiz(){elecQI=0;elecScore=0;elecAnswered=false;const f=document.getElementById('elecQuizFinal');if(f)f.style.display='none';const nb=document.getElementById('elecNextBtn');if(nb)nb.style.display='none';renderModuleQuiz(elecQuestions,elecQI,elecScore,'elecQBox','elecQuizProgress','elecQuizCounter','elecQuizScore');}
-function elecNextQ(){const nb=document.getElementById('elecNextBtn');if(nb)nb.style.display='none';if(elecQI<elecQuestions.length-1){elecQI++;elecAnswered=false;renderModuleQuiz(elecQuestions,elecQI,elecScore,'elecQBox','elecQuizProgress','elecQuizCounter','elecQuizScore');}else{showModuleQuizFinal(elecScore,elecQuestions.length,'elecQuizFinal');}}
+const elecAnswers={};
+function elecInitQuiz(){
+  elecQI=0;elecScore=0;elecAnswered=false;
+  Object.keys(elecAnswers).forEach(k=>delete elecAnswers[k]);
+  const f=document.getElementById('elecQuizFinal');if(f)f.style.display='none';
+  const nb=document.getElementById('elecNextBtn');if(nb)nb.style.display='none';
+  const pb=document.getElementById('elecPrevBtn');if(pb)pb.style.display='none';
+  renderModuleQuiz(elecQuestions,elecQI,elecScore,'elecQBox','elecQuizProgress','elecQuizCounter','elecQuizScore');
+  _navModuleQuizQ('electricity',elecQI);
+}
+function elecNextQ(){
+  const nb=document.getElementById('elecNextBtn');if(nb)nb.style.display='none';
+  if(elecQI<elecQuestions.length-1){
+    elecQI++;
+    const alreadyAnswered = elecAnswers[elecQI] != null;
+    if(alreadyAnswered){
+      renderModuleQuiz(elecQuestions,elecQI,elecScore,'elecQBox','elecQuizProgress','elecQuizCounter','elecQuizScore',elecAnswers[elecQI]);
+      elecAnswered=true;
+      const n=document.getElementById('elecNextBtn');
+      if(n){n.style.display='inline-block';n.textContent=elecQI<elecQuestions.length-1?'Next →':'See Results';}
+    } else {
+      elecAnswered=false;
+      renderModuleQuiz(elecQuestions,elecQI,elecScore,'elecQBox','elecQuizProgress','elecQuizCounter','elecQuizScore');
+    }
+    const pb=document.getElementById('elecPrevBtn');
+    if(pb) pb.style.display= elecQI>0 ? 'inline-block' : 'none';
+    _navModuleQuizQ('electricity',elecQI);
+  }else{showModuleQuizFinal(elecScore,elecQuestions.length,'elecQuizFinal');}
+}
+function elecPrevQ(){
+  if(elecQI<=0)return;
+  elecQI--;
+  const saved=elecAnswers[elecQI];
+  renderModuleQuiz(elecQuestions,elecQI,elecScore,'elecQBox','elecQuizProgress','elecQuizCounter','elecQuizScore',saved);
+  elecAnswered=true;
+  const nb=document.getElementById('elecNextBtn');
+  if(nb){nb.style.display='inline-block';nb.textContent='Next →';}
+  const pb=document.getElementById('elecPrevBtn');
+  if(pb) pb.style.display= elecQI>0 ? 'inline-block' : 'none';
+  const f=document.getElementById('elecQuizFinal');if(f)f.style.display='none';
+  _navModuleQuizQ('electricity',elecQI);
+}
 
 const waveQuestions=[
   {q:"Which type of wave can travel through a vacuum?",opts:["Sound","Water waves","Electromagnetic","Seismic"],ans:2,exp:"EM waves travel at 3×10⁸ m/s through a vacuum."},
@@ -3438,8 +4046,48 @@ const waveQuestions=[
   {q:"During refraction, which property of a wave stays constant?",opts:["Speed","Wavelength","Frequency","Amplitude"],ans:2,exp:"Frequency stays constant; speed and wavelength change."}
 ];
 let waveQI=0,waveScore=0,waveAnswered=false;
-function waveInitQuiz(){waveQI=0;waveScore=0;waveAnswered=false;const f=document.getElementById('waveQuizFinal');if(f)f.style.display='none';const nb=document.getElementById('waveNextBtn');if(nb)nb.style.display='none';renderModuleQuiz(waveQuestions,waveQI,waveScore,'waveQBox','waveQuizProgress','waveQuizCounter','waveQuizScore');}
-function waveNextQ(){const nb=document.getElementById('waveNextBtn');if(nb)nb.style.display='none';if(waveQI<waveQuestions.length-1){waveQI++;waveAnswered=false;renderModuleQuiz(waveQuestions,waveQI,waveScore,'waveQBox','waveQuizProgress','waveQuizCounter','waveQuizScore');}else{showModuleQuizFinal(waveScore,waveQuestions.length,'waveQuizFinal');}}
+const waveAnswers={};
+function waveInitQuiz(){
+  waveQI=0;waveScore=0;waveAnswered=false;
+  Object.keys(waveAnswers).forEach(k=>delete waveAnswers[k]);
+  const f=document.getElementById('waveQuizFinal');if(f)f.style.display='none';
+  const nb=document.getElementById('waveNextBtn');if(nb)nb.style.display='none';
+  const pb=document.getElementById('wavePrevBtn');if(pb)pb.style.display='none';
+  renderModuleQuiz(waveQuestions,waveQI,waveScore,'waveQBox','waveQuizProgress','waveQuizCounter','waveQuizScore');
+  _navModuleQuizQ('waves',waveQI);
+}
+function waveNextQ(){
+  const nb=document.getElementById('waveNextBtn');if(nb)nb.style.display='none';
+  if(waveQI<waveQuestions.length-1){
+    waveQI++;
+    const alreadyAnswered = waveAnswers[waveQI] != null;
+    if(alreadyAnswered){
+      renderModuleQuiz(waveQuestions,waveQI,waveScore,'waveQBox','waveQuizProgress','waveQuizCounter','waveQuizScore',waveAnswers[waveQI]);
+      waveAnswered=true;
+      const n=document.getElementById('waveNextBtn');
+      if(n){n.style.display='inline-block';n.textContent=waveQI<waveQuestions.length-1?'Next →':'See Results';}
+    } else {
+      waveAnswered=false;
+      renderModuleQuiz(waveQuestions,waveQI,waveScore,'waveQBox','waveQuizProgress','waveQuizCounter','waveQuizScore');
+    }
+    const pb=document.getElementById('wavePrevBtn');
+    if(pb) pb.style.display= waveQI>0 ? 'inline-block' : 'none';
+    _navModuleQuizQ('waves',waveQI);
+  }else{showModuleQuizFinal(waveScore,waveQuestions.length,'waveQuizFinal');}
+}
+function wavePrevQ(){
+  if(waveQI<=0)return;
+  waveQI--;
+  const saved=waveAnswers[waveQI];
+  renderModuleQuiz(waveQuestions,waveQI,waveScore,'waveQBox','waveQuizProgress','waveQuizCounter','waveQuizScore',saved);
+  waveAnswered=true;
+  const nb=document.getElementById('waveNextBtn');
+  if(nb){nb.style.display='inline-block';nb.textContent='Next →';}
+  const pb=document.getElementById('wavePrevBtn');
+  if(pb) pb.style.display= waveQI>0 ? 'inline-block' : 'none';
+  const f=document.getElementById('waveQuizFinal');if(f)f.style.display='none';
+  _navModuleQuizQ('waves',waveQI);
+}
 
 /* ══ PROJECTS ═══════════════════════════════════════════════ */
 const projects=[
@@ -3476,7 +4124,7 @@ const projects=[
 ];
 
 let projStepDone={},projQuizScore={},projQuizAnswered={};
-function openProject(idx){
+function _openProjectCore(idx){
   const p=projects[idx];
   if(!projStepDone[idx])projStepDone[idx]=new Array(p.steps.length).fill(false);
   if(!projQuizScore[idx])projQuizScore[idx]=0;
@@ -3504,7 +4152,7 @@ function projTabGuarded(panelId,idx,tabIdx){const lockMsg=document.getElementByI
 function buildReward(idx){const p=projects[idx];const score=projQuizScore[idx]||0,total=p.questions.length,pct=Math.round(score/total*100);let grade,msg,bgColor;if(pct===100){grade='Perfect Score!';msg='Outstanding work!';bgColor='linear-gradient(135deg,#ffd600,#ffab00)';}else if(pct>=67){grade='Great Job!';msg='Well done!';bgColor='linear-gradient(135deg,#1e88e5,#0d47a1)';}else{grade='Keep Practising!';msg='Review and try again.';bgColor='linear-gradient(135deg,#78909c,#546e7a)';}const el=document.getElementById(`reward-content-${idx}`);if(!el)return;el.innerHTML=`<div class="badge-reward" style="background:${bgColor};"><div class="badge-icon">${p.badge}</div><div class="badge-title" style="color:white;">${p.badgeTitle} Badge</div><div class="badge-sub" style="color:rgba(255,255,255,0.9);margin-bottom:12px;">Earned <strong>${p.badgeXP}</strong></div><div style="background:rgba(255,255,255,0.3);border-radius:10px;padding:12px 16px;display:inline-block;min-width:200px;margin-bottom:12px;"><div style="font-size:28px;font-weight:bold;color:white;">${score} / ${total}</div><div style="font-size:13px;color:rgba(255,255,255,0.9);">${pct}%</div></div><div class="progress-bar-wrap" style="max-width:300px;margin:0 auto 10px;"><div class="progress-bar-fill" style="width:${pct}%;background:${pct>=67?'#43a047':'#90a4ae'};"></div></div><div style="font-size:14px;color:rgba(255,255,255,0.95);font-weight:bold;margin-bottom:6px;">${grade}</div><div style="font-size:13px;color:rgba(255,255,255,0.85);max-width:320px;margin:0 auto 14px;">${msg}</div></div><div style="margin-top:16px;text-align:center;"><button class="mech-btn" onclick="closeProject()">← Back to All Projects</button></div>`;}
 function projTab(btn,panelId,idx){const detail=document.getElementById('projectDetailContent');detail.querySelectorAll('.proj-tab').forEach(b=>b.classList.remove('active'));detail.querySelectorAll('.proj-panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');document.getElementById(panelId).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
 function projAnswer(projIdx,qi,oi){if(projQuizAnswered[projIdx][qi])return;const q=projects[projIdx].questions[qi];projQuizAnswered[projIdx][qi]=true;if(oi===q.ans)projQuizScore[projIdx]=(projQuizScore[projIdx]||0)+1;const opts=document.querySelectorAll(`#pqopts-${qi} .proj-quiz-opt`);opts.forEach(b=>b.disabled=true);opts[oi].classList.add(oi===q.ans?'correct':'wrong');if(oi!==q.ans)opts[q.ans].classList.add('correct');const fb=document.getElementById(`pqfb-${qi}`);fb.textContent=q.exp;fb.className='proj-quiz-fb show '+(oi===q.ans?'ok':'no');}
-function closeProject(){document.getElementById('projectCardsGrid').style.display='grid';document.getElementById('projectDetail').style.display='none';document.getElementById('projectDetailContent').innerHTML='';}
+/* closeProject handled by router above */
 
 /* ══ MAIN 30-QUESTION QUIZ ══════════════════════════════════ */
 const mainQuizQuestions=[
@@ -3539,13 +4187,177 @@ const mainQuizQuestions=[
   {cat:"Waves",q:"An echo is heard 0.6 s after a clap. Speed of sound = 340 m/s. Distance to wall?",opts:["204 m","102 m","340 m","68 m"],ans:1,exp:"d = v×t/2 = 340×0.6/2 = 102 m."},
   {cat:"Waves",q:"Which part of the electromagnetic spectrum has the shortest wavelength?",opts:["Radio waves","Visible light","X-rays","Gamma rays"],ans:3,exp:"Gamma rays have the shortest wavelength (and highest frequency) in the EM spectrum."}
 ];
+/* Leave & Reset — removed. Replaced by Review Previous Question. */
 let mainQI=0,mainScore=0,mainAnswered=false,mainTimerInterval=null,mainTimeLeft=30;
 let mainIsFirst=true;
-function mainQuizInit(){mainQI=0;mainScore=0;mainAnswered=false;mainIsFirst=true;clearInterval(mainTimerInterval);mainTimerInterval=null;mainTimeLeft=30;document.getElementById('mainQuizFinal').style.display='none';document.getElementById('mainQBox').style.display='block';document.getElementById('mainQuizProgress').style.width='0%';document.getElementById('mainQuizCounter').textContent='Q 1 of 30';document.getElementById('mainQuizScore').textContent='Score: 0';mainRenderQ();}
-function mainRenderQ(){mainAnswered=false;mainTimeLeft=30;clearInterval(mainTimerInterval);const timerBadge=document.getElementById('mainQuizTimerBadge');if(timerBadge){timerBadge.textContent='⏱ 30s';timerBadge.style.background='rgba(245,127,23,0.15)';timerBadge.style.color='#e65100';timerBadge.style.animation='none';}mainTimerInterval=setInterval(function(){mainTimeLeft--;const tb=document.getElementById('mainQuizTimerBadge');if(tb){tb.textContent='⏱ '+mainTimeLeft+'s';if(mainTimeLeft<=10){tb.style.background='rgba(198,40,40,0.15)';tb.style.color='#c62828';}}if(mainTimeLeft<=0){clearInterval(mainTimerInterval);if(!mainAnswered)mainAnswer(-1);}},1000);const q=mainQuizQuestions[mainQI];document.getElementById('mainNextBtn').style.display='none';const numPill=mainIsFirst?'':` <span style="background:#f0f4fa;color:#555;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:bold;">Q ${mainQI+1} of 30</span>`;let html=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;"><span style="background:#0d47a1;color:white;border-radius:20px;padding:3px 12px;font-size:11px;font-weight:bold;">${q.cat}</span>${numPill}</div>`;html+=`<div class="mech-quiz-q">${q.q}</div><div class="mech-quiz-opts" id="mainOptBox">`;q.opts.forEach((o,i)=>{html+=`<button class="mech-quiz-opt" onclick="mainAnswer(${i})">${o}</button>`;});html+=`</div><div class="mech-quiz-feedback" id="mainQFB"></div>`;document.getElementById('mainQBox').innerHTML=html;}
-function mainAnswer(i){if(mainAnswered)return;mainAnswered=true;clearInterval(mainTimerInterval);const tb=document.getElementById('mainQuizTimerBadge');if(tb){tb.style.animation='none';}const q=mainQuizQuestions[mainQI];const btns=document.querySelectorAll('#mainOptBox .mech-quiz-opt');const correct=(i>=0)&&(i===q.ans);if(i>=0){btns[i].classList.add(correct?'correct':'wrong');if(!correct)btns[q.ans].classList.add('correct');}else{btns.forEach(b=>b.disabled=true);btns[q.ans].classList.add('correct');}if(correct)mainScore++;const fbEl=document.getElementById('mainQFB');fbEl.textContent=i<0?'⏱ Time up! '+q.exp:q.exp;fbEl.className='mech-quiz-feedback show '+(correct?'ok':'no');const done=mainQI+1;document.getElementById('mainQuizProgress').style.width=(done/30*100)+'%';document.getElementById('mainQuizCounter').textContent='Q '+done+' of 30';document.getElementById('mainQuizScore').textContent='Score: '+mainScore;const nb=document.getElementById('mainNextBtn');nb.textContent=mainQI<29?'Next Question →':'See Results 🏆';nb.style.display='inline-block';}
-function mainNextQ(){mainIsFirst=false;if(mainQI<29){mainQI++;mainRenderQ();}else{mainShowFinal();}}
-function mainShowFinal(){document.getElementById('mainQBox').style.display='none';document.getElementById('mainNextBtn').style.display='none';const pct=Math.round(mainScore/30*100);let grade,gc,msg;if(pct>=90){grade='Excellent! 🏆';gc='#2e7d32';msg='Outstanding! Strong grasp across all topics.';}else if(pct>=75){grade='Great Job! 🎉';gc='#1565c0';msg='Well done! Review a few more concepts.';}else if(pct>=55){grade='Good Effort! 👍';gc='#f57f17';msg='Good start! Revisit the Learning Modules.';}else{grade='Keep Practising! 📚';gc='#c62828';msg="Don't give up!";}document.getElementById('mainQuizFinal').style.display='block';document.getElementById('mainQuizFinal').innerHTML=`<div style="text-align:center;padding:24px 10px;background:#f9fafb;border-radius:10px;border:1px solid #dce6f5;"><div style="font-size:52px;">${pct>=75?'🏆':pct>=55?'👍':'📚'}</div><div style="font-size:20px;font-weight:bold;color:${gc};">${grade}</div><div style="font-size:34px;font-weight:bold;color:#0d47a1;">${mainScore}/30</div><div style="font-size:15px;color:#555;margin-bottom:14px;">${pct}%</div><div style="font-size:13px;color:#444;max-width:360px;margin:0 auto 20px;">${msg}</div><button class="mech-btn" onclick="mainQuizInit()">🔁 Try Again</button></div>`;}
+const mainAnswers={};  /* records chosen option index per question, -1 = timed out */
+
+function mainQuizInit(){
+  mainQI=0;mainScore=0;mainAnswered=false;mainIsFirst=true;
+  Object.keys(mainAnswers).forEach(k=>delete mainAnswers[k]);
+  clearInterval(mainTimerInterval);mainTimerInterval=null;mainTimeLeft=30;
+  document.getElementById('mainQuizFinal').style.display='none';
+  document.getElementById('mainQBox').style.display='block';
+  document.getElementById('mainQuizProgress').style.width='0%';
+  document.getElementById('mainQuizCounter').textContent='Q 1 of 30';
+  document.getElementById('mainQuizScore').textContent='Score: 0';
+  const pb=document.getElementById('mainPrevBtn');if(pb)pb.style.display='none';
+  mainRenderQ();
+}
+
+function mainRenderQ(reviewMode){
+  /* reviewMode: if true, render the question read-only with user's saved answer */
+  mainAnswered = reviewMode ? true : false;
+  mainTimeLeft=30;
+  clearInterval(mainTimerInterval);
+  const timerBadge=document.getElementById('mainQuizTimerBadge');
+  if(timerBadge){
+    timerBadge.textContent='⏱ 30s';
+    timerBadge.style.background='rgba(245,127,23,0.15)';
+    timerBadge.style.color='#e65100';
+    timerBadge.style.animation='none';
+  }
+
+  /* In review mode the timer doesn't run */
+  if(!reviewMode){
+    mainTimerInterval=setInterval(function(){
+      mainTimeLeft--;
+      const tb=document.getElementById('mainQuizTimerBadge');
+      if(tb){
+        tb.textContent='⏱ '+mainTimeLeft+'s';
+        if(mainTimeLeft<=10){tb.style.background='rgba(198,40,40,0.15)';tb.style.color='#c62828';}
+      }
+      if(mainTimeLeft<=0){clearInterval(mainTimerInterval);if(!mainAnswered)mainAnswer(-1);}
+    },1000);
+  } else {
+    /* In review mode show timer as dashes */
+    if(timerBadge){ timerBadge.textContent='⏱ –'; timerBadge.style.background='rgba(0,0,0,0.06)'; timerBadge.style.color='#888'; }
+  }
+
+  const q=mainQuizQuestions[mainQI];
+  document.getElementById('mainNextBtn').style.display='none';
+
+  const savedAnswer = mainAnswers[mainQI]; /* undefined if not yet answered */
+  const isReview = reviewMode && (savedAnswer != null);
+
+  const numPill=mainIsFirst?'':` <span style="background:#f0f4fa;color:#555;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:bold;">Q ${mainQI+1} of 30</span>`;
+  const reviewBanner = isReview
+    ? `<div style="font-size:11px;font-weight:700;letter-spacing:0.05em;color:#888;
+           background:rgba(0,0,0,0.04);border-radius:6px;padding:4px 10px;
+           display:inline-block;margin-bottom:10px;">👁 REVIEW MODE — your previous answer is shown</div><br>`
+    : '';
+  let html=`${reviewBanner}<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+    <span style="background:#0d47a1;color:white;border-radius:20px;padding:3px 12px;font-size:11px;font-weight:bold;">${q.cat}</span>${numPill}</div>`;
+  html+=`<div class="mech-quiz-q">${q.q}</div><div class="mech-quiz-opts" id="mainOptBox">`;
+  q.opts.forEach((o,i)=>{
+    let cls='mech-quiz-opt';
+    let extra='';
+    if(isReview){
+      if(i===savedAnswer && savedAnswer===q.ans) cls+=' correct';
+      else if(i===savedAnswer && savedAnswer!==q.ans) cls+=' wrong';
+      else if(i===q.ans) cls+=' correct';
+      extra=' disabled';
+    }
+    html+=`<button class="${cls}" onclick="mainAnswer(${i})"${extra}>${o}</button>`;
+  });
+  html+=`</div><div class="mech-quiz-feedback" id="mainQFB">`;
+  if(isReview){
+    const correct=(savedAnswer===q.ans);
+    const label=savedAnswer===-1?'⏱ Time up! ':'';
+    html+=`<span class="mech-quiz-feedback show ${correct?'ok':'no'}">${label}${q.exp}</span>`;
+  }
+  html+=`</div>`;
+  document.getElementById('mainQBox').innerHTML=html;
+
+  /* Show Next / Prev buttons correctly */
+  if(isReview){
+    const nb=document.getElementById('mainNextBtn');
+    if(nb){nb.style.display='inline-block';nb.textContent=mainQI<29?'Next Question →':'See Results 🏆';}
+  }
+  const pb=document.getElementById('mainPrevBtn');
+  if(pb) pb.style.display= mainQI>0 ? 'inline-block' : 'none';
+
+  /* Push/replace history depending on question number */
+  _navMainQuizQ(mainQI);
+}
+
+function mainAnswer(i){
+  if(mainAnswered)return;
+  mainAnswered=true;
+  clearInterval(mainTimerInterval);
+  const tb=document.getElementById('mainQuizTimerBadge');
+  if(tb){tb.style.animation='none';}
+  const q=mainQuizQuestions[mainQI];
+  const btns=document.querySelectorAll('#mainOptBox .mech-quiz-opt');
+  const correct=(i>=0)&&(i===q.ans);
+  if(i>=0){
+    btns[i].classList.add(correct?'correct':'wrong');
+    if(!correct) btns[q.ans].classList.add('correct');
+  } else {
+    btns.forEach(b=>b.disabled=true);
+    btns[q.ans].classList.add('correct');
+  }
+  if(correct) mainScore++;
+  /* Record the answer */
+  mainAnswers[mainQI]=i;
+  const fbEl=document.getElementById('mainQFB');
+  fbEl.textContent=i<0?'⏱ Time up! '+q.exp:q.exp;
+  fbEl.className='mech-quiz-feedback show '+(correct?'ok':'no');
+  const done=mainQI+1;
+  document.getElementById('mainQuizProgress').style.width=(done/30*100)+'%';
+  document.getElementById('mainQuizCounter').textContent='Q '+done+' of 30';
+  document.getElementById('mainQuizScore').textContent='Score: '+mainScore;
+  const nb=document.getElementById('mainNextBtn');
+  nb.textContent=mainQI<29?'Next Question →':'See Results 🏆';
+  nb.style.display='inline-block';
+  /* Show prev button once this question is answered (Q2+) */
+  if(mainQI>0){const pb=document.getElementById('mainPrevBtn');if(pb)pb.style.display='inline-block';}
+}
+
+function mainPrevQ(){
+  if(mainQI<=0) return;
+  mainQI--;
+  mainIsFirst=false;
+  /* Render in review mode */
+  mainRenderQ(true);
+}
+
+function mainNextQ(){
+  mainIsFirst=false;
+  if(mainQI<29){
+    mainQI++;
+    /* If next question was already answered, keep reviewing */
+    if(mainAnswers[mainQI] != null){
+      mainRenderQ(true);
+    } else {
+      /* First unanswered question — go live */
+      mainRenderQ();
+    }
+  } else {
+    mainShowFinal();
+  }
+}
+
+function mainShowFinal(){
+  document.getElementById('mainQBox').style.display='none';
+  document.getElementById('mainNextBtn').style.display='none';
+  const pb=document.getElementById('mainPrevBtn');if(pb)pb.style.display='none';
+  const pct=Math.round(mainScore/30*100);
+  let grade,gc,msg;
+  if(pct>=90){grade='Excellent! 🏆';gc='#2e7d32';msg='Outstanding! Strong grasp across all topics.';}
+  else if(pct>=75){grade='Great Job! 🎉';gc='#1565c0';msg='Well done! Review a few more concepts.';}
+  else if(pct>=55){grade='Good Effort! 👍';gc='#f57f17';msg='Good start! Revisit the Learning Modules.';}
+  else{grade='Keep Practising! 📚';gc='#c62828';msg="Don't give up!";}
+  document.getElementById('mainQuizFinal').style.display='block';
+  document.getElementById('mainQuizFinal').innerHTML=`<div style="text-align:center;padding:24px 10px;background:#f9fafb;border-radius:10px;border:1px solid #dce6f5;">
+    <div style="font-size:52px;">${pct>=75?'🏆':pct>=55?'👍':'📚'}</div>
+    <div style="font-size:20px;font-weight:bold;color:${gc};">${grade}</div>
+    <div style="font-size:34px;font-weight:bold;color:#0d47a1;">${mainScore}/30</div>
+    <div style="font-size:15px;color:#555;margin-bottom:14px;">${pct}%</div>
+    <div style="font-size:13px;color:#444;max-width:360px;margin:0 auto 20px;">${msg}</div>
+    <button class="mech-btn" onclick="mainQuizInit()">🔁 Try Again</button>
+  </div>`;
+}
 
 function submitForm(){const name=document.getElementById('contactName').value.trim(),email=document.getElementById('contactEmail').value.trim(),subject=document.getElementById('contactSubject').value.trim(),message=document.getElementById('contactMessage').value.trim(),resultEl=document.getElementById('formResult');if(!name||!email||!message){resultEl.textContent='⚠ Please fill in name, email and message.';resultEl.className='error';return;}window.location.href=`mailto:256allex256@gmail.com?subject=${encodeURIComponent(subject||'Message from '+name)}&body=${encodeURIComponent('Name: '+name+'\nEmail: '+email+'\n\n'+message)}`;resultEl.textContent='✅ Email client opened. Please send to complete.';resultEl.className='success';}
 
@@ -3585,7 +4397,7 @@ function updateMechProgress(){
   }
 }
 
-function mechTabByIdx(idx){
+function mechTabByIdx(idx, push){
   if(idx > mechUnlockedLesson) return; // locked — do nothing
   mechPanels.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove('active'); });
   const panel = document.getElementById(mechPanels[idx]);
@@ -3593,6 +4405,7 @@ function mechTabByIdx(idx){
   mechCurrentLesson = idx;
   updateMechProgress();
   window.scrollTo({top:0,behavior:'smooth'});
+  if(push!==false) _navLesson(idx);
 }
 
 function mechNextLesson(){
@@ -3635,7 +4448,7 @@ function updateElecProgress(){
   }
 }
 
-function elecTabByIdx(idx){
+function elecTabByIdx(idx, push){
   if(idx > elecUnlockedLesson) return;
   elecPanelIds.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove('active'); });
   const panel = document.getElementById(elecPanelIds[idx]);
@@ -3643,6 +4456,7 @@ function elecTabByIdx(idx){
   elecCurrentLesson = idx;
   updateElecProgress();
   window.scrollTo({top:0,behavior:'smooth'});
+  if(push!==false) _navLesson(idx);
 }
 
 function elecNextLesson(){
@@ -3685,7 +4499,7 @@ function updateWaveProgress(){
   }
 }
 
-function waveTabByIdx(idx){
+function waveTabByIdx(idx, push){
   if(idx > waveUnlockedLesson) return;
   wavePanelIds.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove('active'); });
   const panel = document.getElementById(wavePanelIds[idx]);
@@ -3693,6 +4507,7 @@ function waveTabByIdx(idx){
   waveCurrentLesson = idx;
   updateWaveProgress();
   window.scrollTo({top:0,behavior:'smooth'});
+  if(push!==false) _navLesson(idx);
 }
 
 function waveNextLesson(){
