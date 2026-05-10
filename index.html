@@ -3106,48 +3106,80 @@ function showModule(type){
         <div id="mech-overview" class="mech-panel active">
           <div class="lesson-panel-card">
             <div class="lesson-section-heading"><span class="lesson-section-icon">🔭</span>What is Mechanics?</div>
-            <p class="lesson-text"><strong>Mechanics</strong> is the oldest and most fundamental branch of physics. It studies <strong>motion</strong> and the <strong>forces</strong> that cause or resist it. Every object you see moving — from a falling raindrop to a satellite in orbit — obeys the laws of mechanics.</p>
+            <p class="lesson-text"><strong>Mechanics</strong> is the oldest and most fundamental branch of physics. It is the systematic study of <strong>motion</strong>, <strong>forces</strong>, and the relationship between them. Every object you see moving — from a raindrop falling to the ground, to a satellite maintaining its orbit thousands of kilometres above Earth — obeys the laws of mechanics. Isaac Newton, Galileo Galilei, and many other scientists built the framework of mechanics over centuries of careful observation and mathematical reasoning.</p>
+            <p class="lesson-text" style="margin-top:10px;">Mechanics is split into two major branches: <strong>Kinematics</strong>, which is purely descriptive — it tells us how objects move in terms of position, velocity, and acceleration, without asking why — and <strong>Dynamics</strong>, which explains the causes of motion by introducing the concept of force. Together, kinematics and dynamics give us a complete language for describing and predicting the behaviour of any moving object.</p>
 
-            <div class="callout-box info"><span class="callout-icon">💡</span><div>Mechanics is the foundation of all physics. Master these principles and every other area of physics becomes easier to understand.</div></div>
+            <div class="callout-box info"><span class="callout-icon">💡</span><div><strong>Why does Mechanics matter?</strong> Mechanics is the foundation on which all other physics is built. Thermodynamics, fluid dynamics, astrophysics, and even quantum mechanics all draw on mechanical principles. Master Newton's laws, energy conservation, and momentum, and every other area of physics becomes significantly easier to understand and apply. Engineers designing aircraft, bridges, robots, and vehicles all rely on mechanical analysis every single day.</div></div>
 
-            <div class="lesson-section-heading"><span class="lesson-section-icon">📋</span>Topics in this Module</div>
+            <div class="lesson-section-heading"><span class="lesson-section-icon">🧭</span>Scalars vs Vectors — A Critical Distinction</div>
+            <p class="lesson-text">Before diving into motion, you must understand the difference between <strong>scalar quantities</strong> and <strong>vector quantities</strong>. This distinction runs through every topic in mechanics.</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
+              <div style="background:rgba(13,71,161,0.07);border:1px solid rgba(13,71,161,0.18);border-radius:10px;padding:14px;">
+                <div style="font-weight:700;color:var(--pg-accent);margin-bottom:6px;font-family:var(--font-heading);">📐 Scalar Quantities</div>
+                <p style="font-size:13px;color:var(--pg-text-secondary);line-height:1.6;margin:0;">A scalar has <strong>magnitude only</strong> — a number with a unit. Direction is irrelevant. Examples: distance (5 m), speed (60 km/h), mass (70 kg), temperature (37°C), energy (200 J), time (10 s). You can add scalars using ordinary arithmetic.</p>
+              </div>
+              <div style="background:rgba(198,40,40,0.07);border:1px solid rgba(198,40,40,0.18);border-radius:10px;padding:14px;">
+                <div style="font-weight:700;color:#c62828;margin-bottom:6px;font-family:var(--font-heading);">🧭 Vector Quantities</div>
+                <p style="font-size:13px;color:var(--pg-text-secondary);line-height:1.6;margin:0;">A vector has both <strong>magnitude and direction</strong>. Examples: displacement (5 m north), velocity (60 km/h east), acceleration (9.81 m/s² downward), force (200 N at 30°), momentum. Vectors must be added using geometric (head-to-tail) or component methods.</p>
+              </div>
+            </div>
+            <div class="note-box">A common mistake: "The car travels at 60 km/h" gives speed (scalar). "The car travels at 60 km/h due north" gives velocity (vector). The direction completely changes the physics.</div>
+
+            <div class="lesson-section-heading"><span class="lesson-section-icon">📋</span>Topics Covered in this Module</div>
+            <p class="lesson-text">This module takes you from the most basic ideas of motion through to the powerful conservation laws that underpin all of classical physics. Each topic builds directly on the one before it.</p>
             <div class="mech-topic-grid">
               <span class="mech-topic-chip">Distance &amp; Displacement</span>
               <span class="mech-topic-chip">Speed &amp; Velocity</span>
               <span class="mech-topic-chip">Acceleration</span>
-              <span class="mech-topic-chip">Equations of Motion</span>
-              <span class="mech-topic-chip">Graphs of Motion</span>
-              <span class="mech-topic-chip">Newton's 3 Laws</span>
-              <span class="mech-topic-chip">Force &amp; Friction</span>
-              <span class="mech-topic-chip">Momentum</span>
-              <span class="mech-topic-chip">Impulse</span>
-              <span class="mech-topic-chip">Work</span>
-              <span class="mech-topic-chip">Energy</span>
-              <span class="mech-topic-chip">Power</span>
-              <span class="mech-topic-chip">Pressure</span>
-              <span class="mech-topic-chip">Moments</span>
-              <span class="mech-topic-chip">Equilibrium</span>
-              <span class="mech-topic-chip">Density</span>
+              <span class="mech-topic-chip">Equations of Motion (SUVAT)</span>
+              <span class="mech-topic-chip">Velocity-Time Graphs</span>
+              <span class="mech-topic-chip">Free Fall &amp; Gravity</span>
+              <span class="mech-topic-chip">Newton's 1st Law (Inertia)</span>
+              <span class="mech-topic-chip">Newton's 2nd Law (F = ma)</span>
+              <span class="mech-topic-chip">Newton's 3rd Law (Action-Reaction)</span>
+              <span class="mech-topic-chip">Friction &amp; Normal Force</span>
+              <span class="mech-topic-chip">Momentum (p = mv)</span>
+              <span class="mech-topic-chip">Impulse &amp; Conservation</span>
+              <span class="mech-topic-chip">Work Done (W = Fd cosθ)</span>
+              <span class="mech-topic-chip">Kinetic Energy (½mv²)</span>
+              <span class="mech-topic-chip">Gravitational Potential Energy (mgh)</span>
+              <span class="mech-topic-chip">Power (P = W/t)</span>
+              <span class="mech-topic-chip">Pressure (P = F/A)</span>
+              <span class="mech-topic-chip">Moments &amp; Torque</span>
+              <span class="mech-topic-chip">Equilibrium &amp; Stability</span>
+              <span class="mech-topic-chip">Density (ρ = m/V)</span>
             </div>
 
-            <div class="lesson-section-heading"><span class="lesson-section-icon">🌍</span>Real-World Applications</div>
-            <p class="lesson-text">Mechanics explains everything from everyday phenomena to the most extreme engineering challenges:</p>
+            <div class="lesson-section-heading"><span class="lesson-section-icon">🌍</span>Real-World Applications of Mechanics</div>
+            <p class="lesson-text">Mechanics is not just a classroom subject — it is the engine behind virtually every piece of technology ever built. Understanding it lets you explain, analyse, and design systems in the real world.</p>
             <div class="application-chips">
-              <span class="app-chip">🚗 Vehicle braking systems</span>
-              <span class="app-chip">🚀 Rocket propulsion</span>
-              <span class="app-chip">🏗 Bridge construction</span>
-              <span class="app-chip">🏊 Sports biomechanics</span>
-              <span class="app-chip">🛰 Satellite orbits</span>
-              <span class="app-chip">🏋 Weight &amp; force</span>
+              <span class="app-chip">🚗 Vehicle braking & safety systems</span>
+              <span class="app-chip">🚀 Rocket propulsion & orbital mechanics</span>
+              <span class="app-chip">🏗 Bridge & building structural engineering</span>
+              <span class="app-chip">🏊 Sports biomechanics & performance</span>
+              <span class="app-chip">🛰 Satellite & GPS orbit calculations</span>
+              <span class="app-chip">🏋 Weight training & force analysis</span>
+              <span class="app-chip">✈ Aircraft lift & drag</span>
+              <span class="app-chip">⚙ Machine design & robotics</span>
+              <span class="app-chip">🌊 Hydraulics & fluid pressure</span>
+              <span class="app-chip">🧱 Dam & reservoir water pressure</span>
             </div>
+
+            <div class="lesson-section-heading"><span class="lesson-section-icon">🏛</span>A Brief History of Mechanics</div>
+            <p class="lesson-text">The story of mechanics stretches back over 2,000 years. <strong>Aristotle</strong> (384–322 BCE) believed heavier objects fall faster — an idea that dominated thinking for almost 2,000 years. In the late 1500s, <strong>Galileo Galilei</strong> disproved this through experiment, showing that all objects fall with the same acceleration in the absence of air resistance. He also described the parabolic path of projectiles and introduced the concept of inertia.</p>
+            <p class="lesson-text" style="margin-top:8px;">In 1687, <strong>Sir Isaac Newton</strong> published his masterwork <em>Philosophiæ Naturalis Principia Mathematica</em> ("Mathematical Principles of Natural Philosophy"), containing his three laws of motion and the law of universal gravitation. These unified terrestrial and celestial mechanics — explaining why an apple falls and why the Moon orbits the Earth using the same mathematics. Newton's framework, known as <em>classical mechanics</em> or <em>Newtonian mechanics</em>, remained unchallenged until Einstein's <strong>Special Relativity</strong> (1905), which showed it breaks down at speeds approaching the speed of light.</p>
+
+            <div class="callout-box warning"><span class="callout-icon">⚠️</span><div><strong>Limits of classical mechanics:</strong> Newton's laws apply with extraordinary accuracy for everyday objects moving at everyday speeds. They become inaccurate at very high speeds (near light speed — use Special Relativity), at very small scales (atoms and subatomic particles — use Quantum Mechanics), and in very strong gravitational fields (use General Relativity). For this course, classical mechanics is the correct and precise framework.</div></div>
 
             <div class="summary-box">
-              <div class="summary-box-title">📌 Key Points</div>
+              <div class="summary-box-title">📌 Key Points — What to Remember from This Overview</div>
               <div class="summary-list">
-                <div class="summary-item"><div class="summary-dot"></div>Mechanics divides into <strong>Kinematics</strong> (describing motion) and <strong>Dynamics</strong> (causes of motion)</div>
-                <div class="summary-item"><div class="summary-dot"></div>All quantities are either <strong>scalars</strong> (magnitude only) or <strong>vectors</strong> (magnitude + direction)</div>
-                <div class="summary-item"><div class="summary-dot"></div>Newton's three laws are the core framework connecting force and motion</div>
-                <div class="summary-item"><div class="summary-dot"></div>Energy and momentum are conserved in closed systems</div>
+                <div class="summary-item"><div class="summary-dot"></div>Mechanics divides into <strong>Kinematics</strong> (how objects move) and <strong>Dynamics</strong> (why they move — forces)</div>
+                <div class="summary-item"><div class="summary-dot"></div>All physical quantities are either <strong>scalars</strong> (magnitude only, e.g. speed, mass) or <strong>vectors</strong> (magnitude + direction, e.g. velocity, force)</div>
+                <div class="summary-item"><div class="summary-dot"></div>Newton's three laws connect force and motion — they are the core of classical mechanics</div>
+                <div class="summary-item"><div class="summary-dot"></div><strong>Conservation of energy</strong> and <strong>conservation of momentum</strong> are the two most powerful problem-solving tools in mechanics</div>
+                <div class="summary-item"><div class="summary-dot"></div>Mechanics underpins engineering, technology, sport, and virtually every physical science</div>
+                <div class="summary-item"><div class="summary-dot"></div>Classical mechanics is accurate for everyday speeds and masses — it was built by Galileo, Newton, and their successors over centuries of careful experiment</div>
               </div>
             </div>
 
@@ -3162,77 +3194,104 @@ function showModule(type){
           <div class="lesson-panel-card">
 
             <div class="lesson-section-heading"><span class="lesson-section-icon">📏</span>Distance &amp; Displacement</div>
-            <p class="lesson-text"><strong>Distance</strong> is the total path length travelled — a scalar quantity with magnitude only. <strong>Displacement</strong> is the straight-line change in position — a vector with both magnitude and direction.</p>
-            <div class="formula-box"><div class="formula-box-label">Displacement</div>Δx = x_final − x_initial</div>
+            <p class="lesson-text"><strong>Distance</strong> is the total length of the path an object has actually travelled, regardless of the direction it took. It is always a positive number and is a <strong>scalar</strong> — it has magnitude but no direction. If you walked 3 km east and then 3 km west, you have covered a distance of 6 km.</p>
+            <p class="lesson-text" style="margin-top:8px;"><strong>Displacement</strong>, on the other hand, is the straight-line distance from the starting point to the ending point, measured in a specific direction. It is a <strong>vector</strong>. In the example above, your displacement is 0 km — you ended exactly where you started. Displacement can be positive, negative (opposite direction), or zero.</p>
+            <div class="formula-box"><div class="formula-box-label">Displacement Formula</div>Δx = x_final − x_initial &nbsp;&nbsp;(direction must be stated)</div>
             <div class="worked-example">
-              <div class="worked-example-q">A runner completes one full lap of a 400 m track. Find the distance and displacement.</div>
+              <div class="worked-example-q">A runner completes one full lap of a 400 m circular track and stops at the starting line. Find the total distance run and the final displacement.</div>
               <ul class="worked-example-steps">
-                <li>Distance = total path = 400 m (the runner covered the whole track)</li>
-                <li>Displacement = 0 m (start and finish are the same point)</li>
+                <li>Distance = total path length = 400 m (the entire track was covered)</li>
+                <li>Displacement = straight-line from start to finish = 0 m (same point)</li>
+                <li>This illustrates why distance ≠ displacement for curved paths</li>
               </ul>
-              <div class="worked-example-answer">Distance = 400 m, Displacement = 0 m</div>
+              <div class="worked-example-answer">Distance = 400 m &nbsp;|&nbsp; Displacement = 0 m</div>
             </div>
+            <div class="note-box">In everyday language, "distance" is often used loosely. In physics, always ask: are you describing the total path travelled (distance) or the net change in position (displacement)? They are different quantities with different units only because direction is included in one.</div>
 
             <hr class="lesson-divider">
-            <div class="lesson-section-heading"><span class="lesson-section-icon">⚡</span>Speed &amp; Velocity</div>
-            <p class="lesson-text"><strong>Speed</strong> = distance ÷ time (scalar). <strong>Velocity</strong> = displacement ÷ time (vector). A car and a train may have the same speed but completely different velocities if they are travelling in different directions.</p>
-            <div class="formula-box"><div class="formula-box-label">Speed &amp; Velocity</div>speed = d / t &nbsp;&nbsp;|&nbsp;&nbsp; velocity v = Δx / Δt</div>
+            <div class="lesson-section-heading"><span class="lesson-section-icon">💨</span>Speed &amp; Velocity</div>
+            <p class="lesson-text"><strong>Speed</strong> is the rate of change of distance with time — a <strong>scalar</strong> quantity. It tells you how fast an object is moving, but says nothing about direction. <strong>Average speed</strong> = total distance ÷ total time. <strong>Instantaneous speed</strong> is the speed at one particular moment, as shown on a car's speedometer.</p>
+            <p class="lesson-text" style="margin-top:8px;"><strong>Velocity</strong> is the rate of change of <em>displacement</em> with time — a <strong>vector</strong>. It includes both the magnitude (how fast) and the direction (which way). Two cars driving at 60 km/h in opposite directions have the same speed but completely opposite velocities. This distinction is crucial when analysing collisions, relative motion, and circular motion.</p>
+            <div class="formula-box"><div class="formula-box-label">Speed &amp; Velocity</div>Average speed = total distance / total time &nbsp;&nbsp;|&nbsp;&nbsp; Velocity v = Δx / Δt</div>
             <div class="worked-example">
-              <div class="worked-example-q">A car travels 90 km north in 1.5 hours. Find speed and velocity.</div>
+              <div class="worked-example-q">A car travels 90 km due north in 1.5 hours. Find (a) average speed and (b) average velocity.</div>
               <ul class="worked-example-steps">
-                <li>Speed = 90 ÷ 1.5 = 60 km/h</li>
-                <li>Velocity = 60 km/h north</li>
+                <li>(a) Average speed = 90 km ÷ 1.5 h = 60 km/h (no direction needed)</li>
+                <li>(b) Velocity = displacement / time = 90 km north / 1.5 h = 60 km/h due north</li>
+                <li>Here speed and magnitude of velocity are equal because the path is straight</li>
               </ul>
-              <div class="worked-example-answer">Speed = 60 km/h &nbsp; | &nbsp; Velocity = 60 km/h north</div>
+              <div class="worked-example-answer">Speed = 60 km/h &nbsp; | &nbsp; Velocity = 60 km/h due north</div>
             </div>
 
             <hr class="lesson-divider">
             <div class="lesson-section-heading"><span class="lesson-section-icon">🚀</span>Acceleration</div>
-            <p class="lesson-text"><strong>Acceleration</strong> is the rate of change of velocity. It is a vector. An object can accelerate by speeding up, slowing down (deceleration), or changing direction. Free-fall near the Earth's surface: <strong>g ≈ 9.81 m/s²</strong> downward.</p>
-            <div class="formula-box"><div class="formula-box-label">Acceleration</div>a = Δv / Δt = (v − u) / t</div>
+            <p class="lesson-text"><strong>Acceleration</strong> is the rate of change of velocity with time. Because velocity is a vector, acceleration is also a vector — it has magnitude and direction. An object accelerates whenever its speed changes, its direction changes, or both. Importantly, slowing down is still acceleration (just in the opposite direction to motion), sometimes called <strong>deceleration</strong> or <strong>negative acceleration</strong>.</p>
+            <p class="lesson-text" style="margin-top:8px;">Near the Earth's surface, gravity provides a constant downward acceleration of approximately <strong>g = 9.81 m/s²</strong> (often approximated as 10 m/s² in calculations). A ball dropped from rest gains 9.81 m/s of downward speed every second it falls.</p>
+            <div class="formula-box"><div class="formula-box-label">Acceleration</div>a = Δv / Δt = (v − u) / t &nbsp;&nbsp;(unit: m/s²)</div>
             <div class="worked-example">
-              <div class="worked-example-q">A car accelerates from 20 m/s to 50 m/s in 6 s. Find the acceleration.</div>
+              <div class="worked-example-q">A car accelerates from 20 m/s to 50 m/s in 6 seconds. Find the acceleration. Then find the additional force required if the car's mass is 1200 kg.</div>
               <ul class="worked-example-steps">
-                <li>Δv = 50 − 20 = 30 m/s</li>
-                <li>a = 30 / 6 = 5 m/s²</li>
+                <li>Δv = v − u = 50 − 20 = 30 m/s</li>
+                <li>a = Δv / t = 30 / 6 = 5 m/s²</li>
+                <li>F = ma = 1200 × 5 = 6000 N</li>
               </ul>
-              <div class="worked-example-answer">a = 5 m/s²</div>
+              <div class="worked-example-answer">a = 5 m/s² &nbsp; | &nbsp; F = 6000 N</div>
             </div>
 
             <hr class="lesson-divider">
-            <div class="lesson-section-heading"><span class="lesson-section-icon">📊</span>Equations of Motion (SUVAT)</div>
-            <p class="lesson-text">For uniform (constant) acceleration, these four equations relate <strong>s</strong> (displacement), <strong>u</strong> (initial velocity), <strong>v</strong> (final velocity), <strong>a</strong> (acceleration), and <strong>t</strong> (time):</p>
-            <div class="formula-box"><div class="formula-box-label">SUVAT Equations</div>v = u + at &nbsp;|&nbsp; s = ut + ½at² &nbsp;|&nbsp; v² = u² + 2as &nbsp;|&nbsp; s = (u+v)/2 × t</div>
-            <div class="note-box">Memory tip: Select the equation that contains your 3 known quantities and the 1 unknown you want to find.</div>
+            <div class="lesson-section-heading"><span class="lesson-section-icon">📊</span>The SUVAT Equations of Motion</div>
+            <p class="lesson-text">When acceleration is <strong>constant (uniform)</strong>, five quantities describe the motion completely: <strong>s</strong> (displacement), <strong>u</strong> (initial velocity), <strong>v</strong> (final velocity), <strong>a</strong> (acceleration), and <strong>t</strong> (time). These are linked by four equations, collectively known as the <strong>SUVAT equations</strong> or kinematic equations. Each equation uses four of the five variables, so if you know any three, you can always find the other two.</p>
+            <div class="formula-box"><div class="formula-box-label">SUVAT — Four Equations of Motion</div>① v = u + at &nbsp;|&nbsp; ② s = ut + ½at² &nbsp;|&nbsp; ③ v² = u² + 2as &nbsp;|&nbsp; ④ s = ½(u + v)t</div>
+            <div class="note-box">Strategy: Write down your known values (s, u, v, a, t). Identify the unknown. Pick the equation that contains your three knowns and the one unknown — and solve. Equation ③ is especially powerful when time is unknown.</div>
+            <div class="worked-example">
+              <div class="worked-example-q">A stone is dropped from rest off a 45 m cliff (g = 10 m/s²). How long does it take to hit the ground, and what is its speed on impact?</div>
+              <ul class="worked-example-steps">
+                <li>Known: u = 0, s = 45 m, a = 10 m/s², find t and v</li>
+                <li>Use ②: s = ut + ½at² → 45 = 0 + ½ × 10 × t² → t² = 9 → t = 3 s</li>
+                <li>Use ①: v = u + at = 0 + 10 × 3 = 30 m/s</li>
+              </ul>
+              <div class="worked-example-answer">Time = 3 s &nbsp; | &nbsp; Impact speed = 30 m/s</div>
+            </div>
 
             <hr class="lesson-divider">
-            <div class="lesson-section-heading"><span class="lesson-section-icon">💥</span>Momentum</div>
-            <p class="lesson-text"><strong>Momentum</strong> = mass × velocity. It is a vector. Momentum is conserved in any closed system (no external forces). This is why a small, fast bullet can have the same momentum as a slow, heavy truck.</p>
-            <div class="formula-box"><div class="formula-box-label">Momentum</div>p = m × v &nbsp;&nbsp;(unit: kg·m/s)</div>
+            <div class="lesson-section-heading"><span class="lesson-section-icon">💥</span>Momentum &amp; Impulse</div>
+            <p class="lesson-text"><strong>Momentum</strong> (symbol <em>p</em>) is the product of an object's mass and its velocity. It is a vector — it points in the same direction as velocity. Momentum measures how difficult it is to stop a moving object. A massive lorry moving slowly and a lightweight bullet moving very fast can have equal momenta — they are equally difficult to stop in different ways.</p>
+            <p class="lesson-text" style="margin-top:8px;"><strong>Impulse</strong> is the change in momentum, and it equals the force applied multiplied by the time for which it acts. This is why airbags and crumple zones in cars increase the collision time — spreading the force impulse over a longer period dramatically reduces the peak force on passengers, saving lives.</p>
+            <div class="formula-box"><div class="formula-box-label">Momentum &amp; Impulse</div>p = m × v (kg·m/s) &nbsp;|&nbsp; Impulse = F × t = Δp &nbsp;|&nbsp; Conservation: p_total before = p_total after</div>
+            <div class="note-box">The <strong>Law of Conservation of Momentum</strong> states that in a closed system with no external forces, the total momentum before any collision or interaction equals the total momentum after. This law is used to analyse car crashes, rocket launches, and particle physics experiments.</div>
 
             <hr class="lesson-divider">
             <div class="lesson-section-heading"><span class="lesson-section-icon">⚡</span>Work, Energy &amp; Power</div>
-            <p class="lesson-text"><strong>Work</strong> is done when a force moves an object. <strong>Kinetic energy</strong> (KE) is the energy of motion. <strong>Gravitational potential energy</strong> (GPE) is stored by height. <strong>Power</strong> is the rate of doing work.</p>
-            <div class="formula-box"><div class="formula-box-label">Work, Energy &amp; Power</div>W = Fd·cosθ &nbsp;|&nbsp; KE = ½mv² &nbsp;|&nbsp; GPE = mgh &nbsp;|&nbsp; P = W/t</div>
+            <p class="lesson-text"><strong>Work</strong> is done on an object when a force causes it to move. Mathematically, work = force × displacement × cosθ, where θ is the angle between the force and the direction of motion. If you carry a bag horizontally, gravity does zero work (force is vertical, motion is horizontal, cos90° = 0). Work is measured in <strong>Joules (J)</strong>.</p>
+            <p class="lesson-text" style="margin-top:8px;"><strong>Kinetic energy (KE)</strong> is the energy an object possesses because of its motion. It depends on both mass and the square of speed — doubling speed quadruples kinetic energy, which is why high-speed collisions are so destructive. <strong>Gravitational potential energy (GPE)</strong> is stored by an object raised above a reference point — it depends on mass, gravity, and height. <strong>Power</strong> is the rate at which work is done or energy is transferred, measured in <strong>Watts (W)</strong>.</p>
+            <div class="formula-box"><div class="formula-box-label">Work, Energy &amp; Power</div>W = F·d·cosθ &nbsp;|&nbsp; KE = ½mv² &nbsp;|&nbsp; GPE = mgh &nbsp;|&nbsp; P = W/t = Fv</div>
+            <div class="callout-box success"><span class="callout-icon">✅</span><div><strong>Conservation of Energy:</strong> Energy cannot be created or destroyed — only converted between forms. A falling object converts GPE → KE. A car braking converts KE → thermal energy (heat in brakes). In a perfectly efficient system, total mechanical energy (KE + GPE) remains constant.</div></div>
 
             <p style="font-size:12px;color:var(--pg-text-muted);margin-bottom:8px;">👇 Tap any card below to expand its explanation.</p>
             <div class="concept-cards-grid">
               <div class="concept-card" onclick="this.classList.toggle('open')">
                 <div class="concept-header"><div class="concept-icon" style="background:rgba(13,71,161,0.1);">📏</div><div><div class="concept-title">Distance vs Displacement</div><div class="concept-formula">scalar vs vector</div></div></div>
-                <div class="concept-body">Distance (total path, no direction) vs Displacement (straight line, with direction). Running 400 m lap: distance = 400 m, displacement = 0.</div>
+                <div class="concept-body">Distance measures the total path length an object travels — always positive, no direction. Displacement is the straight-line change in position from start to finish, including direction. On a circular lap, distance = circumference but displacement = 0. The distinction is fundamental to understanding velocity vs speed and all vector problems in mechanics.</div>
               </div>
               <div class="concept-card" onclick="this.classList.toggle('open')">
-                <div class="concept-header"><div class="concept-icon" style="background:rgba(46,125,50,0.1);">🔩</div><div><div class="concept-title">Friction</div><div class="concept-formula">F_friction = μN</div></div></div>
-                <div class="concept-body">Friction opposes relative motion. Static friction keeps objects stationary; kinetic friction acts during motion. μ is the coefficient of friction.</div>
+                <div class="concept-header"><div class="concept-icon" style="background:rgba(46,125,50,0.1);">🔩</div><div><div class="concept-title">Friction</div><div class="concept-formula">F_f = μN</div></div></div>
+                <div class="concept-body">Friction is the contact force that opposes relative motion between surfaces. <strong>Static friction</strong> acts on stationary objects and can vary up to a maximum value before sliding begins. <strong>Kinetic (sliding) friction</strong> acts once motion has started and is generally constant. The coefficient of friction μ (mu) depends on the surface materials — smooth ice has μ ≈ 0.03, rubber on dry road μ ≈ 0.7. Friction is not always "bad" — without it, you could not walk or drive a car.</div>
               </div>
               <div class="concept-card" onclick="this.classList.toggle('open')">
                 <div class="concept-header"><div class="concept-icon" style="background:rgba(245,127,23,0.1);">⚙</div><div><div class="concept-title">Moments &amp; Equilibrium</div><div class="concept-formula">M = F × d</div></div></div>
-                <div class="concept-body">A moment (torque) = force × perpendicular distance from pivot. Equilibrium: sum of clockwise moments = sum of anticlockwise moments.</div>
+                <div class="concept-body">A <strong>moment</strong> (or torque) is the turning effect of a force about a pivot point. It equals force × perpendicular distance from pivot to force's line of action, in Newton-metres (N·m). For an object in <strong>rotational equilibrium</strong>, the sum of all clockwise moments equals the sum of all anticlockwise moments (the principle of moments). This explains how a seesaw, spanner, and crane boom all work — a larger distance can balance a larger force.</div>
               </div>
               <div class="concept-card" onclick="this.classList.toggle('open')">
-                <div class="concept-header"><div class="concept-icon" style="background:rgba(198,40,40,0.1);">🌊</div><div><div class="concept-title">Pressure &amp; Density</div><div class="concept-formula">P = F/A &nbsp; ρ = m/V</div></div></div>
-                <div class="concept-body">Pressure = force per unit area (Pa). Density = mass per unit volume (kg/m³). Pressure in a fluid increases with depth: P = ρgh.</div>
+                <div class="concept-header"><div class="concept-icon" style="background:rgba(198,40,40,0.1);">💧</div><div><div class="concept-title">Pressure &amp; Density</div><div class="concept-formula">P = F/A &nbsp;|&nbsp; ρ = m/V</div></div></div>
+                <div class="concept-body"><strong>Pressure</strong> is force applied per unit area, measured in Pascals (Pa = N/m²). A sharp knife exerts far more pressure than a blunt one for the same force. In fluids, pressure increases with depth: P = ρgh. <strong>Density</strong> (ρ) is mass per unit volume (kg/m³) — it tells you how tightly packed the matter is. Water has ρ = 1000 kg/m³; iron ≈ 7874 kg/m³. Objects float if their average density is less than the fluid's.</div>
               </div>
+            </div>
+
+            <div class="revision-q-list">
+              <div class="lesson-section-heading" style="margin-top:24px;"><span class="lesson-section-icon">📝</span>Revision Questions</div>
+              <div class="revision-q"><span class="revision-q-num">Q1</span>A cyclist travels 12 km east and then 5 km north. What is the total distance cycled? What is the magnitude of the final displacement?</div>
+              <div class="revision-q"><span class="revision-q-num">Q2</span>A ball is thrown upward at 20 m/s. Using g = 10 m/s², find (a) the time to reach maximum height, (b) the maximum height reached, and (c) the speed on return to the launch point.</div>
+              <div class="revision-q"><span class="revision-q-num">Q3</span>A 2 kg object moving at 6 m/s collides and sticks to a stationary 4 kg object. Using conservation of momentum, find the velocity of the combined mass after collision.</div>
             </div>
 
             <div class="lesson-nav-footer">
@@ -3246,62 +3305,69 @@ function showModule(type){
         <div id="mech-laws" class="mech-panel">
           <div class="lesson-panel-card">
             <div class="lesson-section-heading"><span class="lesson-section-icon">⚖</span>Newton's Three Laws of Motion</div>
-            <p class="lesson-text">Published in 1687 in <em>Principia Mathematica</em>, Newton's three laws are the cornerstone of classical mechanics. They apply to all macroscopic objects moving much slower than the speed of light.</p>
+            <p class="lesson-text">Published in 1687 in <em>Philosophiæ Naturalis Principia Mathematica</em>, Newton's three laws are the cornerstone of classical mechanics. They apply to all macroscopic objects moving much slower than the speed of light. These laws unified the physics of falling apples with the motion of planets in their orbits — the same mathematical framework explains both.</p>
+            <p class="lesson-text" style="margin-top:8px;">Before Newton, people believed a force was needed to keep an object moving. Newton overturned this with the insight that force is needed only to <em>change</em> motion — not to sustain it. This radical idea changed physics forever and allowed engineers to design everything from steam engines to spacecraft.</p>
 
             <div style="background:var(--pg-panel-bg);border:1px solid var(--pg-panel-border);border-radius:12px;padding:16px;margin-bottom:16px;">
               <div class="law-block">
                 <div class="law-num">1</div>
                 <div>
-                  <div class="law-title">First Law — Law of Inertia</div>
-                  <div class="law-desc">An object at rest stays at rest, and an object in motion continues at constant velocity, unless acted upon by a net external force. Objects resist changes to their state of motion — this resistance is called <strong>inertia</strong>.</div>
-                  <span class="law-example" style="background:var(--pg-chip-bg);color:var(--pg-accent);">📚 A book on a desk stays still until you push it</span>
+                  <div class="law-title">First Law — The Law of Inertia</div>
+                  <div class="law-desc">An object at rest remains at rest, and an object in motion continues moving at the same speed in the same straight line, <strong>unless acted upon by a resultant external force</strong>. This tendency — the resistance of objects to changes in their state of motion — is called <strong>inertia</strong>. The amount of inertia is directly proportional to mass. A bowling ball has far more inertia than a tennis ball — it is much harder to start moving or to stop. On Earth, this is masked by ubiquitous forces like friction and air resistance. In deep space, a moving object keeps going indefinitely because no friction or air resistance acts on it. This law tells us that rest and constant-velocity motion are physically equivalent — neither requires a force.</div>
+                  <span class="law-example" style="background:var(--pg-chip-bg);color:var(--pg-accent);">📚 A book on a table stays still. Push the table suddenly and the book "stays behind" — this is inertia resisting the change in motion.</span>
                 </div>
               </div>
               <div class="law-block">
                 <div class="law-num">2</div>
                 <div>
-                  <div class="law-title">Second Law — F = ma</div>
-                  <div class="law-desc">The net force on an object equals its mass times its acceleration. The direction of acceleration is the same as the net force. A larger force causes more acceleration; a larger mass requires more force for the same acceleration.</div>
-                  <span class="law-example" style="background:rgba(245,127,23,0.1);color:#f57f17;">🚛 Pushing a heavy truck requires far more force than a bicycle</span>
+                  <div class="law-title">Second Law — Force, Mass &amp; Acceleration (F = ma)</div>
+                  <div class="law-desc">The <strong>net (resultant) force</strong> on an object equals its mass multiplied by its acceleration: F = ma. The acceleration is always in the same direction as the net force. This is the most quantitative of the three laws. Key implications: (1) for a fixed force, a larger mass produces less acceleration; (2) for a fixed mass, a larger force produces more acceleration; (3) if the net force is zero, acceleration is zero — the object moves at constant velocity or stays at rest (which is Newton's 1st law as a special case). This law lets engineers calculate the exact force needed to accelerate a vehicle, launch a satellite, or stop a train.</div>
+                  <span class="law-example" style="background:rgba(245,127,23,0.1);color:#f57f17;">🚛 A lorry and a bicycle pushed with equal force: the bicycle accelerates much more (less mass = more a for same F).</span>
                 </div>
               </div>
               <div class="law-block">
                 <div class="law-num">3</div>
                 <div>
-                  <div class="law-title">Third Law — Action &amp; Reaction</div>
-                  <div class="law-desc">For every action force there is an equal and opposite reaction force. Forces always occur in pairs — the two forces act on different objects, so they don't cancel.</div>
-                  <span class="law-example" style="background:rgba(46,125,50,0.1);color:#2e7d32;">🚀 Rocket expels gas downward → thrust pushes rocket upward</span>
+                  <div class="law-title">Third Law — Action &amp; Reaction (Every Force Has a Pair)</div>
+                  <div class="law-desc">For every action force exerted by object A on object B, there is an equal and opposite reaction force exerted by object B on object A. These two forces: are equal in magnitude, are opposite in direction, act on <em>different objects</em>, are of the same type, and occur simultaneously. Because the forces act on different objects, they do NOT cancel — each force accelerates its own object according to its mass. When you push on a wall with 100 N, the wall pushes you back with 100 N — that reaction force is what you feel. This law explains rocket propulsion: gas is expelled backward, the rocket is pushed forward. It also explains why guns recoil when fired.</div>
+                  <span class="law-example" style="background:rgba(46,125,50,0.1);color:#2e7d32;">🚀 A rocket expels exhaust gas downward with massive force → the equal and opposite reaction propels the rocket upward into space.</span>
                 </div>
               </div>
             </div>
 
-            <div class="formula-box"><div class="formula-box-label">Newton's Second Law</div>F_net = m × a &nbsp;&nbsp;(unit: Newton = kg·m/s²)</div>
+            <div class="formula-box"><div class="formula-box-label">Newton's Second Law</div>F_net = m × a &nbsp;&nbsp;(unit: Newton [N] = kg·m/s²) &nbsp;|&nbsp; Weight W = m × g</div>
 
             <div class="worked-example">
-              <div class="worked-example-q">A 1200 kg car accelerates at 3 m/s². What is the net force driving it forward?</div>
+              <div class="worked-example-q">A 1200 kg car accelerates forward at 3 m/s². Friction and air resistance produce a backward force of 600 N. Find (a) the required net force and (b) the engine's driving force.</div>
               <ul class="worked-example-steps">
-                <li>F = ma = 1200 × 3</li>
-                <li>F = 3600 N</li>
+                <li>(a) Net force = ma = 1200 × 3 = 3600 N forward</li>
+                <li>(b) Engine force − friction = net force → Engine force = 3600 + 600 = 4200 N</li>
               </ul>
-              <div class="worked-example-answer">Net force = 3600 N (forward)</div>
+              <div class="worked-example-answer">Net force = 3600 N &nbsp; | &nbsp; Engine (driving) force = 4200 N</div>
             </div>
 
-            <div class="callout-box warning"><span class="callout-icon">⚠️</span><div>Newton's laws apply to inertial reference frames only. They break down for objects moving near the speed of light (use Special Relativity) or at very small scales (use Quantum Mechanics).</div></div>
+            <div class="lesson-section-heading" style="margin-top:20px;"><span class="lesson-section-icon">🌍</span>Weight, Mass &amp; the Gravitational Field</div>
+            <p class="lesson-text"><strong>Mass</strong> (kg) is the amount of matter in an object — it is the same everywhere in the universe and is a measure of inertia. <strong>Weight</strong> (N) is the gravitational force pulling an object toward a massive body — it depends on the local gravitational field strength g. On Earth g ≈ 9.81 N/kg; on the Moon g ≈ 1.62 N/kg. A 70 kg person weighs 686 N on Earth but only 113 N on the Moon. Their mass is unchanged. Astronauts feel "weightless" in orbit not because gravity disappears, but because they are in continuous free fall — they and the space station fall together, so there is no contact force between them and the floor.</p>
+
+            <div class="callout-box warning"><span class="callout-icon">⚠️</span><div><strong>Limits of Newton's laws:</strong> For everyday objects at everyday speeds, Newton's laws are extraordinarily accurate. They become inaccurate when objects approach the speed of light (use Einstein's Special Relativity), or at atomic and subatomic scales (use Quantum Mechanics), or in very strong gravitational fields (use General Relativity). For this course, classical Newtonian mechanics is the correct framework.</div></div>
 
             <div class="summary-box">
-              <div class="summary-box-title">📌 Laws Summary</div>
+              <div class="summary-box-title">📌 Newton's Laws — Full Summary</div>
               <div class="summary-list">
-                <div class="summary-item"><div class="summary-dot"></div><strong>1st:</strong> No force = no change in motion (inertia)</div>
-                <div class="summary-item"><div class="summary-dot"></div><strong>2nd:</strong> F = ma — net force determines acceleration</div>
-                <div class="summary-item"><div class="summary-dot"></div><strong>3rd:</strong> Every force has an equal and opposite reaction force</div>
+                <div class="summary-item"><div class="summary-dot"></div><strong>1st Law (Inertia):</strong> No net force = no change in motion. Objects resist acceleration; mass measures inertia.</div>
+                <div class="summary-item"><div class="summary-dot"></div><strong>2nd Law (F = ma):</strong> Net force = mass × acceleration. Larger force → more acceleration; larger mass → less acceleration for the same force.</div>
+                <div class="summary-item"><div class="summary-dot"></div><strong>3rd Law (Pairs):</strong> Forces come in equal and opposite pairs acting on different objects — they never cancel.</div>
+                <div class="summary-item"><div class="summary-dot"></div><strong>Weight vs Mass:</strong> Weight = mg is a force (Newtons); mass is inertia (kg). Weight varies by location; mass never changes.</div>
+                <div class="summary-item"><div class="summary-dot"></div>Always draw a free body diagram and identify the net force before applying F = ma to any problem.</div>
               </div>
             </div>
 
             <div class="revision-q-list">
               <div class="lesson-section-heading" style="margin-top:24px;"><span class="lesson-section-icon">📝</span>Revision Questions</div>
-              <div class="revision-q"><span class="revision-q-num">Q1</span>A book sits motionless on a table. Name the two forces acting on it and explain why it doesn't move.</div>
-              <div class="revision-q"><span class="revision-q-num">Q2</span>A net force of 500 N acts on a 50 kg trolley. Calculate the acceleration.</div>
-              <div class="revision-q"><span class="revision-q-num">Q3</span>A swimmer pushes backwards against water with 200 N. What force does the water exert on the swimmer?</div>
+              <div class="revision-q"><span class="revision-q-num">Q1</span>A book sits motionless on a table. Name the two forces acting on it, state their magnitudes relative to each other, and identify which of Newton's laws explains why it does not accelerate.</div>
+              <div class="revision-q"><span class="revision-q-num">Q2</span>A net force of 500 N acts on a 50 kg trolley. Calculate the acceleration. Then find the velocity reached after 8 seconds starting from rest.</div>
+              <div class="revision-q"><span class="revision-q-num">Q3</span>A swimmer pushes backward against water with 200 N. State the reaction force fully (magnitude, direction, which object it acts on). Why does the swimmer accelerate forward?</div>
+              <div class="revision-q"><span class="revision-q-num">Q4</span>A 70 kg person stands on scales inside a lift accelerating upward at 2 m/s². What does the scale read in Newtons? What reading would appear if the lift cable snapped and it fell freely?</div>
             </div>
 
             <a href="https://www.geeksforgeeks.org/physics/mechanics/" target="_blank" class="learn-more-btn" style="margin-top:16px;">📖 Read More on Mechanics</a>
@@ -3431,30 +3497,55 @@ function showModule(type){
         <div id="elec-overview" class="mech-panel active">
           <div class="lesson-panel-card">
             <div class="lesson-section-heading"><span class="lesson-section-icon">⚡</span>What is Electricity?</div>
-            <p class="lesson-text"><strong>Electricity</strong> is the study of <strong>electric charge</strong> and its effects. It encompasses everything from the static spark when you touch a doorknob to the alternating current powering hospitals. It is one of the most practically important areas of physics.</p>
-            <div class="callout-box info"><span class="callout-icon">💡</span><div>Almost every device you use — phone, fridge, light, computer — runs on electricity. Understanding circuits lets you troubleshoot, design, and innovate.</div></div>
-            <div class="lesson-section-heading"><span class="lesson-section-icon">📋</span>Topics in this Module</div>
+            <p class="lesson-text"><strong>Electricity</strong> is the branch of physics that studies <strong>electric charge</strong>, its movement, and the forces and effects it produces. It encompasses everything from the tiny static spark when you touch a doorknob after walking across a carpet, to the massive alternating currents that power hospitals, factories, and entire cities. Electricity is arguably the most important applied science of the modern world — the Industrial Revolution ran on steam, but the Digital Revolution and virtually every technology of the 21st century run on electricity.</p>
+            <p class="lesson-text" style="margin-top:8px;">The story of electricity as a science began with early experiments on static charge — Benjamin Franklin's famous kite-in-a-thunderstorm experiment in 1752 showed lightning was electrical. In the 1800s, <strong>Alessandro Volta</strong> invented the first battery, <strong>André-Marie Ampère</strong> quantified current, <strong>Georg Ohm</strong> discovered the relationship between voltage, current and resistance, and <strong>Michael Faraday</strong> showed that electricity and magnetism were deeply linked. These discoveries together gave us the generators and motors that drive the modern world.</p>
+
+            <div class="callout-box info"><span class="callout-icon">💡</span><div><strong>Why study Electricity?</strong> Almost every device you use — smartphone, refrigerator, light bulb, medical equipment, computer, electric vehicle — runs on electrical circuits. Understanding the principles of charge, current, voltage, and resistance allows you to troubleshoot faulty circuits, design new devices, understand electricity bills, appreciate energy conservation, and pursue careers in engineering, medicine, computing, and technology.</div></div>
+
+            <div class="lesson-section-heading"><span class="lesson-section-icon">🔬</span>The Nature of Electric Charge</div>
+            <p class="lesson-text">All matter is made of atoms, and atoms contain positively charged <strong>protons</strong> (in the nucleus) and negatively charged <strong>electrons</strong> (orbiting the nucleus). Normally, atoms are neutral — equal numbers of protons and electrons. <strong>Electric charge</strong> arises when electrons are transferred between objects. An object that gains extra electrons becomes negatively charged; one that loses electrons becomes positively charged. Like charges repel each other; opposite charges attract — this is Coulomb's Law.</p>
+            <p class="lesson-text" style="margin-top:8px;">In a metal conductor, some electrons are not tightly bound to individual atoms and are free to move through the material — these are called <strong>free electrons</strong> or conduction electrons. When a voltage source (like a battery) is connected, it creates an electric field that pushes these free electrons around the circuit, creating an electric current. In contrast, <strong>insulators</strong> like rubber, glass, and wood have no (or very few) free electrons, which is why current cannot flow through them.</p>
+
+            <div class="lesson-section-heading"><span class="lesson-section-icon">📋</span>Topics Covered in this Module</div>
+            <p class="lesson-text">This module builds from the atomic basis of charge all the way through to the analysis of complex circuits and the principles of electrical power. Each lesson unlocks the next.</p>
             <div class="mech-topic-grid">
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Electric Charge</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Current</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Voltage</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Resistance</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Ohm's Law</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Series Circuits</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Parallel Circuits</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Electrical Power</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Domestic Wiring</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Electromagnetism</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Magnetic Fields</span>
-              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Transformers</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Electric Charge (Coulombs)</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Electric Current (Amperes)</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Potential Difference / Voltage</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Resistance (Ohms)</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Ohm's Law (V = IR)</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Series Circuit Analysis</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Parallel Circuit Analysis</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Kirchhoff's Current Law</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Kirchhoff's Voltage Law</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Electrical Power (P = VI)</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Energy &amp; the Kilowatt-Hour</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Domestic Wiring &amp; Safety</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Conductors &amp; Insulators</span>
+              <span class="mech-topic-chip" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Electromagnetism &amp; Induction</span>
             </div>
+
+            <div class="lesson-section-heading"><span class="lesson-section-icon">🌍</span>Real-World Applications</div>
+            <div class="application-chips">
+              <span class="app-chip">📱 Smartphone and computer circuits</span>
+              <span class="app-chip">💡 LED and fluorescent lighting</span>
+              <span class="app-chip">🏥 Medical equipment (ECG, defibrillators)</span>
+              <span class="app-chip">🚗 Electric vehicles and charging systems</span>
+              <span class="app-chip">🏭 Industrial motors and generators</span>
+              <span class="app-chip">🔌 Household wiring and safety</span>
+              <span class="app-chip">🌐 Power transmission over long distances</span>
+              <span class="app-chip">☀ Solar panels and renewable energy</span>
+            </div>
+
             <div class="summary-box" style="background:linear-gradient(135deg,rgba(123,31,162,0.06),transparent);">
-              <div class="summary-box-title" style="color:#7b1fa2;">📌 Key Points</div>
+              <div class="summary-box-title" style="color:#7b1fa2;">📌 Key Points — What to Remember from This Overview</div>
               <div class="summary-list">
-                <div class="summary-item"><div class="summary-dot" style="background:#7b1fa2;"></div>Electric current flows when charges move through a conductor</div>
-                <div class="summary-item"><div class="summary-dot" style="background:#7b1fa2;"></div>Ohm's Law (V = IR) links voltage, current, and resistance</div>
-                <div class="summary-item"><div class="summary-dot" style="background:#7b1fa2;"></div>Series circuits: same current everywhere; Parallel: same voltage</div>
-                <div class="summary-item"><div class="summary-dot" style="background:#7b1fa2;"></div>Electrical power P = VI measures energy transfer per second</div>
+                <div class="summary-item"><div class="summary-dot" style="background:#7b1fa2;"></div>Electric charge (positive and negative) is the fundamental property underlying all electrical phenomena — charge is measured in Coulombs (C)</div>
+                <div class="summary-item"><div class="summary-dot" style="background:#7b1fa2;"></div>Electric current is the flow of charge past a point per second (I = Q/t), measured in Amperes (A)</div>
+                <div class="summary-item"><div class="summary-dot" style="background:#7b1fa2;"></div>Voltage (potential difference) is the energy given to each coulomb of charge by a source — measured in Volts (V)</div>
+                <div class="summary-item"><div class="summary-dot" style="background:#7b1fa2;"></div>Ohm's Law (V = IR) relates the three fundamental electrical quantities in a resistor</div>
+                <div class="summary-item"><div class="summary-dot" style="background:#7b1fa2;"></div>Series circuits: same current everywhere; voltages add. Parallel circuits: same voltage across branches; currents add.</div>
+                <div class="summary-item"><div class="summary-dot" style="background:#7b1fa2;"></div>Electrical power P = VI = I²R measures energy transferred per second; energy in joules = power × time</div>
               </div>
             </div>
             <div class="lesson-nav-footer">
@@ -3467,27 +3558,61 @@ function showModule(type){
         <div id="elec-concepts" class="mech-panel">
           <div class="lesson-panel-card">
             <div class="lesson-section-heading"><span class="lesson-section-icon">⚡</span>Electric Charge</div>
-            <p class="lesson-text">Matter contains positive charges (protons) and negative charges (electrons). Like charges repel; opposite charges attract. Charge is measured in <strong>Coulombs (C)</strong>. 1 C ≈ 6.24 × 10¹⁸ electrons.</p>
-            <div class="formula-box" style="background:#4a148c;"><div class="formula-box-label">Charge</div>Q = I × t &nbsp;&nbsp;(Coulombs = Amperes × seconds)</div>
+            <p class="lesson-text">Every atom contains positively charged <strong>protons</strong> in the nucleus and negatively charged <strong>electrons</strong> orbiting it. In a neutral atom, these balance exactly. When electrons are transferred from one object to another, a <strong>net electric charge</strong> is created. The unit of charge is the <strong>Coulomb (C)</strong> — named after physicist Charles-Augustin de Coulomb. One Coulomb is an enormous amount of charge: it corresponds to approximately 6.24 × 10¹⁸ electron charges. In practical circuits, current is measured in Amperes, and charge flows at rates of milliamperes to hundreds of Amperes.</p>
+            <p class="lesson-text" style="margin-top:8px;">The key rule: <strong>like charges repel, unlike charges attract</strong>. This Coulomb force is what drives electrons through a circuit and also governs chemical bonding, lightning, and the structure of matter itself. Charge, like energy and momentum, is conserved — it cannot be created or destroyed, only transferred.</p>
+            <div class="formula-box" style="background:#4a148c;"><div class="formula-box-label">Charge, Current &amp; Time</div>Q = I × t &nbsp;&nbsp;|&nbsp;&nbsp; I = Q / t &nbsp;&nbsp;(Q in Coulombs, I in Amperes, t in seconds)</div>
+            <div class="worked-example">
+              <div class="worked-example-q">A torch draws a current of 0.5 A for 3 minutes. How much charge flows through the bulb?</div>
+              <ul class="worked-example-steps">
+                <li>t = 3 × 60 = 180 s</li>
+                <li>Q = I × t = 0.5 × 180 = 90 C</li>
+              </ul>
+              <div class="worked-example-answer">Charge = 90 Coulombs</div>
+            </div>
 
             <hr class="lesson-divider">
-            <div class="lesson-section-heading"><span class="lesson-section-icon">🔋</span>Voltage, Current &amp; Resistance</div>
+            <div class="lesson-section-heading"><span class="lesson-section-icon">🔋</span>Voltage (Potential Difference)</div>
+            <p class="lesson-text"><strong>Voltage</strong>, also called <strong>potential difference (p.d.)</strong>, is the amount of electrical energy transferred per unit of charge as it moves between two points in a circuit. Think of voltage as the electrical "pressure" or "push" that drives current around the circuit. A 9V battery means it gives each coulomb of charge 9 joules of energy as it passes through the battery. Without a voltage, charges have no reason to flow — just as water in a flat pipe stays still without a pressure difference.</p>
+            <p class="lesson-text" style="margin-top:8px;">Voltage is measured in <strong>Volts (V)</strong> using a <strong>voltmeter</strong> connected in parallel across the component being measured. Voltage can also be thought of as electric potential energy per unit charge: V = W/Q, where W is energy in Joules.</p>
+
+            <hr class="lesson-divider">
+            <div class="lesson-section-heading"><span class="lesson-section-icon">🌊</span>Current</div>
+            <p class="lesson-text"><strong>Electric current (I)</strong> is the rate of flow of electric charge past a given point in a circuit. 1 Ampere (A) = 1 Coulomb per second. Current is measured using an <strong>ammeter</strong> connected in series with the component. In metallic conductors, it is the free electrons that actually move — from the negative terminal to the positive terminal of the battery. By historical convention, <strong>conventional current</strong> is defined as flowing from + to −, which is the opposite to actual electron flow. In semiconductor devices, charges can be either electrons (negative) or holes (positive).</p>
+
+            <hr class="lesson-divider">
+            <div class="lesson-section-heading"><span class="lesson-section-icon">🔩</span>Resistance</div>
+            <p class="lesson-text"><strong>Resistance (R)</strong> is the opposition a component offers to the flow of current through it. It arises because electrons collide with the lattice of metal ions as they move through a conductor, transferring energy as heat. The unit is the <strong>Ohm (Ω)</strong>. Resistance depends on: (1) <strong>Material</strong> — copper has very low resistivity, nichrome wire much higher. (2) <strong>Length</strong> — longer wire = more resistance (more collisions). (3) <strong>Cross-sectional area</strong> — thicker wire = less resistance (more paths for electrons). (4) <strong>Temperature</strong> — for metals, resistance increases with temperature.</p>
+            <p class="lesson-text" style="margin-top:8px;">Components designed to provide a specific resistance are called <strong>resistors</strong>. A <strong>fixed resistor</strong> has constant resistance; a <strong>variable resistor (rheostat)</strong> can be adjusted. An <strong>ohmic conductor</strong> obeys Ohm's Law — its resistance stays constant regardless of the current. A <strong>non-ohmic conductor</strong> (like a light bulb filament or diode) has resistance that changes with current.</p>
+
+            <hr class="lesson-divider">
+            <div class="lesson-section-heading"><span class="lesson-section-icon">💡</span>Electrical Power &amp; Energy</div>
+            <p class="lesson-text"><strong>Electrical power (P)</strong> is the rate at which electrical energy is transferred — how many joules of energy are used per second. A 1000 W kettle uses 1000 J every second. Power is measured in <strong>Watts (W)</strong>. It can be calculated from voltage and current (P = VI), or from current and resistance (P = I²R), or from voltage and resistance (P = V²/R) — all three expressions are equivalent via Ohm's Law.</p>
+            <p class="lesson-text" style="margin-top:8px;"><strong>Electrical energy</strong> is power multiplied by time: E = Pt (in Joules). In homes, energy is measured in <strong>kilowatt-hours (kWh)</strong>: 1 kWh = 3,600,000 J = energy used by a 1 kW appliance in 1 hour. Your electricity bill is calculated in kWh at a price per unit.</p>
+
             <p style="font-size:12px;color:var(--pg-text-muted);margin-bottom:8px;">👇 Tap any card below to expand its explanation.</p>
             <div class="concept-cards-grid">
-              <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:rgba(123,31,162,0.1);">🔋</div><div><div class="concept-title">Voltage (V)</div><div class="concept-formula">V = W / Q</div></div></div><div class="concept-body">Electrical potential difference — the "pressure" that drives current. A 9V battery gives 9 J of energy per coulomb of charge. Measured in Volts (V).</div></div>
-              <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:rgba(46,125,50,0.1);">💡</div><div><div class="concept-title">Current (I)</div><div class="concept-formula">I = Q / t</div></div></div><div class="concept-body">Rate of flow of charge. 1 Ampere = 1 Coulomb per second. Conventional current flows + to −; electrons flow the other way.</div></div>
-              <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:rgba(198,40,40,0.1);">🔩</div><div><div class="concept-title">Resistance (R)</div><div class="concept-formula">R = V / I</div></div></div><div class="concept-body">Opposition to current flow. Increases with wire length, decreases with cross-section area. Measured in Ohms (Ω).</div></div>
-              <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:rgba(13,71,161,0.1);">⚡</div><div><div class="concept-title">Power (P)</div><div class="concept-formula">P = V × I</div></div></div><div class="concept-body">Rate of energy transfer. A 100 W bulb uses 100 J/s. Also P = I²R = V²/R. Unit: Watt (W).</div></div>
+              <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:rgba(123,31,162,0.1);">🔋</div><div><div class="concept-title">Voltage (Potential Difference)</div><div class="concept-formula">V = W / Q</div></div></div><div class="concept-body">The energy transferred per unit charge as charges move between two points. Voltage is the "driving force" of a circuit — without it, no current flows. A 12 V car battery pushes 12 J of energy into each coulomb of charge. Voltage is always measured across (in parallel with) a component, using a voltmeter. EMF (electromotive force) is the voltage of a source like a battery; terminal voltage is slightly less due to internal resistance.</div></div>
+              <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:rgba(46,125,50,0.1);">💡</div><div><div class="concept-title">Current (I)</div><div class="concept-formula">I = Q / t</div></div></div><div class="concept-body">The rate of flow of charge through a conductor. 1 Ampere = 1 Coulomb passing any point per second. Current is measured in series using an ammeter. In metals, electrons (negative) carry charge but flow from − to +; conventional current (positive) flows + to −. The direction matters when analysing circuit behaviour with diodes or in electromagnetic contexts.</div></div>
+              <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:rgba(198,40,40,0.1);">🔩</div><div><div class="concept-title">Resistance (R)</div><div class="concept-formula">R = V / I</div></div></div><div class="concept-body">The opposition to current flow in a material. Caused by electron-ion collisions inside the conductor. Increases with temperature in metals (more vibration = more collisions). Measured in Ohms (Ω). Resistors are connected in series to increase total resistance, in parallel to decrease it. Resistivity (ρ) is the material's intrinsic property: R = ρL/A where L = length and A = cross-sectional area.</div></div>
+              <div class="concept-card" onclick="this.classList.toggle('open')"><div class="concept-header"><div class="concept-icon" style="background:rgba(13,71,161,0.1);">⚡</div><div><div class="concept-title">Power (P)</div><div class="concept-formula">P = VI = I²R = V²/R</div></div></div><div class="concept-body">The rate at which electrical energy is converted to other forms (heat, light, sound, mechanical). A 60 W bulb converts 60 J of electrical energy to light and heat every second. All three power formulas — P = VI, P = I²R, P = V²/R — are equivalent and interchangeable via Ohm's Law. Choose the one that uses the quantities you already know.</div></div>
             </div>
 
             <div class="worked-example">
-              <div class="worked-example-q">A 12 V battery drives 2 A through a resistor for 5 minutes. Find: (a) resistance, (b) power, (c) energy used.</div>
+              <div class="worked-example-q">A 12 V battery drives a current of 2 A through a resistor for exactly 5 minutes. Find: (a) resistance, (b) power dissipated, (c) total energy used, (d) charge that flowed.</div>
               <ul class="worked-example-steps">
                 <li>(a) R = V/I = 12/2 = 6 Ω</li>
                 <li>(b) P = VI = 12 × 2 = 24 W</li>
                 <li>(c) t = 5 × 60 = 300 s → E = Pt = 24 × 300 = 7200 J</li>
+                <li>(d) Q = It = 2 × 300 = 600 C</li>
               </ul>
-              <div class="worked-example-answer">R = 6 Ω &nbsp; | &nbsp; P = 24 W &nbsp; | &nbsp; E = 7200 J</div>
+              <div class="worked-example-answer">R = 6 Ω &nbsp;|&nbsp; P = 24 W &nbsp;|&nbsp; E = 7200 J &nbsp;|&nbsp; Q = 600 C</div>
+            </div>
+
+            <div class="revision-q-list">
+              <div class="lesson-section-heading" style="margin-top:20px;"><span class="lesson-section-icon">📝</span>Revision Questions</div>
+              <div class="revision-q"><span class="revision-q-num">Q1</span>A current of 3 A flows through a 10 Ω resistor. Find (a) the voltage across the resistor and (b) the power dissipated.</div>
+              <div class="revision-q"><span class="revision-q-num">Q2</span>A household iron is rated 1200 W and operates at 240 V. Find (a) current drawn and (b) resistance of the heating element.</div>
+              <div class="revision-q"><span class="revision-q-num">Q3</span>A 2 kW electric shower runs for 15 minutes every day. Calculate the weekly energy consumption in kWh and the cost if electricity is charged at 50 UGX per kWh.</div>
             </div>
 
             <div class="lesson-nav-footer">
@@ -3500,21 +3625,41 @@ function showModule(type){
         <!-- CIRCUIT LAWS -->
         <div id="elec-laws" class="mech-panel">
           <div class="lesson-panel-card">
-            <div class="lesson-section-heading"><span class="lesson-section-icon">🔗</span>Circuit Laws</div>
+            <div class="lesson-section-heading"><span class="lesson-section-icon">🔗</span>Circuit Laws &amp; Analysis</div>
+            <p class="lesson-text">Understanding how to analyse circuits — to find current, voltage, and resistance at every point — is one of the most important practical skills in electricity. Three core frameworks govern circuit behaviour: Ohm's Law, the rules for series and parallel combinations, and Kirchhoff's Laws. Together, they allow you to analyse any circuit, no matter how complex.</p>
+
             <div style="background:var(--pg-panel-bg);border:1px solid var(--pg-panel-border);border-radius:12px;padding:16px;margin-bottom:16px;">
-              <div class="law-block"><div class="law-num" style="background:rgba(123,31,162,0.12);color:#7b1fa2;">1</div><div><div class="law-title">Ohm's Law — V = IR</div><div class="law-desc">Voltage across a conductor is proportional to current at constant temperature. Doubling voltage doubles current if resistance is unchanged.</div><span class="law-example" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">If V doubles → I doubles (R constant)</span></div></div>
-              <div class="law-block"><div class="law-num" style="background:rgba(123,31,162,0.12);color:#7b1fa2;">2</div><div><div class="law-title">Series Circuit Rules</div><div class="law-desc">Same current through all components. Total resistance R_T = R₁ + R₂ + … Voltage is shared: V_T = V₁ + V₂ + …</div><span class="law-example" style="background:rgba(245,127,23,0.1);color:#f57f17;">Christmas lights in series: one fails, all go out</span></div></div>
-              <div class="law-block"><div class="law-num" style="background:rgba(123,31,162,0.12);color:#7b1fa2;">3</div><div><div class="law-title">Parallel Circuit Rules</div><div class="law-desc">Same voltage across all branches. Total current I_T = I₁ + I₂ + … 1/R_T = 1/R₁ + 1/R₂ + …</div><span class="law-example" style="background:rgba(46,125,50,0.1);color:#2e7d32;">Household appliances: each on independently</span></div></div>
-              <div class="law-block"><div class="law-num" style="background:rgba(123,31,162,0.12);color:#7b1fa2;">4</div><div><div class="law-title">Kirchhoff's Laws</div><div class="law-desc">KCL: sum of currents into a junction = sum out (charge conserved). KVL: sum of all voltages around a closed loop = 0 (energy conserved).</div><span class="law-example" style="background:var(--pg-chip-bg);color:var(--pg-accent);">3A in = 1A + 2A out at a junction</span></div></div>
+              <div class="law-block"><div class="law-num" style="background:rgba(123,31,162,0.12);color:#7b1fa2;">1</div><div><div class="law-title">Ohm's Law — V = IR</div><div class="law-desc">For a conductor at constant temperature, the potential difference across it is directly proportional to the current flowing through it. Stated as V = IR, where V is voltage, I is current, and R is resistance. Doubling the voltage across a fixed resistor doubles the current. Doubling the resistance halves the current. Ohm's Law holds for <strong>ohmic conductors</strong> (metals at constant temperature). It does NOT hold for non-ohmic devices like diodes, light-dependent resistors, or filament bulbs (whose resistance changes with temperature). Ohm's Law is the most-used equation in all of electronics.</div><span class="law-example" style="background:rgba(123,31,162,0.1);color:#7b1fa2;">Double the voltage across a 10 Ω resistor: current doubles from 1 A to 2 A. Double the resistance: current halves.</span></div></div>
+
+              <div class="law-block"><div class="law-num" style="background:rgba(123,31,162,0.12);color:#7b1fa2;">2</div><div><div class="law-title">Series Circuits — Single Path</div><div class="law-desc">In a series circuit, all components are connected end-to-end in a single loop. There is only one path for the current to flow, so the <strong>same current passes through every component</strong>. The total resistance is the sum of individual resistances: R_total = R₁ + R₂ + R₃ + … The supply voltage is shared (divided) across the components: V_T = V₁ + V₂ + V₃ + … The voltage across each component is proportional to its resistance (V₁/V₂ = R₁/R₂). If any component in a series circuit breaks (open-circuits), the entire circuit stops working — the current path is broken. This is why old-style Christmas tree lights (in series) would all go out when one bulb failed.</div><span class="law-example" style="background:rgba(245,127,23,0.1);color:#f57f17;">🎄 Traditional Christmas lights in series: one bulb fails → all go dark. Modern lights use parallel connections to prevent this.</span></div></div>
+
+              <div class="law-block"><div class="law-num" style="background:rgba(123,31,162,0.12);color:#7b1fa2;">3</div><div><div class="law-title">Parallel Circuits — Multiple Paths</div><div class="law-desc">In a parallel circuit, components are connected across the same two nodes, providing multiple current paths. The <strong>same voltage appears across each branch</strong>. The total current splits: I_total = I₁ + I₂ + I₃ + … Each branch carries a current determined by its own resistance (I₁ = V/R₁). The total (equivalent) resistance is always less than the smallest individual resistance: 1/R_T = 1/R₁ + 1/R₂ + … Adding more branches to a parallel circuit always increases total current drawn from the supply and decreases total resistance. If one branch fails (open-circuits), the other branches continue operating — this is why household circuits are wired in parallel, and why switching off one appliance doesn't affect the others.</div><span class="law-example" style="background:rgba(46,125,50,0.1);color:#2e7d32;">🏠 Every socket in your home is in parallel: each appliance gets the full mains voltage and can be switched independently.</span></div></div>
+
+              <div class="law-block"><div class="law-num" style="background:rgba(123,31,162,0.12);color:#7b1fa2;">4</div><div><div class="law-title">Kirchhoff's Current Law (KCL) — Charge Conservation</div><div class="law-desc">At any junction (node) in a circuit, the total current flowing into the junction equals the total current flowing out. Mathematically: ΣI_in = ΣI_out. This is a direct consequence of the conservation of electric charge — charge cannot accumulate at a junction. If 5 A flows into a junction that splits into two branches carrying I₁ and I₂, then I₁ + I₂ = 5 A. KCL is used to write current equations at each node of a complex circuit before solving for unknowns.</div><span class="law-example" style="background:var(--pg-chip-bg);color:var(--pg-accent);">Junction with 3A and 2A flowing in → 5A must flow out. If one branch carries 3A, the other branch carries 2A.</span></div></div>
+
+              <div class="law-block"><div class="law-num" style="background:rgba(123,31,162,0.12);color:#7b1fa2;">5</div><div><div class="law-title">Kirchhoff's Voltage Law (KVL) — Energy Conservation</div><div class="law-desc">Around any closed loop in a circuit, the algebraic sum of all potential differences (voltages) equals zero: ΣV = 0. This is a statement of conservation of energy — the energy given to charges by sources (batteries, generators) must equal the energy lost in resistances and other components. When traversing a loop, voltage rises (through a battery from − to +) and voltage drops (across resistors in the direction of current) must balance exactly. KVL and KCL together form the basis of all systematic circuit analysis methods.</div><span class="law-example" style="background:rgba(46,125,50,0.1);color:#2e7d32;">A 12 V battery in a loop with a 4 Ω and 8 Ω resistor: voltage drops across resistors must sum to 12 V — confirmed by V₁ + V₂ = IR₁ + IR₂ = 1 × (4+8) = 12 V ✓</span></div></div>
             </div>
 
-            <div class="formula-box" style="background:#4a148c;"><div class="formula-box-label">Key Formulas</div>Series: R_T = R₁+R₂ &nbsp;|&nbsp; Parallel: 1/R_T = 1/R₁+1/R₂ &nbsp;|&nbsp; P = VI = I²R = V²/R</div>
+            <div class="formula-box" style="background:#4a148c;"><div class="formula-box-label">Essential Circuit Formulas</div>Ohm: V = IR &nbsp;|&nbsp; Series: R_T = R₁+R₂+... &nbsp;|&nbsp; Parallel: 1/R_T = 1/R₁+1/R₂+... &nbsp;|&nbsp; P = VI = I²R = V²/R &nbsp;|&nbsp; E = Pt</div>
+
+            <div class="worked-example">
+              <div class="worked-example-q">Three resistors — 6 Ω, 3 Ω, and 2 Ω — are connected in parallel to a 12 V battery. Find (a) the equivalent resistance, (b) the current through each branch, and (c) the total current from the battery.</div>
+              <ul class="worked-example-steps">
+                <li>(a) 1/R_T = 1/6 + 1/3 + 1/2 = 1/6 + 2/6 + 3/6 = 6/6 = 1 → R_T = 1 Ω</li>
+                <li>(b) I₁ = 12/6 = 2 A; I₂ = 12/3 = 4 A; I₃ = 12/2 = 6 A</li>
+                <li>(c) I_total = I₁+I₂+I₃ = 2+4+6 = 12 A (also: I_T = V/R_T = 12/1 = 12 A ✓)</li>
+              </ul>
+              <div class="worked-example-answer">R_T = 1 Ω &nbsp;|&nbsp; I₁=2A, I₂=4A, I₃=6A &nbsp;|&nbsp; Total = 12 A</div>
+            </div>
+
+            <div class="note-box">Notice that in the parallel combination above, the equivalent resistance (1 Ω) is smaller than the smallest individual resistor (2 Ω). This is always true for parallel circuits — adding resistors in parallel always reduces total resistance and increases total current.</div>
 
             <div class="revision-q-list">
               <div class="lesson-section-heading" style="margin-top:20px;"><span class="lesson-section-icon">📝</span>Revision Questions</div>
-              <div class="revision-q"><span class="revision-q-num">Q1</span>Two resistors of 4 Ω and 6 Ω are connected in series to a 20 V supply. Find the current and voltage across each resistor.</div>
-              <div class="revision-q"><span class="revision-q-num">Q2</span>The same resistors are connected in parallel. Find the total resistance and total current drawn.</div>
-              <div class="revision-q"><span class="revision-q-num">Q3</span>An electric iron rated 1000 W operates at 240 V. Find (a) current drawn and (b) resistance of the heating element.</div>
+              <div class="revision-q"><span class="revision-q-num">Q1</span>Two resistors of 4 Ω and 6 Ω are connected in series to a 20 V supply. Find (a) the total resistance, (b) the current through the circuit, (c) the voltage across each resistor.</div>
+              <div class="revision-q"><span class="revision-q-num">Q2</span>The same 4 Ω and 6 Ω resistors are now connected in parallel to the same 20 V supply. Find (a) the equivalent resistance, (b) the current through each branch, (c) the total current from the supply.</div>
+              <div class="revision-q"><span class="revision-q-num">Q3</span>A junction in a circuit has three branches. Branch A carries 4 A into the junction. Branch B carries 1.5 A out. What current flows in Branch C, and in which direction?</div>
+              <div class="revision-q"><span class="revision-q-num">Q4</span>An electric iron rated 1000 W operates at 240 V. Find (a) current drawn, (b) resistance of the heating element, (c) energy used in 30 minutes in joules and in kWh.</div>
             </div>
 
             <a href="https://www.geeksforgeeks.org/physics/class-10-science-notes-chapter-12-electricity/" target="_blank" class="learn-more-btn" style="background:linear-gradient(135deg,#9c27b0,#4a148c);margin-top:16px;">📖 Read More on Electricity</a>
@@ -3637,37 +3782,58 @@ function showModule(type){
         <div id="wave-overview" class="mech-panel active">
           <div class="lesson-panel-card">
             <div class="lesson-section-heading"><span class="lesson-section-icon">🌊</span>What are Waves?</div>
-            <p class="lesson-text"><strong>Waves</strong> are disturbances that transfer energy from one place to another <strong>without transferring matter</strong>. A wave is a repeating pattern of oscillations — it carries information and energy across space.</p>
-            <div class="callout-box info"><span class="callout-icon">💡</span><div>Waves carry information across the universe — light from distant stars, radio signals, sound in a concert hall. Understanding waves is understanding communication itself.</div></div>
-            <div class="lesson-section-heading"><span class="lesson-section-icon">📋</span>Topics in this Module</div>
+            <p class="lesson-text"><strong>Waves</strong> are disturbances that transfer energy from one point to another <strong>without permanently transferring matter</strong>. When a wave passes through a medium, the particles of that medium oscillate (vibrate) about their equilibrium positions — they do not travel with the wave. Only the energy and pattern of disturbance propagate forward. Drop a stone into a pond and watch the circular ripples spread outward: the water molecules bob up and down, but the water itself does not flow outward with the wave.</p>
+            <p class="lesson-text" style="margin-top:8px;">Waves are one of the most universal phenomena in nature. They explain how we see (light waves), how we hear (sound waves), how we communicate wirelessly (radio and microwave), how doctors image internal organs (ultrasound), how seismologists detect earthquakes (seismic waves), and how the universe itself communicates information across cosmological distances. The mathematics of waves, developed by scientists from Huygens and Young to Maxwell and Hertz, underpins almost all of modern physics and technology.</p>
+
+            <div class="callout-box info"><span class="callout-icon">💡</span><div><strong>Why Waves Matter:</strong> The entire global communications network — internet, radio, TV, mobile phones, satellite navigation — is built on the physics of electromagnetic waves. Medical imaging (X-rays, ultrasound, MRI) uses wave physics. Musical instruments, acoustic design of concert halls, sonar on submarines, radar for aircraft — all of these are direct applications of the wave concepts you will learn in this module.</div></div>
+
+            <div class="lesson-section-heading"><span class="lesson-section-icon">🧬</span>The Fundamental Nature of a Wave</div>
+            <p class="lesson-text">Every wave — regardless of type — is characterised by a <strong>repeating periodic disturbance</strong>. The source of a wave is always something that oscillates: a vibrating tuning fork creates sound waves, electrons oscillating in an antenna create radio waves, a vibrating string creates standing waves. The energy of the oscillation is passed on from one part of the medium to the next, creating the propagating wave.</p>
+            <p class="lesson-text" style="margin-top:8px;">A key insight: the medium through which a wave travels does not move with the wave. After the wave passes, each particle returns to its original position. This is fundamentally different from the flow of water in a river — that is a transfer of matter, not a wave.</p>
+
+            <div class="lesson-section-heading"><span class="lesson-section-icon">📋</span>Topics Covered in this Module</div>
+            <p class="lesson-text">This module covers wave classification, the key parameters that describe waves, the behaviour of waves at boundaries and in different media, and the important applications of wave physics in science and technology.</p>
             <div class="mech-topic-grid">
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Types of Waves</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Sound Waves</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Light &amp; EM Spectrum</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Amplitude</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Frequency</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Wavelength</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Wave Speed</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Reflection</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Refraction</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Transverse Waves</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Longitudinal Waves</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Mechanical vs EM Waves</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Amplitude (A)</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Frequency (f) &amp; Period (T)</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Wavelength (λ)</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Wave Speed (v = fλ)</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Sound Waves &amp; Pitch</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">The EM Spectrum</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Reflection (angle laws)</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Refraction &amp; Snell's Law</span>
               <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Diffraction</span>
               <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Interference</span>
-              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Echoes</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Echoes &amp; Echo Method</span>
+              <span class="mech-topic-chip" style="background:rgba(0,96,100,0.1);color:#006064;">Speed of Sound Measurement</span>
             </div>
+
+            <div class="lesson-section-heading"><span class="lesson-section-icon">🌍</span>Real-World Applications of Wave Physics</div>
             <div class="application-chips">
-              <span class="app-chip">📻 Radio broadcasting</span>
-              <span class="app-chip">🏥 Medical ultrasound</span>
-              <span class="app-chip">🌐 Fibre optic internet</span>
-              <span class="app-chip">🎵 Music acoustics</span>
-              <span class="app-chip">🛸 Radar systems</span>
+              <span class="app-chip">📻 AM/FM radio &amp; TV broadcasting</span>
+              <span class="app-chip">🏥 Medical ultrasound &amp; X-ray imaging</span>
+              <span class="app-chip">🌐 Fibre optic internet &amp; broadband</span>
+              <span class="app-chip">🎵 Musical instruments &amp; acoustics</span>
+              <span class="app-chip">🛸 Radar for aircraft &amp; weather</span>
+              <span class="app-chip">📡 Satellite communications</span>
+              <span class="app-chip">🌊 Sonar for ocean depth mapping</span>
+              <span class="app-chip">☀ Solar energy &amp; photovoltaics</span>
+              <span class="app-chip">🔬 Electron microscopy</span>
+              <span class="app-chip">🎸 Audio engineering &amp; noise control</span>
             </div>
+
             <div class="summary-box" style="background:linear-gradient(135deg,rgba(0,96,100,0.06),transparent);">
-              <div class="summary-box-title" style="color:#006064;">📌 Key Points</div>
+              <div class="summary-box-title" style="color:#006064;">📌 Key Points — What to Remember from This Overview</div>
               <div class="summary-list">
-                <div class="summary-item"><div class="summary-dot" style="background:#006064;"></div>Waves transfer energy without transferring matter</div>
-                <div class="summary-item"><div class="summary-dot" style="background:#006064;"></div>Wave speed v = frequency × wavelength (v = fλ)</div>
-                <div class="summary-item"><div class="summary-dot" style="background:#006064;"></div>Transverse waves oscillate perpendicular to travel (e.g. light); longitudinal parallel (e.g. sound)</div>
-                <div class="summary-item"><div class="summary-dot" style="background:#006064;"></div>All electromagnetic waves travel at c = 3×10⁸ m/s in vacuum</div>
+                <div class="summary-item"><div class="summary-dot" style="background:#006064;"></div>Waves transfer energy from place to place without permanently moving matter — only energy and the disturbance pattern travel</div>
+                <div class="summary-item"><div class="summary-dot" style="background:#006064;"></div>Mechanical waves (sound, water, seismic) require a medium; electromagnetic waves (light, radio) travel through vacuum</div>
+                <div class="summary-item"><div class="summary-dot" style="background:#006064;"></div>Transverse waves: oscillation is perpendicular to wave travel (light, water). Longitudinal: oscillation is parallel (sound, ultrasound)</div>
+                <div class="summary-item"><div class="summary-dot" style="background:#006064;"></div>The wave equation v = fλ links the three key wave quantities — speed, frequency, and wavelength</div>
+                <div class="summary-item"><div class="summary-dot" style="background:#006064;"></div>All electromagnetic waves travel at c = 3×10⁸ m/s in a vacuum, regardless of frequency</div>
+                <div class="summary-item"><div class="summary-dot" style="background:#006064;"></div>Waves undergo reflection, refraction, diffraction, and interference — each has important real-world consequences</div>
               </div>
             </div>
             <div class="lesson-nav-footer">
